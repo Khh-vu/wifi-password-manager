@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
+import io.github.wifi_password_manager.navigation.NavigationRoot
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
@@ -26,9 +27,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WiFiPasswordManagerTheme {
-                ShizukuPermissionHandler(finishCallback = { finish() }) {
-                    // TODO: "Implement main screen"
-                }
+                ShizukuPermissionHandler(finishCallback = { finish() }) { NavigationRoot() }
             }
         }
     }
