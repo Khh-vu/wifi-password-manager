@@ -5,6 +5,9 @@ import android.os.Parcelable;
 
 import java.util.List;
 
+/**
+ * @noinspection rawtypes
+ */
 public class ParceledListSlice<T extends Parcelable> extends BaseParceledListSlice<T> {
 
     public ParceledListSlice(List<T> list) {
@@ -39,7 +42,7 @@ public class ParceledListSlice<T extends Parcelable> extends BaseParceledListSli
         throw new RuntimeException("Stub!");
     }
 
-    public static final ClassLoaderCreator<ParceledListSlice> CREATOR = new ClassLoaderCreator<ParceledListSlice>() {
+    public static final ClassLoaderCreator<ParceledListSlice> CREATOR = new ClassLoaderCreator<>() {
 
         public ParceledListSlice createFromParcel(Parcel in) {
             throw new RuntimeException("Stub!");

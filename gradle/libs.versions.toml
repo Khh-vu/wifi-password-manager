@@ -13,6 +13,7 @@ junitVersion = "1.2.1"
 koin = "4.1.0"
 koinAnnotations = "2.1.0"
 kotlin = "2.2.0"
+kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.9.0"
 ksp = "2.2.0-2.0.2"
 ktfmt = "0.23.0"
@@ -50,6 +51,7 @@ koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koinAnnotations" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 material-components = { module = "com.google.android.material:material", version.ref = "materialComponents" }

@@ -27,7 +27,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.data.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
@@ -89,9 +89,7 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
                     onImportClick = {
                         // TODO: Implement import functionality
                     },
-                    onExportClick = {
-                        // TODO: Implement export functionality
-                    },
+                    onExportClick = { onEvent(MainViewModel.Event.ExportNetworks) },
                 )
             }
         },
@@ -115,7 +113,7 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun MainViewPreview() {
     WiFiPasswordManagerTheme {
@@ -123,7 +121,7 @@ private fun MainViewPreview() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun SearchMainViewPreview() {
     WiFiPasswordManagerTheme {

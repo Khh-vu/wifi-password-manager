@@ -115,4 +115,8 @@ class WifiService(private val json: Json) {
                     false
                 },
             )
+
+    fun exportToJson(networks: List<WifiNetwork>): String {
+        return json.encodeToString(networks)
+    }
 }
