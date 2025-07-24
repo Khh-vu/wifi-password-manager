@@ -63,34 +63,4 @@ data class WifiNetwork(
         WPA3,
         WEP,
     }
-
-    fun toWifiConfiguration(): WifiConfiguration {
-        val config =
-            WifiConfigurationHidden().apply {
-                SSID = "\"$ssid\""
-                when (securityType) {
-                    SecurityType.OPEN -> {
-                        setSecurityParams(WifiConfigurationHidden.SECURITY_TYPE_OPEN)
-                    }
-                    SecurityType.OWE -> {
-                        setSecurityParams(WifiConfigurationHidden.SECURITY_TYPE_OWE)
-                    }
-                    SecurityType.WPA2 -> {
-                        setSecurityParams(WifiConfigurationHidden.SECURITY_TYPE_PSK)
-                        preSharedKey = "\"$password\""
-                    }
-                    SecurityType.WPA3 -> {
-                        setSecurityParams(WifiConfigurationHidden.SECURITY_TYPE_SAE)
-                        preSharedKey = "\"$password\""
-                    }
-                    SecurityType.WEP -> {
-                        setSecurityParams(WifiConfigurationHidden.SECURITY_TYPE_WEP)
-                        wepKeys = password.split("\n").map { "\"$it\"" }.toTypedArray()
-                    }
-                }
-                allowAutojoin = autojoin
-                hiddenSSID = hidden
-            }
-        return Refine.unsafeCast(config)
-    }
 }

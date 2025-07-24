@@ -5,17 +5,19 @@ package io.github.wifi_password_manager.services
 import android.content.AttributionSource
 import android.content.Context
 import android.net.wifi.IWifiManager
-import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
+import android.os.ParcelFileDescriptor
 import android.util.Log
+import io.github.wifi_password_manager.data.ShellResult
 import io.github.wifi_password_manager.data.WifiNetwork
 import kotlinx.serialization.json.Json
+import moe.shizuku.server.IShizukuService
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
 import rikka.shizuku.SystemServiceHelper
 
-class WifiService(private val json: Json, private val context: Context) {
+class WifiService(private val json: Json) {
     companion object {
         private const val TAG = "WifiService"
 
@@ -82,21 +84,36 @@ class WifiService(private val json: Json, private val context: Context) {
                 },
             )
 
-    fun addOrUpdateNetwork(wifiNetwork: WifiNetwork): Boolean =
+    fun addOrUpdateNetwork(network: WifiNetwork): Boolean =
         runCatching {
-                val config = wifiNetwork.toWifiConfiguration()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    wifiManager
-                        .addOrUpdateNetworkPrivileged(config, context.packageName)
-                        ?.statusCode == WifiManager.AddNetworkResult.STATUS_SUCCESS
-                } else {
-                    wifiManager.addOrUpdateNetwork(config, context.packageName) != -1
+                val command = buildString {
+                    append("cmd wifi add-network \"${network.ssid}\"")
+
+                    when (network.securityType) {
+                        WifiNetwork.SecurityType.OPEN -> append(" open")
+                        WifiNetwork.SecurityType.OWE -> append(" owe")
+                        WifiNetwork.SecurityType.WPA2 -> append(" wpa2 \"${network.password}\"")
+                        WifiNetwork.SecurityType.WPA3 -> append(" wpa3 \"${network.password}\"")
+                        WifiNetwork.SecurityType.WEP -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                                append(" wep \"${network.password}\"")
+                            } else {
+                                throw UnsupportedOperationException(
+                                    "WEP is not supported on this API level"
+                                )
+                            }
+                        }
+                    }
+
+                    if (!network.autojoin) append(" -d")
+                    if (network.hidden) append(" -h")
                 }
+                execute(command)
             }
             .fold(
                 onSuccess = {
-                    Log.d(TAG, "Network added or updated: $wifiNetwork")
-                    it
+                    Log.d(TAG, "Network added or updated: $network")
+                    it.resultCode != -1
                 },
                 onFailure = {
                     Log.e(TAG, "Error adding or updating network", it)
@@ -105,11 +122,11 @@ class WifiService(private val json: Json, private val context: Context) {
             )
 
     fun removeNetwork(netId: Int): Boolean =
-        runCatching { wifiManager.removeNetwork(netId, SHELL_PACKAGE) }
+        runCatching { execute("cmd wifi forget-network $netId") }
             .fold(
                 onSuccess = {
                     Log.d(TAG, "Network removed: $netId")
-                    it
+                    it.resultCode != -1
                 },
                 onFailure = {
                     Log.e(TAG, "Error removing network", it)
@@ -124,4 +141,19 @@ class WifiService(private val json: Json, private val context: Context) {
     fun getNetworks(jsonString: String): List<WifiNetwork> {
         return json.decodeFromString(jsonString)
     }
+
+    private fun execute(command: String): ShellResult =
+        runCatching {
+                val process =
+                    IShizukuService.Stub.asInterface(Shizuku.getBinder())
+                        .newProcess(arrayOf("sh", "-c", command), null, null)
+                val output = process.inputStream.text.ifBlank { process.errorStream.text }
+                val resultCode = process.waitFor()
+                ShellResult(resultCode, output.trim())
+            }
+            .getOrElse { ShellResult(resultCode = -1, output = it.stackTraceToString()) }
+
+    private val ParcelFileDescriptor.text
+        get() =
+            ParcelFileDescriptor.AutoCloseInputStream(this).use { it.bufferedReader().readText() }
 }

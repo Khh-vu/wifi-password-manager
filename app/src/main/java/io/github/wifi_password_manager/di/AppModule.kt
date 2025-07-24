@@ -1,6 +1,5 @@
 package io.github.wifi_password_manager.di
 
-import android.content.Context
 import io.github.wifi_password_manager.services.WifiService
 import io.github.wifi_password_manager.ui.screen.main.MainViewModel
 import kotlinx.serialization.json.Json
@@ -19,9 +18,7 @@ class AppModule {
         coerceInputValues = true
     }
 
-    @Single
-    fun wifiService(json: Json, context: Context): WifiService =
-        WifiService(json = json, context = context)
+    @Single fun wifiService(json: Json): WifiService = WifiService(json)
 
     @KoinViewModel
     fun mainViewModel(wifiService: WifiService): MainViewModel = MainViewModel(wifiService)
