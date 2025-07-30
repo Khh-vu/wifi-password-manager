@@ -15,6 +15,7 @@ import androidx.navigation3.ui.NavDisplay
 import io.github.wifi_password_manager.ui.screen.main.MainView
 import io.github.wifi_password_manager.ui.screen.main.MainViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingView
+import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -39,7 +40,12 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 }
 
                 is SettingScreen -> {
-                    NavEntry(key = key) { SettingView() }
+                    NavEntry(key = key) {
+                        val viewModel = koinViewModel<SettingViewModel>()
+                        val state by viewModel.state.collectAsStateWithLifecycle()
+
+                        SettingView(state = state, onEvent = viewModel::onEvent)
+                    }
                 }
 
                 else -> throw RuntimeException("Invalid NavKey.")

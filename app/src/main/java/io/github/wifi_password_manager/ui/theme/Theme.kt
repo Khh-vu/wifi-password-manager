@@ -2,14 +2,17 @@ package io.github.wifi_password_manager.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WiFiPasswordManagerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -25,8 +28,12 @@ fun WiFiPasswordManagerTheme(
             }
 
             darkTheme -> darkColorScheme()
-            else -> lightColorScheme()
+            else -> expressiveLightColorScheme()
         }
 
-    MaterialTheme(colorScheme = colorScheme, content = content)
+    MaterialTheme(
+        colorScheme = colorScheme,
+        motionScheme = MotionScheme.expressive(),
+        content = content,
+    )
 }

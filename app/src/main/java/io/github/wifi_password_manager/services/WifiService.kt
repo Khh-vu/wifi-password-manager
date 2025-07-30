@@ -12,6 +12,7 @@ import android.util.Log
 import io.github.wifi_password_manager.data.WifiNetwork
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
+import io.github.wifi_password_manager.utils.hasShizukuPermission
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -24,7 +25,7 @@ import rikka.shizuku.SystemServiceHelper
 
 private data class ShellResult(val resultCode: Int, val output: String)
 
-class WifiService(private val json: Json) {
+class WifiService(private val context: Context, private val json: Json) {
     companion object {
         private const val TAG = "WifiService"
 
@@ -69,8 +70,13 @@ class WifiService(private val json: Json) {
         }
     }
 
-    fun getPrivilegedConfiguredNetworks(): List<WifiNetwork> =
-        runCatching {
+    fun getPrivilegedConfiguredNetworks(): List<WifiNetwork> {
+        if (!context.hasShizukuPermission) {
+            Log.w(TAG, "Shizuku permission not available, returning empty list")
+            return emptyList()
+        }
+
+        return runCatching {
                 val configs =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                         wifiManager
@@ -103,9 +109,16 @@ class WifiService(private val json: Json) {
                     emptyList()
                 },
             )
+    }
 
     suspend fun addOrUpdateNetworks(networks: List<WifiNetwork>) {
+        if (!context.hasShizukuPermission) {
+            Log.w(TAG, "Shizuku permission not available, cannot add/update networks")
+            return
+        }
+
         if (networks.isEmpty()) return
+
         runCatching {
                 withContext(Dispatchers.IO) {
                     val jobs =
@@ -127,6 +140,11 @@ class WifiService(private val json: Json) {
     }
 
     fun removeNetwork(netId: Int) {
+        if (!context.hasShizukuPermission) {
+            Log.w(TAG, "Shizuku permission not available, cannot remove network")
+            return
+        }
+
         runCatching { execute("cmd wifi forget-network $netId") }
             .fold(
                 onSuccess = { Log.d(TAG, "Network removed: $netId") },

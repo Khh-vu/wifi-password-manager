@@ -3,9 +3,11 @@ package io.github.wifi_password_manager.ui.screen.main.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -46,7 +48,9 @@ fun NetworkList(modifier: Modifier = Modifier, networks: List<WifiNetwork>) {
                 modifier = modifier,
                 columns = GridCells.Fixed(2),
                 contentPadding =
-                    WindowInsets.displayCutout.asPaddingValues() +
+                    WindowInsets.displayCutout
+                        .only(WindowInsetsSides.Horizontal)
+                        .asPaddingValues() +
                         WindowInsets.navigationBars.asPaddingValues() +
                         PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
