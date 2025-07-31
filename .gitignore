@@ -31,6 +31,7 @@ local.properties
 .idea/studiobot.xml
 
 # Keystore files
+key.properties
 *.jks
 *.keystore
 
