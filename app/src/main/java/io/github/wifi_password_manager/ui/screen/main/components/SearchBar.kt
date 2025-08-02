@@ -21,6 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
@@ -77,7 +78,10 @@ fun SearchBar(
             keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
             leadingIcon = {
                 TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                    positionProvider =
+                        TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Below
+                        ),
                     tooltip = {
                         PlainTooltip { Text(text = stringResource(R.string.back_tooltip)) }
                     },
@@ -94,7 +98,10 @@ fun SearchBar(
             trailingIcon = {
                 Row {
                     TooltipBox(
-                        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                        positionProvider =
+                            TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Below
+                            ),
                         tooltip = { PlainTooltip { Text(text = "Clear") } },
                         state = rememberTooltipState(),
                     ) {

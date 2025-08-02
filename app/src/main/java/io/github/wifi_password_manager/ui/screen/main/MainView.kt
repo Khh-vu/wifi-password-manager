@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBar
@@ -62,7 +63,9 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
                         actions = {
                             TooltipBox(
                                 positionProvider =
-                                    TooltipDefaults.rememberTooltipPositionProvider(),
+                                    TooltipDefaults.rememberTooltipPositionProvider(
+                                        positioning = TooltipAnchorPosition.Below
+                                    ),
                                 tooltip = {
                                     PlainTooltip {
                                         Text(text = stringResource(R.string.search_tooltip))
@@ -82,7 +85,9 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
 
                             TooltipBox(
                                 positionProvider =
-                                    TooltipDefaults.rememberTooltipPositionProvider(),
+                                    TooltipDefaults.rememberTooltipPositionProvider(
+                                        positioning = TooltipAnchorPosition.Below
+                                    ),
                                 tooltip = {
                                     PlainTooltip {
                                         Text(text = stringResource(R.string.settings_tooltip))

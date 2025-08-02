@@ -26,6 +26,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -76,7 +77,10 @@ private fun SSIDItem(modifier: Modifier = Modifier, network: WifiNetwork) {
     val trailingContent =
         @Composable {
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Above
+                    ),
                 tooltip = {
                     PlainTooltip { Text(text = stringResource(R.string.hidden_network_tooltip)) }
                 },
