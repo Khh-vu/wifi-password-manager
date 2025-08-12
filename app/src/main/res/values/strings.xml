@@ -25,6 +25,11 @@
     <string name="export_action">Export networks</string>
     <string name="export_description">Export WiFi networks to a JSON file</string>
 
+    <!-- Advanced Section -->
+    <string name="advanced_section">Advanced</string>
+    <string name="forget_all_action">Forget all networks</string>
+    <string name="forget_all_description">Remove all saved WiFi networks from this device</string>
+
     <!-- WiFi Network -->
     <string name="hidden_network_tooltip">Hidden network</string>
 
@@ -51,4 +56,10 @@
     <string name="open_shizuku">Open Shizuku</string>
     <string name="install_shizuku">Install Shizuku</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Forget All Networks Confirmation Dialog -->
+    <string name="warning">Warning</string>
+    <string name="forget_all_confirmation_title">Forget all networks?</string>
+    <string name="forget_all_confirmation_message">This will permanently remove all saved WiFi networks from this device. This action cannot be undone.</string>
+    <string name="forget_all_confirm">OK</string>
 </resources>

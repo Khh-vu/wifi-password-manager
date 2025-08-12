@@ -48,6 +48,8 @@ class SettingViewModel(
         data object ImportNetworks : Event
 
         data object ExportNetworks : Event
+
+        data object ForgetAllNetworks : Event
     }
 
     private val _state = MutableStateFlow(State())
@@ -71,6 +73,7 @@ class SettingViewModel(
                     settingService.updateSettings { it.copy(useMaterialYou = event.value) }
                 is Event.ImportNetworks -> importNetworks()
                 is Event.ExportNetworks -> exportNetworks()
+                is Event.ForgetAllNetworks -> forgetAllNetworks()
             }
         }
     }
@@ -101,6 +104,14 @@ class SettingViewModel(
                 wifiService.addOrUpdateNetworks(networks)
             }
         }
+
+        _state.update { it.copy(isLoading = false) }
+    }
+
+    private suspend fun forgetAllNetworks() {
+        _state.update { it.copy(isLoading = true) }
+
+        withContext(Dispatchers.IO) { wifiService.removeAllNetworks() }
 
         _state.update { it.copy(isLoading = false) }
     }

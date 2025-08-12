@@ -75,8 +75,12 @@ class WifiService(private val context: Context, private val json: Json) {
         _configuredNetworks.emit(value = networks)
     }
 
-    fun getPrivilegedConfiguredNetworks(): List<WifiNetwork> =
-        runCatching {
+    fun getPrivilegedConfiguredNetworks(): List<WifiNetwork> {
+        if (!context.hasShizukuPermission) {
+            Log.w(TAG, "Shizuku permission not available, returning empty list")
+            return emptyList()
+        }
+        return runCatching {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     wifiManager
                         .getPrivilegedConfiguredNetworks(
@@ -106,6 +110,7 @@ class WifiService(private val context: Context, private val json: Json) {
                     emptyList()
                 },
             )
+    }
 
     suspend fun addOrUpdateNetworks(networks: List<WifiNetwork>) {
         if (!context.hasShizukuPermission) {
@@ -138,19 +143,31 @@ class WifiService(private val context: Context, private val json: Json) {
             )
     }
 
-    suspend fun removeNetwork(netId: Int) {
+    suspend fun removeAllNetworks() {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot remove network")
+            Log.w(TAG, "Shizuku permission not available, cannot remove networks")
             return
         }
 
-        runCatching { execute("cmd wifi forget-network $netId") }
+        val networks = getPrivilegedConfiguredNetworks()
+        val validNetworks = networks.filter { it.networkId != -1 }
+
+        if (validNetworks.isEmpty()) {
+            Log.d(TAG, "No networks to remove")
+            return
+        }
+
+        runCatching {
+                validNetworks.forEach { network ->
+                    wifiManager.removeNetwork(network.networkId, SHELL_PACKAGE)
+                }
+            }
             .fold(
                 onSuccess = {
                     refresh()
-                    Log.d(TAG, "Network removed: $netId")
+                    Log.d(TAG, "All networks removed: ${validNetworks.size} networks")
                 },
-                onFailure = { Log.e(TAG, "Error removing network", it) },
+                onFailure = { Log.e(TAG, "Error removing all networks", it) },
             )
     }
 

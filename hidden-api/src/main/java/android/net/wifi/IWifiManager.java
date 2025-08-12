@@ -1,6 +1,5 @@
 package android.net.wifi;
 
-import android.content.pm.ParceledListSlice;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -22,5 +21,8 @@ public interface IWifiManager extends IInterface {
     com.android.wifi.x.com.android.modules.utils.ParceledListSlice<WifiConfiguration> getPrivilegedConfiguredNetworks(String packageName, String featureId, Bundle extras);
 
     //Android 11
-    ParceledListSlice<WifiConfiguration> getPrivilegedConfiguredNetworks(String packageName, String featureId);
+    android.content.pm.ParceledListSlice<WifiConfiguration> getPrivilegedConfiguredNetworks(String packageName, String featureId);
+
+    //Android 11+
+    boolean removeNetwork(int netId, String packageName);
 }

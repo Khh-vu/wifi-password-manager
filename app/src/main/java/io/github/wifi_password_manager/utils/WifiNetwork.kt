@@ -43,6 +43,7 @@ fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
         .values
         .map { duplicateNetworks ->
             WifiNetwork(
+                networkId = duplicateNetworks.first().networkId,
                 ssid = duplicateNetworks.first().ssid,
                 securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
                 password =
