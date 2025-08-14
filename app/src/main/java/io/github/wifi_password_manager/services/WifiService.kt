@@ -119,31 +119,22 @@ class WifiService(private val context: Context, private val json: Json) {
                                 async {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                         wifiManager
-                                            .addOrUpdateNetworkPrivileged(
-                                                config,
-                                                context.packageName,
-                                            )
+                                            .addOrUpdateNetworkPrivileged(config, SHELL_PACKAGE)
                                             ?.statusCode ==
                                             WifiManager.AddNetworkResult.STATUS_SUCCESS
                                     } else {
-                                        wifiManager.addOrUpdateNetwork(
-                                            config,
-                                            context.packageName,
-                                        ) != -1
+                                        wifiManager.addOrUpdateNetwork(config, SHELL_PACKAGE) != -1
                                     }
                                 }
                             }
                         }
-                    jobs.awaitAll()
+                    jobs.awaitAll().count { it }
                 }
             }
             .fold(
-                onSuccess = { results ->
+                onSuccess = {
                     refresh()
-                    Log.d(
-                        TAG,
-                        "Networks added or updated successfully: ${results.count { it }}/${results.size} networks",
-                    )
+                    Log.d(TAG, "Added or Updated ${it}/${networks.size} networks")
                 },
                 onFailure = { Log.e(TAG, "Error adding or updating networks", it) },
             )
@@ -164,14 +155,18 @@ class WifiService(private val context: Context, private val json: Json) {
         }
 
         runCatching {
-                validNetworks.forEach { network ->
-                    wifiManager.removeNetwork(network.networkId, context.packageName)
+                withContext(Dispatchers.IO) {
+                    val jobs =
+                        validNetworks.map { network ->
+                            async { wifiManager.removeNetwork(network.networkId, SHELL_PACKAGE) }
+                        }
+                    jobs.awaitAll().count { it }
                 }
             }
             .fold(
                 onSuccess = {
                     refresh()
-                    Log.d(TAG, "All networks removed: ${validNetworks.size} networks")
+                    Log.d(TAG, "Removed ${it}/${networks.size} networks")
                 },
                 onFailure = { Log.e(TAG, "Error removing all networks", it) },
             )
