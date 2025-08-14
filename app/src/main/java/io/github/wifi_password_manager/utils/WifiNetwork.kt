@@ -53,3 +53,48 @@ fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
             )
         }
         .sortedBy { it.ssid.lowercase() }
+
+fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
+    return securityType.map { type ->
+        val config =
+            WifiConfigurationHidden().apply {
+                SSID = "\"$ssid\""
+                when (type) {
+                    SecurityType.OPEN -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_OPEN)
+                    }
+
+                    SecurityType.OWE -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_OWE)
+                    }
+
+                    SecurityType.WPA2 -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_PSK)
+                        preSharedKey = "\"$password\""
+                    }
+
+                    SecurityType.WPA3 -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_SAE)
+                        preSharedKey = "\"$password\""
+                    }
+
+                    SecurityType.WEP -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_WEP)
+                        // WEP-40, WEP-104, and WEP-256
+                        if (
+                            (password.length == 10 ||
+                                password.length == 26 ||
+                                password.length == 58) && password matches "[0-9A-Fa-f]*".toRegex()
+                        ) {
+                            wepKeys[0] = password
+                        } else {
+                            wepKeys[0] = "\"$password\""
+                        }
+                    }
+                }
+                allowAutojoin = autojoin
+                hiddenSSID = hidden
+            }
+        Refine.unsafeCast(config)
+    }
+}

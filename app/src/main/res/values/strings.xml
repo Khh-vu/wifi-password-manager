@@ -44,7 +44,7 @@
     <string name="security_open">None</string>
     <string name="security_owe">Enhanced Open</string>
     <string name="security_wpa2">WPA/WPA2</string>
-    <string name="security_wpa3">WPA3</string>
+    <string name="security_wpa3">WPA3-Personal</string>
     <string name="security_wep">WEP</string>
 
     <!-- Loading Dialog -->

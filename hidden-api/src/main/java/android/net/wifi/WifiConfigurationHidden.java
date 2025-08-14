@@ -18,6 +18,14 @@ public class WifiConfigurationHidden implements Parcelable {
     }
 
     /**
+     * Set the various security params to correspond to the provided security type.
+     * This is accomplished by setting the various BitSets exposed in WifiConfiguration.
+     */
+    public void setSecurityParams(int securityType) {
+        throw new RuntimeException("Stub!");
+    }
+
+    /**
      * The ID number that the supplicant uses to identify this
      * network configuration entry. This must be passed as an argument
      * to most calls into the supplicant.
@@ -32,14 +40,6 @@ public class WifiConfigurationHidden implements Parcelable {
      * (e.g., {@code 01a243f405}).
      */
     public String SSID;
-
-    /**
-     * When set, this network configuration entry should only be used when
-     * associating with the AP having the specified BSSID. The value is
-     * a string in the format of an Ethernet MAC address, e.g.,
-     * <code>XX:XX:XX:XX:XX:XX</code> where each <code>X</code> is a hex digit.
-     */
-    public String BSSID;
 
     /**
      * Pre-shared key for use with WPA-PSK. Either an ASCII string enclosed in
@@ -61,21 +61,8 @@ public class WifiConfigurationHidden implements Parcelable {
      * When the value of one of these keys is read, the actual key is
      * not returned, just a "*" if the key has a value, or the null
      * string otherwise.
-     *
-     * @deprecated Due to security and performance limitations, use of WEP networks
-     * is discouraged.
      */
-    @Deprecated
     public String[] wepKeys;
-
-    /**
-     * Default WEP key index, ranging from 0 to 3.
-     *
-     * @deprecated Due to security and performance limitations, use of WEP networks
-     * is discouraged.
-     */
-    @Deprecated
-    public int wepTxKeyIndex;
 
     /**
      * This is a network that does not broadcast its SSID, so an
@@ -95,21 +82,7 @@ public class WifiConfigurationHidden implements Parcelable {
      * Auto-join is allowed by user for this network.
      * Default true.
      */
-    public boolean allowAutojoin = true;
-
-    public String getPrintableSsid() {
-        throw new RuntimeException("Stub!");
-    }
-
-    /**
-     * Return a String that can be used to uniquely identify this WifiConfiguration.
-     * <br />
-     * Note: Do not persist this value! This value is not guaranteed to remain backwards compatible.
-     */
-    @NonNull
-    public String getKey() {
-        throw new RuntimeException("Stub!");
-    }
+    public boolean allowAutojoin;
 
     /**
      * Implement the Parcelable interface
