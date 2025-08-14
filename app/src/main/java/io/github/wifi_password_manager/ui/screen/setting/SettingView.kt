@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.github.wifi_password_manager.BuildConfig
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllNetworksItem
@@ -113,6 +114,25 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
             )
 
             ForgetAllNetworksItem { onEvent(SettingViewModel.Event.ForgetAllNetworks) }
+
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
+
+            // About Section
+            Text(
+                text = stringResource(R.string.about_section),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+
+            ListItem(
+                headlineContent = { Text(text = stringResource(R.string.version_title)) },
+                supportingContent = { Text(text = BuildConfig.VERSION_NAME) },
+            )
+
+            ListItem(
+                headlineContent = { Text(text = stringResource(R.string.build_type_title)) },
+                supportingContent = { Text(text = BuildConfig.BUILD_TYPE) },
+            )
         }
 
         if (state.isLoading) {

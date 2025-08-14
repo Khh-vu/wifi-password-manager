@@ -30,6 +30,11 @@
     <string name="forget_all_action">Forget all networks</string>
     <string name="forget_all_description">Remove all saved WiFi networks from this device</string>
 
+    <!-- About Section -->
+    <string name="about_section">About</string>
+    <string name="version_title">Version</string>
+    <string name="build_type_title">Build Type</string>
+
     <!-- WiFi Network -->
     <string name="hidden_network_tooltip">Hidden network</string>
 
