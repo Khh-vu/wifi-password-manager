@@ -34,10 +34,14 @@ fun ShizukuPermissionHandler(finishCallback: () -> Unit, content: @Composable ()
         }
 
     fun requestShizukuPermission() {
-        if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
-            permissionLauncher.launch(ShizukuProvider.PERMISSION)
-        } else {
-            Shizuku.requestPermission(10001)
+        try {
+            if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
+                permissionLauncher.launch(ShizukuProvider.PERMISSION)
+            } else {
+                Shizuku.requestPermission(10001)
+            }
+        } catch (_: Throwable) {
+            showErrorDialog = true
         }
     }
 
