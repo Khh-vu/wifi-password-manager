@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">WiFi Password Manager</string>
 
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
     <!-- Main Screen -->
     <string name="main_title">Saved WiFi Networks</string>
     <string name="search_hint">Find by SSID</string>
@@ -52,19 +56,24 @@
     <string name="security_wpa3">WPA3-Personal</string>
     <string name="security_wep">WEP</string>
 
-    <!-- Loading Dialog -->
-    <string name="loading_message">Loading…</string>
-
     <!-- Shizuku Permission Dialog -->
     <string name="shizuku_required_title">Shizuku Required</string>
     <string name="shizuku_required_message">Shizuku is required to use this app. If you have Shizuku installed, please start it. Otherwise, you can install Shizuku from the Play Store.</string>
     <string name="open_shizuku">Open Shizuku</string>
     <string name="install_shizuku">Install Shizuku</string>
-    <string name="cancel">Cancel</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="warning">Warning</string>
     <string name="forget_all_confirmation_title">Forget all networks?</string>
     <string name="forget_all_confirmation_message">This will permanently remove all saved WiFi networks from this device. This action cannot be undone.</string>
-    <string name="forget_all_confirm">OK</string>
+
+    <!-- Messages -->
+    <string name="loading">Loading…</string>
+    <string name="refresh_success">Refreshed successfully</string>
+    <string name="import_networks_success">Imported networks successfully</string>
+    <string name="export_networks_success">Exported networks successfully</string>
+    <string name="forget_success">Forgot all networks successfully</string>
+    <string name="no_network_to_forget">No networks found to forget</string>
+    <string name="no_network_to_export">No networks available to export</string>
+    <string name="invalid_json">Unable to use the selected JSON file</string>
 </resources>

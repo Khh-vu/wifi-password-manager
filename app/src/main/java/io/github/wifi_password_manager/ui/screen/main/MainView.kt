@@ -43,10 +43,10 @@ import io.github.wifi_password_manager.utils.MOCK
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit) {
+fun MainView(state: MainViewModel.State, onAction: (MainViewModel.Action) -> Unit) {
     val navBackStack = LocalNavBackStack.current
 
-    BackHandler(enabled = state.showingSearch) { onEvent(MainViewModel.Event.ToggleSearch) }
+    BackHandler(enabled = state.showingSearch) { onAction(MainViewModel.Action.ToggleSearch) }
 
     Scaffold(
         contentWindowInsets = WindowInsets.statusBars,
@@ -56,7 +56,7 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
             ) { showingSearch ->
                 if (showingSearch) {
-                    SearchBar(state = state, onEvent = onEvent)
+                    SearchBar(state = state, onAction = onAction)
                 } else {
                     TopAppBar(
                         title = { Text(text = stringResource(R.string.main_title)) },
@@ -74,7 +74,7 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
                                 state = rememberTooltipState(),
                             ) {
                                 IconButton(
-                                    onClick = { onEvent(MainViewModel.Event.ToggleSearch) }
+                                    onClick = { onAction(MainViewModel.Action.ToggleSearch) }
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Search,
@@ -121,7 +121,7 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
             ) {
                 FloatingActionButton(
                     modifier = Modifier.navigationBarsPadding().imePadding(),
-                    onClick = { onEvent(MainViewModel.Event.Refresh) },
+                    onClick = { onAction(MainViewModel.Action.Refresh) },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Refresh,
@@ -143,7 +143,7 @@ fun MainView(state: MainViewModel.State, onEvent: (MainViewModel.Event) -> Unit)
 @Composable
 private fun MainViewPreview() {
     WiFiPasswordManagerTheme {
-        MainView(state = MainViewModel.State(savedNetworks = WifiNetwork.MOCK), onEvent = {})
+        MainView(state = MainViewModel.State(savedNetworks = WifiNetwork.MOCK), onAction = {})
     }
 }
 
@@ -151,6 +151,6 @@ private fun MainViewPreview() {
 @Composable
 private fun SearchMainViewPreview() {
     WiFiPasswordManagerTheme {
-        MainView(state = MainViewModel.State(showingSearch = true), onEvent = {})
+        MainView(state = MainViewModel.State(showingSearch = true), onAction = {})
     }
 }

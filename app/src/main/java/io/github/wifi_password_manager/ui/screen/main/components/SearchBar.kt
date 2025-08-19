@@ -47,7 +47,7 @@ import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 fun SearchBar(
     modifier: Modifier = Modifier,
     state: MainViewModel.State,
-    onEvent: (MainViewModel.Event) -> Unit,
+    onAction: (MainViewModel.Action) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -70,7 +70,7 @@ fun SearchBar(
                     .height(TopAppBarDefaults.TopAppBarExpandedHeight)
                     .focusRequester(focusRequester),
             value = state.searchText,
-            onValueChange = { onEvent(MainViewModel.Event.SearchTextChanged(it)) },
+            onValueChange = { onAction(MainViewModel.Action.SearchTextChanged(it)) },
             singleLine = true,
             placeholder = { Text(text = stringResource(R.string.search_hint)) },
             keyboardOptions =
@@ -87,7 +87,7 @@ fun SearchBar(
                     },
                     state = rememberTooltipState(),
                 ) {
-                    IconButton(onClick = { onEvent(MainViewModel.Event.ToggleSearch) }) {
+                    IconButton(onClick = { onAction(MainViewModel.Action.ToggleSearch) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -106,7 +106,7 @@ fun SearchBar(
                         state = rememberTooltipState(),
                     ) {
                         IconButton(
-                            onClick = { onEvent(MainViewModel.Event.SearchTextChanged("")) },
+                            onClick = { onAction(MainViewModel.Action.SearchTextChanged("")) },
                             enabled = state.searchText.isNotEmpty(),
                         ) {
                             Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear")
@@ -131,7 +131,7 @@ fun SearchBar(
 @Composable
 private fun SearchBarPreview() {
     WiFiPasswordManagerTheme {
-        Scaffold(topBar = { SearchBar(state = MainViewModel.State(), onEvent = {}) }) {
+        Scaffold(topBar = { SearchBar(state = MainViewModel.State(), onAction = {}) }) {
             Box(modifier = Modifier.padding(it))
         }
     }

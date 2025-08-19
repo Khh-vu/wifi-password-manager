@@ -3,6 +3,8 @@ package io.github.wifi_password_manager.utils
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import rikka.shizuku.Shizuku
@@ -24,3 +26,9 @@ fun Context.launchUrl(url: String) {
         startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
     } catch (_: Exception) {}
 }
+
+fun Context.toast(text: String, duration: Int = Toast.LENGTH_SHORT) =
+    Toast.makeText(this, text, duration).show()
+
+fun Context.toast(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT) =
+    Toast.makeText(this, resId, duration).show()

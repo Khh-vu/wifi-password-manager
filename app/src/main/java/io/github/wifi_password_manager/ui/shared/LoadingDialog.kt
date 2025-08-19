@@ -40,7 +40,7 @@ fun LoadingDialog(modifier: Modifier = Modifier) {
             ) {
                 CircularWavyProgressIndicator(modifier = Modifier.padding(vertical = 12.dp))
 
-                Text(text = stringResource(R.string.loading_message))
+                Text(text = stringResource(R.string.loading))
             }
         }
     }

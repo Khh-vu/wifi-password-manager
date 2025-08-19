@@ -173,11 +173,12 @@ class WifiService(private val context: Context, private val json: Json) {
             )
     }
 
-    fun exportToJson(networks: List<WifiNetwork>): String {
-        return json.encodeToString(networks)
-    }
+    suspend fun exportToJson(): String =
+        withContext(Dispatchers.Default) {
+            val networks = getPrivilegedConfiguredNetworks()
+            json.encodeToString(networks)
+        }
 
-    fun getNetworks(jsonString: String): List<WifiNetwork> {
-        return json.decodeFromString(jsonString)
-    }
+    suspend fun getNetworks(jsonString: String): List<WifiNetwork> =
+        withContext(Dispatchers.Default) { json.decodeFromString(jsonString) }
 }

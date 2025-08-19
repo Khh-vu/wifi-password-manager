@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.BuildConfig
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
-import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllNetworksItem
+import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllConfirmDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.LoadingDialog
@@ -35,7 +35,7 @@ import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event) -> Unit) {
+fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Action) -> Unit) {
     val navBackStack = LocalNavBackStack.current
 
     Scaffold(
@@ -63,7 +63,7 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
             item {
                 SettingSection(title = stringResource(R.string.appearance_section)) {
                     ThemeModeItem(themeMode = state.settings.themeMode) {
-                        onEvent(SettingViewModel.Event.UpdateThemeMode(it))
+                        onAction(SettingViewModel.Action.UpdateThemeMode(it))
                     }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -72,8 +72,8 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
                         ListItem(
                             modifier =
                                 Modifier.clickable {
-                                    onEvent(
-                                        SettingViewModel.Event.ToggleMaterialYou(
+                                    onAction(
+                                        SettingViewModel.Action.ToggleMaterialYou(
                                             !state.settings.useMaterialYou
                                         )
                                     )
@@ -85,7 +85,7 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
                                 Switch(
                                     checked = state.settings.useMaterialYou,
                                     onCheckedChange = {
-                                        onEvent(SettingViewModel.Event.ToggleMaterialYou(it))
+                                        onAction(SettingViewModel.Action.ToggleMaterialYou(it))
                                     },
                                 )
                             },
@@ -99,7 +99,7 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
                 SettingSection(title = stringResource(R.string.import_export_section)) {
                     ListItem(
                         modifier =
-                            Modifier.clickable { onEvent(SettingViewModel.Event.ImportNetworks) },
+                            Modifier.clickable { onAction(SettingViewModel.Action.ImportNetworks) },
                         headlineContent = { Text(text = stringResource(R.string.import_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.import_description))
@@ -110,7 +110,7 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
 
                     ListItem(
                         modifier =
-                            Modifier.clickable { onEvent(SettingViewModel.Event.ExportNetworks) },
+                            Modifier.clickable { onAction(SettingViewModel.Action.ExportNetworks) },
                         headlineContent = { Text(text = stringResource(R.string.export_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.export_description))
@@ -122,7 +122,18 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
             // Advanced Section
             item {
                 SettingSection(title = stringResource(R.string.advanced_section)) {
-                    ForgetAllNetworksItem { onEvent(SettingViewModel.Event.ForgetAllNetworks) }
+                    ListItem(
+                        modifier =
+                            Modifier.clickable {
+                                onAction(SettingViewModel.Action.ShowForgetAllDialog)
+                            },
+                        headlineContent = {
+                            Text(text = stringResource(R.string.forget_all_action))
+                        },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.forget_all_description))
+                        },
+                    )
                 }
             }
 
@@ -149,17 +160,24 @@ fun SettingView(state: SettingViewModel.State, onEvent: (SettingViewModel.Event)
         if (state.isLoading) {
             LoadingDialog()
         }
+
+        if (state.showForgetAllDialog) {
+            ForgetAllConfirmDialog(
+                onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
+                onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks) },
+            )
+        }
     }
 }
 
 @PreviewLightDark
 @Composable
 private fun SettingViewPreview() {
-    WiFiPasswordManagerTheme { SettingView(state = SettingViewModel.State(), onEvent = {}) }
+    WiFiPasswordManagerTheme { SettingView(state = SettingViewModel.State(), onAction = {}) }
 }
 
 @PreviewScreenSizes
 @Composable
 private fun AdaptiveSettingViewPreview() {
-    WiFiPasswordManagerTheme { SettingView(state = SettingViewModel.State(), onEvent = {}) }
+    WiFiPasswordManagerTheme { SettingView(state = SettingViewModel.State(), onAction = {}) }
 }

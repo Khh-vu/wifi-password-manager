@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.data.WifiNetwork
 import io.github.wifi_password_manager.services.WifiService
 import kotlin.time.Duration.Companion.milliseconds
@@ -12,9 +13,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -39,23 +42,30 @@ class MainViewModel(private val wifiService: WifiService) : ViewModel() {
         val searchText: String = "",
     )
 
+    sealed interface Action {
+        data object Refresh : Action
+
+        data object ToggleSearch : Action
+
+        data class SearchTextChanged(val text: String) : Action
+    }
+
     sealed interface Event {
-        data object Refresh : Event
-
-        data object ToggleSearch : Event
-
-        data class SearchTextChanged(val text: String) : Event
+        data class ShowMessage(val messageRes: Int) : Event
     }
 
     private val _state = MutableStateFlow(State())
     val state =
         _state
-            .onStart { onEvent(Event.Refresh) }
+            .onStart { wifiService.refresh() }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5.seconds),
                 initialValue = State(),
             )
+
+    private val _event = MutableSharedFlow<Event>()
+    val event = _event.asSharedFlow()
 
     init {
         combine(
@@ -82,15 +92,21 @@ class MainViewModel(private val wifiService: WifiService) : ViewModel() {
             .launchIn(viewModelScope)
     }
 
-    fun onEvent(event: Event) {
-        Log.d(TAG, "onEvent: $event")
+    fun onAction(action: Action) {
+        Log.d(TAG, "onAction: $action")
         viewModelScope.launch {
-            when (event) {
-                is Event.Refresh -> wifiService.refresh()
-                is Event.ToggleSearch ->
+            when (action) {
+                is Action.Refresh -> onRefresh()
+                is Action.ToggleSearch ->
                     _state.update { it.copy(showingSearch = !it.showingSearch) }
-                is Event.SearchTextChanged -> _state.update { it.copy(searchText = event.text) }
+
+                is Action.SearchTextChanged -> _state.update { it.copy(searchText = action.text) }
             }
         }
+    }
+
+    private suspend fun onRefresh() {
+        wifiService.refresh()
+        _event.emit(Event.ShowMessage(R.string.refresh_success))
     }
 }
