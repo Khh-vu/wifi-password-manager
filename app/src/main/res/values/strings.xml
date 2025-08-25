@@ -39,15 +39,14 @@
     <string name="version_title">Version</string>
     <string name="build_type_title">Build Type</string>
 
-    <!-- WiFi Network -->
-    <string name="hidden_network_tooltip">Hidden network</string>
-
     <!-- WiFi Card -->
     <string name="copy_action">Copy</string>
     <string name="copy_description">Copy the WiFi Password</string>
     <string name="password_label">Password</string>
     <string name="password_mask_character">•</string>
     <string name="no_password">No password</string>
+    <string name="show_wifi_qr_code">Show WiFi QR Code</string>
+    <string name="wifi_qr_code">WiFi QR Code</string>
 
     <!-- Security Types -->
     <string name="security_open">None</string>

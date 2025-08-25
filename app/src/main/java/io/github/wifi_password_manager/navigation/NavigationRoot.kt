@@ -34,12 +34,14 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val backStack = rememberNavBackStack(MainScreen)
 
-    CompositionLocalProvider(LocalNavBackStack provides backStack) {
+    CompositionLocalProvider(LocalNavBackStack provides rememberNavBackStack(MainScreen)) {
+        val backStack = LocalNavBackStack.current
+
         NavDisplay(
             modifier = modifier,
-            backStack = LocalNavBackStack.current,
+            backStack = backStack,
+            onBack = { repeat(it) { if (backStack.size > 1) backStack.removeLastOrNull() } },
             entryDecorators =
                 listOf(
                     rememberSavedStateNavEntryDecorator(),

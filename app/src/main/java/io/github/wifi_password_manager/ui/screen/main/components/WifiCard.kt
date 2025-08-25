@@ -15,7 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedCard
@@ -23,6 +23,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -71,29 +73,11 @@ fun WifiCard(modifier: Modifier = Modifier, network: WifiNetwork, expanded: Bool
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun SSIDItem(modifier: Modifier = Modifier, network: WifiNetwork) {
     val context = LocalContext.current
-
-    val trailingContent =
-        @Composable {
-            TooltipBox(
-                positionProvider =
-                    TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Above
-                    ),
-                tooltip = {
-                    PlainTooltip { Text(text = stringResource(R.string.hidden_network_tooltip)) }
-                },
-                state = rememberTooltipState(),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.VisibilityOff,
-                    contentDescription = stringResource(R.string.hidden_network_tooltip),
-                )
-            }
-        }
+    var showQRDialog by rememberSaveable { mutableStateOf(false) }
 
     ListItem(
         modifier = modifier,
@@ -106,8 +90,33 @@ private fun SSIDItem(modifier: Modifier = Modifier, network: WifiNetwork) {
             )
         },
         supportingContent = { Text(text = network.getSecurity(context)) },
-        trailingContent = trailingContent.takeIf { network.hidden },
+        trailingContent = {
+            TooltipBox(
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Above
+                    ),
+                tooltip = {
+                    PlainTooltip { Text(text = stringResource(R.string.show_wifi_qr_code)) }
+                },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(
+                    onClick = { showQRDialog = true },
+                    shapes = IconButtonDefaults.shapes(),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.QrCode2,
+                        contentDescription = stringResource(R.string.show_wifi_qr_code),
+                    )
+                }
+            }
+        },
     )
+
+    if (showQRDialog) {
+        WifiQRDialog(network = network, onDismiss = { showQRDialog = false })
+    }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -136,7 +145,6 @@ private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
                     }
                 },
                 shapes = ButtonDefaults.shapes(),
-                contentPadding = ButtonDefaults.ContentPadding,
             ) {
                 Icon(
                     imageVector = Icons.Filled.ContentCopy,
