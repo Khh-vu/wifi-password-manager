@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.main
+package io.github.wifi_password_manager.ui.screen.network.list
 
 import android.util.Log
 import androidx.compose.runtime.Immutable
@@ -30,9 +30,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-class MainViewModel(private val wifiService: WifiService) : ViewModel() {
+class NetworkListViewModel(private val wifiService: WifiService) : ViewModel() {
     companion object {
-        private const val TAG = "MainViewModel"
+        private const val TAG = "NetworkListViewModel"
     }
 
     @Immutable

@@ -3,7 +3,7 @@ package io.github.wifi_password_manager.di
 import android.content.Context
 import io.github.wifi_password_manager.services.SettingService
 import io.github.wifi_password_manager.services.WifiService
-import io.github.wifi_password_manager.ui.screen.main.MainViewModel
+import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
 import kotlinx.serialization.json.Json
 import org.koin.android.annotation.KoinViewModel
@@ -27,7 +27,8 @@ class AppModule {
     fun settingService(context: Context, json: Json): SettingService = SettingService(context, json)
 
     @KoinViewModel
-    fun mainViewModel(wifiService: WifiService): MainViewModel = MainViewModel(wifiService)
+    fun networkListViewModel(wifiService: WifiService): NetworkListViewModel =
+        NetworkListViewModel(wifiService)
 
     @KoinViewModel
     fun settingViewModel(

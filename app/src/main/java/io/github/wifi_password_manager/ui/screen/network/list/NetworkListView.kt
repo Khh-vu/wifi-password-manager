@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.main
+package io.github.wifi_password_manager.ui.screen.network.list
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -40,17 +40,22 @@ import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.data.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.SettingScreen
-import io.github.wifi_password_manager.ui.screen.main.components.NetworkList
-import io.github.wifi_password_manager.ui.screen.main.components.SearchBar
+import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
+import io.github.wifi_password_manager.ui.screen.network.list.components.SearchBar
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.MOCK
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainView(state: MainViewModel.State, onAction: (MainViewModel.Action) -> Unit) {
+fun NetworkListView(
+    state: NetworkListViewModel.State,
+    onAction: (NetworkListViewModel.Action) -> Unit,
+) {
     val navBackStack = LocalNavBackStack.current
 
-    BackHandler(enabled = state.showingSearch) { onAction(MainViewModel.Action.ToggleSearch) }
+    BackHandler(enabled = state.showingSearch) {
+        onAction(NetworkListViewModel.Action.ToggleSearch)
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.statusBars,
@@ -63,7 +68,7 @@ fun MainView(state: MainViewModel.State, onAction: (MainViewModel.Action) -> Uni
                     SearchBar(state = state, onAction = onAction)
                 } else {
                     TopAppBar(
-                        title = { Text(text = stringResource(R.string.main_title)) },
+                        title = { Text(text = stringResource(R.string.network_list_title)) },
                         actions = {
                             TooltipBox(
                                 positionProvider =
@@ -78,7 +83,7 @@ fun MainView(state: MainViewModel.State, onAction: (MainViewModel.Action) -> Uni
                                 state = rememberTooltipState(),
                             ) {
                                 IconButton(
-                                    onClick = { onAction(MainViewModel.Action.ToggleSearch) }
+                                    onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) }
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.Search,
@@ -125,7 +130,7 @@ fun MainView(state: MainViewModel.State, onAction: (MainViewModel.Action) -> Uni
             ) {
                 FloatingActionButton(
                     modifier = Modifier.navigationBarsPadding().imePadding(),
-                    onClick = { onAction(MainViewModel.Action.Refresh) },
+                    onClick = { onAction(NetworkListViewModel.Action.Refresh) },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Refresh,
@@ -164,24 +169,10 @@ fun MainView(state: MainViewModel.State, onAction: (MainViewModel.Action) -> Uni
 
 @PreviewLightDark
 @Composable
-private fun MainViewPreview() {
+private fun NetworkListViewPreview() {
     WiFiPasswordManagerTheme {
-        MainView(state = MainViewModel.State(savedNetworks = WifiNetwork.MOCK), onAction = {})
-    }
-}
-
-@PreviewLightDark
-@Composable
-private fun EmptyMainViewPreview() {
-    WiFiPasswordManagerTheme { MainView(state = MainViewModel.State(), onAction = {}) }
-}
-
-@PreviewLightDark
-@Composable
-private fun SearchMainViewPreview() {
-    WiFiPasswordManagerTheme {
-        MainView(
-            state = MainViewModel.State(showingSearch = true, savedNetworks = WifiNetwork.MOCK),
+        NetworkListView(
+            state = NetworkListViewModel.State(savedNetworks = WifiNetwork.MOCK),
             onAction = {},
         )
     }
@@ -189,8 +180,28 @@ private fun SearchMainViewPreview() {
 
 @PreviewLightDark
 @Composable
-private fun EmptySearchMainViewPreview() {
+private fun EmptyNetworkListViewPreview() {
     WiFiPasswordManagerTheme {
-        MainView(state = MainViewModel.State(showingSearch = true), onAction = {})
+        NetworkListView(state = NetworkListViewModel.State(), onAction = {})
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun SearchNetworkListViewPreview() {
+    WiFiPasswordManagerTheme {
+        NetworkListView(
+            state =
+                NetworkListViewModel.State(showingSearch = true, savedNetworks = WifiNetwork.MOCK),
+            onAction = {},
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun EmptySearchNetworkListViewPreview() {
+    WiFiPasswordManagerTheme {
+        NetworkListView(state = NetworkListViewModel.State(showingSearch = true), onAction = {})
     }
 }

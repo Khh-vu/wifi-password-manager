@@ -5,8 +5,8 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
 
-    <!-- Main Screen -->
-    <string name="main_title">Saved WiFi Networks</string>
+    <!-- Network List Screen -->
+    <string name="network_list_title">Saved WiFi Networks</string>
     <string name="search_hint">Find by SSID</string>
     <string name="search_tooltip">Search</string>
     <string name="back_tooltip">Back</string>

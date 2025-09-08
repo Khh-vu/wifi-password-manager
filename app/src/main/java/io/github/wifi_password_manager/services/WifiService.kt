@@ -95,6 +95,7 @@ class WifiService(private val context: Context, private val json: Json) {
                         ?.map(WifiNetwork::fromWifiConfiguration)
                         .orEmpty()
                         .groupAndSortedBySsid()
+                        .also { Log.d(TAG, "Found ${it.size} networks") }
                 },
                 onFailure = {
                     Log.e(TAG, "Error getting configured networks", it)

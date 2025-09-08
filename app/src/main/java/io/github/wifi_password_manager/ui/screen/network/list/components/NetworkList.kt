@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.main.components
+package io.github.wifi_password_manager.ui.screen.network.list.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -79,11 +81,19 @@ fun NetworkList(modifier: Modifier = Modifier, networks: ImmutableList<WifiNetwo
 @PreviewLightDark
 @Composable
 private fun NetworkListPreview() {
-    WiFiPasswordManagerTheme { NetworkList(networks = WifiNetwork.MOCK) }
+    WiFiPasswordManagerTheme {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+            NetworkList(networks = WifiNetwork.MOCK)
+        }
+    }
 }
 
 @PreviewScreenSizes
 @Composable
 private fun AdaptiveNetworkListPreview() {
-    WiFiPasswordManagerTheme { NetworkList(networks = WifiNetwork.MOCK) }
+    WiFiPasswordManagerTheme {
+        Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
+            NetworkList(networks = WifiNetwork.MOCK)
+        }
+    }
 }

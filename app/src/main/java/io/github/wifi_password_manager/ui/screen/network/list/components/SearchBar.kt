@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.main.components
+package io.github.wifi_password_manager.ui.screen.network.list.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -39,15 +39,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.ui.screen.main.MainViewModel
+import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    state: MainViewModel.State,
-    onAction: (MainViewModel.Action) -> Unit,
+    state: NetworkListViewModel.State,
+    onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -70,7 +70,7 @@ fun SearchBar(
                     .height(TopAppBarDefaults.TopAppBarExpandedHeight)
                     .focusRequester(focusRequester),
             value = state.searchText,
-            onValueChange = { onAction(MainViewModel.Action.SearchTextChanged(it)) },
+            onValueChange = { onAction(NetworkListViewModel.Action.SearchTextChanged(it)) },
             singleLine = true,
             placeholder = { Text(text = stringResource(R.string.search_hint)) },
             keyboardOptions =
@@ -87,7 +87,7 @@ fun SearchBar(
                     },
                     state = rememberTooltipState(),
                 ) {
-                    IconButton(onClick = { onAction(MainViewModel.Action.ToggleSearch) }) {
+                    IconButton(onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -106,7 +106,9 @@ fun SearchBar(
                         state = rememberTooltipState(),
                     ) {
                         IconButton(
-                            onClick = { onAction(MainViewModel.Action.SearchTextChanged("")) },
+                            onClick = {
+                                onAction(NetworkListViewModel.Action.SearchTextChanged(""))
+                            },
                             enabled = state.searchText.isNotEmpty(),
                         ) {
                             Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear")
@@ -131,7 +133,7 @@ fun SearchBar(
 @Composable
 private fun SearchBarPreview() {
     WiFiPasswordManagerTheme {
-        Scaffold(topBar = { SearchBar(state = MainViewModel.State(), onAction = {}) }) {
+        Scaffold(topBar = { SearchBar(state = NetworkListViewModel.State(), onAction = {}) }) {
             Box(modifier = Modifier.padding(it))
         }
     }

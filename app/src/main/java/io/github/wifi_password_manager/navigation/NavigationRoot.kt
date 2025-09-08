@@ -19,8 +19,8 @@ import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import io.github.wifi_password_manager.ui.screen.license.LicenseView
-import io.github.wifi_password_manager.ui.screen.main.MainView
-import io.github.wifi_password_manager.ui.screen.main.MainViewModel
+import io.github.wifi_password_manager.ui.screen.network.list.NetworkListView
+import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingView
 import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
 import io.github.wifi_password_manager.utils.toast
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
-@Serializable data object MainScreen : NavKey
+@Serializable data object NetworkListScreen : NavKey
 
 @Serializable data object SettingScreen : NavKey
 
@@ -38,7 +38,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NavigationRoot(modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
-    CompositionLocalProvider(LocalNavBackStack provides rememberNavBackStack(MainScreen)) {
+    CompositionLocalProvider(LocalNavBackStack provides rememberNavBackStack(NetworkListScreen)) {
         val backStack = LocalNavBackStack.current
 
         NavDisplay(
@@ -53,21 +53,21 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 ),
             entryProvider =
                 entryProvider {
-                    entry<MainScreen> {
-                        val viewModel = koinViewModel<MainViewModel>()
+                    entry<NetworkListScreen> {
+                        val viewModel = koinViewModel<NetworkListViewModel>()
                         val state by viewModel.state.collectAsStateWithLifecycle()
 
                         LaunchedEffect(Unit) {
                             viewModel.event.collectLatest { event ->
                                 when (event) {
-                                    is MainViewModel.Event.ShowMessage -> {
+                                    is NetworkListViewModel.Event.ShowMessage -> {
                                         context.toast(resId = event.messageRes)
                                     }
                                 }
                             }
                         }
 
-                        MainView(state = state, onAction = viewModel::onAction)
+                        NetworkListView(state = state, onAction = viewModel::onAction)
                     }
 
                     entry<SettingScreen> {

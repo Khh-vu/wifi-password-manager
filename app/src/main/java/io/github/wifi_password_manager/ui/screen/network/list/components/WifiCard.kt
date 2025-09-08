@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.main.components
+package io.github.wifi_password_manager.ui.screen.network.list.components
 
 import android.content.ClipData
 import android.content.ClipDescription
