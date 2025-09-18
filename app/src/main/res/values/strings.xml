@@ -4,12 +4,13 @@
     <!-- Common -->
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="clear">Clear</string>
+    <string name="back">Back</string>
 
     <!-- Network List Screen -->
     <string name="network_list_title">Saved WiFi Networks</string>
     <string name="search_hint">Find by SSID</string>
     <string name="search_tooltip">Search</string>
-    <string name="back_tooltip">Back</string>
     <string name="refresh_description">Refresh</string>
     <string name="no_networks_found">No WiFi Networks Found</string>
     <string name="no_networks_available">No saved WiFi networks are available on this device</string>

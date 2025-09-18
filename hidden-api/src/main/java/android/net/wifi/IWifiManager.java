@@ -1,6 +1,7 @@
 package android.net.wifi;
 
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IInterface;
@@ -17,14 +18,14 @@ public interface IWifiManager extends IInterface {
     }
 
     //Android 12+
-    @RequiresApi(31)
+    @RequiresApi(Build.VERSION_CODES.S)
     com.android.wifi.x.com.android.modules.utils.ParceledListSlice<WifiConfiguration> getPrivilegedConfiguredNetworks(String packageName, String featureId, Bundle extras);
 
     //Android 11
     android.content.pm.ParceledListSlice<WifiConfiguration> getPrivilegedConfiguredNetworks(String packageName, String featureId);
 
     //Android 12+
-    @RequiresApi(31)
+    @RequiresApi(Build.VERSION_CODES.S)
     WifiManager.AddNetworkResult addOrUpdateNetworkPrivileged(WifiConfiguration config, String packageName);
 
     //Android 11

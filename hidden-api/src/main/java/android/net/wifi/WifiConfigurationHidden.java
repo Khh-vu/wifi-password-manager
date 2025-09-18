@@ -79,10 +79,25 @@ public class WifiConfigurationHidden implements Parcelable {
     public BitSet allowedKeyManagement;
 
     /**
+     * True if this network configuration is visible to and usable by other users on the
+     * same device, false otherwise.
+     */
+    public boolean shared;
+
+    /**
      * Auto-join is allowed by user for this network.
      * Default true.
      */
     public boolean allowAutojoin;
+
+    /**
+     * Get the SSID in a human-readable format, with all additional formatting removed
+     * e.g. quotation marks around the SSID, "P" prefix
+     */
+    @NonNull
+    public String getPrintableSsid() {
+        throw new RuntimeException("Stub!");
+    }
 
     /**
      * Implement the Parcelable interface

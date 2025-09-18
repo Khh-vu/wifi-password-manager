@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.FormatStringsInDatetimeFormats
@@ -115,7 +115,7 @@ class SettingViewModel(
                 suggestedName = "WiFi_${formatter.format(now)}",
                 extension = "json",
             ) ?: return
-        withContext(Dispatchers.IO) { file.writeString(wifiService.exportToJson()) }
+        Dispatchers.IO { file.writeString(wifiService.exportToJson()) }
         _event.emit(Event.ShowMessage(R.string.export_networks_success))
     }
 
@@ -125,7 +125,7 @@ class SettingViewModel(
         _state.update { it.copy(isLoading = true) }
 
         try {
-            withContext(Dispatchers.IO) {
+            Dispatchers.IO {
                 val networks = wifiService.getNetworks(file.readString())
                 if (networks.isNotEmpty()) {
                     wifiService.addOrUpdateNetworks(networks)
@@ -157,7 +157,7 @@ class SettingViewModel(
     private suspend fun forgetAllNetworks() {
         _state.update { it.copy(isLoading = true, showForgetAllDialog = false) }
 
-        withContext(Dispatchers.IO) { wifiService.removeAllNetworks() }
+        Dispatchers.IO { wifiService.removeAllNetworks() }
 
         _state.update { it.copy(isLoading = false) }
         _event.emit(Event.ShowMessage(R.string.forget_success))

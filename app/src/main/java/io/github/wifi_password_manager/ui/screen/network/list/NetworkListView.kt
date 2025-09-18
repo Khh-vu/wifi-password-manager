@@ -15,9 +15,9 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -40,10 +40,11 @@ import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.SettingScreen
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
 import io.github.wifi_password_manager.ui.screen.network.list.components.SearchBar
+import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.MOCK
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NetworkListView(
     state: NetworkListViewModel.State,
@@ -67,48 +68,19 @@ fun NetworkListView(
                     TopAppBar(
                         title = { Text(text = stringResource(R.string.network_list_title)) },
                         actions = {
-                            TooltipBox(
-                                positionProvider =
-                                    TooltipDefaults.rememberTooltipPositionProvider(
-                                        positioning = TooltipAnchorPosition.Below
-                                    ),
-                                tooltip = {
-                                    PlainTooltip {
-                                        Text(text = stringResource(R.string.search_tooltip))
-                                    }
-                                },
-                                state = rememberTooltipState(),
-                            ) {
-                                IconButton(
-                                    onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Search,
-                                        contentDescription = stringResource(R.string.search_tooltip),
-                                    )
-                                }
-                            }
+                            TooltipIconButton(
+                                onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                                imageVector = Icons.Filled.Search,
+                                tooltip = stringResource(R.string.search_tooltip),
+                                positioning = TooltipAnchorPosition.Below,
+                            )
 
-                            TooltipBox(
-                                positionProvider =
-                                    TooltipDefaults.rememberTooltipPositionProvider(
-                                        positioning = TooltipAnchorPosition.Below
-                                    ),
-                                tooltip = {
-                                    PlainTooltip {
-                                        Text(text = stringResource(R.string.settings_tooltip))
-                                    }
-                                },
-                                state = rememberTooltipState(),
-                            ) {
-                                IconButton(onClick = { navBackStack.add(SettingScreen) }) {
-                                    Icon(
-                                        imageVector = Icons.Outlined.Settings,
-                                        contentDescription =
-                                            stringResource(R.string.settings_tooltip),
-                                    )
-                                }
-                            }
+                            TooltipIconButton(
+                                onClick = { navBackStack.add(SettingScreen) },
+                                imageVector = Icons.Outlined.Settings,
+                                tooltip = stringResource(R.string.settings_tooltip),
+                                positioning = TooltipAnchorPosition.Below,
+                            )
                         },
                     )
                 }

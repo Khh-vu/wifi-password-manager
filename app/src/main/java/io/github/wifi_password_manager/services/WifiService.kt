@@ -21,7 +21,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.invoke
 import kotlinx.serialization.json.Json
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
@@ -113,9 +113,9 @@ class WifiService(private val context: Context, private val json: Json) {
         if (networks.isEmpty()) return
 
         runCatching {
-                withContext(Dispatchers.IO) {
-                    val jobs =
-                        networks.flatMap { network ->
+                Dispatchers.IO {
+                    networks
+                        .flatMap { network ->
                             network.toWifiConfigurations().map { config ->
                                 async {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -130,7 +130,7 @@ class WifiService(private val context: Context, private val json: Json) {
                                 }
                             }
                         }
-                    jobs.awaitAll()
+                        .awaitAll()
                 }
             }
             .fold(
@@ -157,12 +157,12 @@ class WifiService(private val context: Context, private val json: Json) {
         }
 
         runCatching {
-                withContext(Dispatchers.IO) {
-                    val jobs =
-                        validNetworks.map { network ->
+                Dispatchers.IO {
+                    validNetworks
+                        .map { network ->
                             async { wifiManager.removeNetwork(network.networkId, user) }
                         }
-                    jobs.awaitAll()
+                        .awaitAll()
                 }
             }
             .fold(
@@ -175,11 +175,11 @@ class WifiService(private val context: Context, private val json: Json) {
     }
 
     suspend fun exportToJson(): String =
-        withContext(Dispatchers.Default) {
+        Dispatchers.Default {
             val networks = getPrivilegedConfiguredNetworks()
             json.encodeToString(networks)
         }
 
     suspend fun getNetworks(jsonString: String): List<WifiNetwork> =
-        withContext(Dispatchers.Default) { json.decodeFromString(jsonString) }
+        Dispatchers.Default { json.decodeFromString(jsonString) }
 }

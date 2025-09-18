@@ -9,7 +9,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.invoke
 import kotlinx.serialization.json.Json
 
 class SettingService(private val context: Context, private val json: Json) {
@@ -21,7 +21,7 @@ class SettingService(private val context: Context, private val json: Json) {
                     override val defaultValue: Settings = Settings()
 
                     override suspend fun readFrom(input: InputStream): Settings =
-                        withContext(Dispatchers.IO) {
+                        Dispatchers.IO {
                             try {
                                 json.decodeFromString(input.readBytes().decodeToString())
                             } catch (_: Exception) {
@@ -30,9 +30,7 @@ class SettingService(private val context: Context, private val json: Json) {
                         }
 
                     override suspend fun writeTo(t: Settings, output: OutputStream) =
-                        withContext(Dispatchers.IO) {
-                            output.write(json.encodeToString(t).encodeToByteArray())
-                        }
+                        Dispatchers.IO { output.write(json.encodeToString(t).encodeToByteArray()) }
                 },
         )
 

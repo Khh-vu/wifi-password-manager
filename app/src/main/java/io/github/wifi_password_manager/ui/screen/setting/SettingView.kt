@@ -8,14 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,10 +31,11 @@ import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllCon
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.LoadingDialog
+import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.plus
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Action) -> Unit) {
     val navBackStack = LocalNavBackStack.current
@@ -43,12 +44,12 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
         topBar = {
             TopAppBar(
                 navigationIcon = {
-                    IconButton(onClick = { navBackStack.removeLastOrNull() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back_tooltip),
-                        )
-                    }
+                    TooltipIconButton(
+                        onClick = { navBackStack.removeLastOrNull() },
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        tooltip = stringResource(R.string.back),
+                        positioning = TooltipAnchorPosition.Below,
+                    )
                 },
                 title = { Text(text = stringResource(R.string.settings_title)) },
             )

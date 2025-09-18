@@ -12,20 +12,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -40,9 +35,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
+import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
@@ -50,7 +46,6 @@ fun SearchBar(
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(state.showingSearch) {
@@ -77,43 +72,21 @@ fun SearchBar(
                 KeyboardOptions(imeAction = ImeAction.Search, keyboardType = KeyboardType.Text),
             keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
             leadingIcon = {
-                TooltipBox(
-                    positionProvider =
-                        TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Below
-                        ),
-                    tooltip = {
-                        PlainTooltip { Text(text = stringResource(R.string.back_tooltip)) }
-                    },
-                    state = rememberTooltipState(),
-                ) {
-                    IconButton(onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                }
+                TooltipIconButton(
+                    onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    tooltip = stringResource(R.string.back),
+                    positioning = TooltipAnchorPosition.Below,
+                )
             },
             trailingIcon = {
                 Row {
-                    TooltipBox(
-                        positionProvider =
-                            TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Below
-                            ),
-                        tooltip = { PlainTooltip { Text(text = "Clear") } },
-                        state = rememberTooltipState(),
-                    ) {
-                        IconButton(
-                            onClick = {
-                                onAction(NetworkListViewModel.Action.SearchTextChanged(""))
-                            },
-                            enabled = state.searchText.isNotEmpty(),
-                        ) {
-                            Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear")
-                        }
-                    }
+                    TooltipIconButton(
+                        onClick = { onAction(NetworkListViewModel.Action.SearchTextChanged("")) },
+                        imageVector = Icons.Filled.Clear,
+                        tooltip = stringResource(R.string.clear),
+                        positioning = TooltipAnchorPosition.Below,
+                    )
                 }
             },
             colors =
