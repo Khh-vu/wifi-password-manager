@@ -2,12 +2,6 @@ package io.github.wifi_password_manager.ui.screen.network.list.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.displayCutout
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,7 +23,11 @@ import io.github.wifi_password_manager.utils.plus
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun NetworkList(modifier: Modifier = Modifier, networks: ImmutableList<WifiNetwork>) {
+fun NetworkList(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    networks: ImmutableList<WifiNetwork>,
+) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
@@ -37,8 +35,7 @@ fun NetworkList(modifier: Modifier = Modifier, networks: ImmutableList<WifiNetwo
         DeviceConfiguration.MOBILE_PORTRAIT -> {
             LazyColumn(
                 modifier = modifier,
-                contentPadding =
-                    WindowInsets.navigationBars.asPaddingValues() + PaddingValues(12.dp),
+                contentPadding = contentPadding + PaddingValues(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(
@@ -57,12 +54,7 @@ fun NetworkList(modifier: Modifier = Modifier, networks: ImmutableList<WifiNetwo
                     if (deviceConfiguration == DeviceConfiguration.TABLET_PORTRAIT)
                         GridCells.Fixed(2)
                     else GridCells.Adaptive(400.dp),
-                contentPadding =
-                    WindowInsets.displayCutout
-                        .only(WindowInsetsSides.Horizontal)
-                        .asPaddingValues() +
-                        WindowInsets.navigationBars.asPaddingValues() +
-                        PaddingValues(16.dp),
+                contentPadding = contentPadding + PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {

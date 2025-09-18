@@ -6,12 +6,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -58,7 +56,6 @@ fun NetworkListView(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.statusBars,
         topBar = {
             AnimatedContent(
                 targetState = state.showingSearch,
@@ -141,10 +138,10 @@ fun NetworkListView(
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { innerPadding ->
-        val modifier = Modifier.fillMaxSize().padding(innerPadding).imePadding()
+        val modifier = Modifier.fillMaxSize().imePadding()
 
         if (state.savedNetworks.isEmpty()) {
-            Box(modifier = modifier, contentAlignment = Alignment.Center) {
+            Box(modifier = modifier.padding(innerPadding), contentAlignment = Alignment.Center) {
                 if (state.showingSearch) {
                     Text(
                         text = stringResource(R.string.no_networks_found),
@@ -162,7 +159,11 @@ fun NetworkListView(
                 }
             }
         } else {
-            NetworkList(modifier = modifier, networks = state.savedNetworks)
+            NetworkList(
+                modifier = modifier,
+                contentPadding = innerPadding,
+                networks = state.savedNetworks,
+            )
         }
     }
 }

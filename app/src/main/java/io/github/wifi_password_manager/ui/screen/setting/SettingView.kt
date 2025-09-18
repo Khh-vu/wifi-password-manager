@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -33,6 +32,7 @@ import io.github.wifi_password_manager.ui.screen.setting.components.SettingSecti
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.LoadingDialog
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
+import io.github.wifi_password_manager.utils.plus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,8 +56,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            contentPadding = PaddingValues(12.dp),
+            contentPadding = innerPadding + PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             // Appearance Section
