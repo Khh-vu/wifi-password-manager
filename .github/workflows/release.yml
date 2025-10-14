@@ -40,10 +40,7 @@ jobs:
           echo 'keyPassword=${{ secrets.KEYSTORE_KEY_PASSWORD }}' >> $KEYSTORE_PROPERTIES_PATH
 
       - name: Create Release APK
-        run: ./gradlew assembleRelease
-
-      - name: Get latest tag
-        run: echo "TAG=${{ github.ref_name }}" >> $GITHUB_ENV
+        run: ./gradlew assembleRelease --no-daemon
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4.6.2
@@ -53,10 +50,10 @@ jobs:
 
       - name: Create GitHub Release
         run: |
-          gh release create "$TAG" \
+          gh release create "${{ github.ref_name }}" \
             --verify-tag \
-            --title "$TAG" \
+            --title "${{ github.ref_name }}" \
             --generate-notes \
             ./app/build/outputs/apk/release/app-release.apk
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
