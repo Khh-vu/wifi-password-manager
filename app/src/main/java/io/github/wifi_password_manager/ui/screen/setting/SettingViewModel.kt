@@ -20,6 +20,7 @@ import io.github.wifi_password_manager.data.WifiNetwork
 import io.github.wifi_password_manager.services.FileService
 import io.github.wifi_password_manager.services.SettingService
 import io.github.wifi_password_manager.services.WifiService
+import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.toWifiConfigurations
 import kotlin.time.Clock
@@ -79,7 +80,7 @@ class SettingViewModel(
     }
 
     sealed interface Event {
-        data class ShowMessage(val messageRes: Int) : Event
+        data class ShowMessage(val message: UiText) : Event
     }
 
     private val _state = MutableStateFlow(State())
@@ -129,7 +130,7 @@ class SettingViewModel(
     private fun onExportNetworks() {
         val configs = wifiService.getPrivilegedConfiguredNetworks()
         if (configs.isEmpty()) {
-            _event.tryEmit(Event.ShowMessage(R.string.no_network_to_export))
+            _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_export)))
             return
         }
 
@@ -148,10 +149,16 @@ class SettingViewModel(
                 }
             }
             .fold(
-                onSuccess = { _event.tryEmit(Event.ShowMessage(R.string.export_networks_success)) },
+                onSuccess = {
+                    _event.tryEmit(
+                        Event.ShowMessage(UiText.StringResource(R.string.export_networks_success))
+                    )
+                },
                 onFailure = {
                     Log.e(TAG, "Error exporting networks", it)
-                    _event.tryEmit(Event.ShowMessage(R.string.export_networks_failed))
+                    _event.tryEmit(
+                        Event.ShowMessage(UiText.StringResource(R.string.export_networks_failed))
+                    )
                 },
             )
     }
@@ -173,13 +180,17 @@ class SettingViewModel(
                 } else {
                     importMultipleFiles(files)
                 }
-                _event.tryEmit(Event.ShowMessage(R.string.import_networks_success))
+                _event.tryEmit(
+                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_success))
+                )
             } catch (e: SerializationException) {
                 Log.e(TAG, "Error parsing JSON", e)
-                _event.tryEmit(Event.ShowMessage(R.string.invalid_json))
+                _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.invalid_json)))
             } catch (e: Throwable) {
                 Log.e(TAG, "Error importing networks", e)
-                _event.tryEmit(Event.ShowMessage(R.string.import_networks_failed))
+                _event.tryEmit(
+                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_failed))
+                )
             } finally {
                 _state.update { it.copy(isLoading = false) }
             }
@@ -190,7 +201,9 @@ class SettingViewModel(
         Dispatchers.IO {
             val networks = fileService.networksFromJson(file.readString())
             if (networks.isEmpty()) {
-                _event.tryEmit(Event.ShowMessage(R.string.no_network_to_import))
+                _event.tryEmit(
+                    Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import))
+                )
                 return@IO
             }
 
@@ -216,7 +229,9 @@ class SettingViewModel(
                     .toSet()
 
             if (networks.isEmpty()) {
-                _event.tryEmit(Event.ShowMessage(R.string.no_network_to_import))
+                _event.tryEmit(
+                    Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import))
+                )
                 return@IO
             }
             networks
@@ -231,7 +246,7 @@ class SettingViewModel(
     private fun onShowForgetAllDialog() {
         val configs = wifiService.getPrivilegedConfiguredNetworks()
         if (configs.isEmpty()) {
-            _event.tryEmit(Event.ShowMessage(R.string.no_network_to_forget))
+            _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_forget)))
             return
         }
 
@@ -259,10 +274,16 @@ class SettingViewModel(
                     _state.update { it.copy(isLoading = false) }
                 }
                 .fold(
-                    onSuccess = { _event.tryEmit(Event.ShowMessage(R.string.forget_success)) },
+                    onSuccess = {
+                        _event.tryEmit(
+                            Event.ShowMessage(UiText.StringResource(R.string.forget_success))
+                        )
+                    },
                     onFailure = {
                         Log.e(TAG, "Failed to remove networks", it)
-                        _event.tryEmit(Event.ShowMessage(R.string.forget_failed))
+                        _event.tryEmit(
+                            Event.ShowMessage(UiText.StringResource(R.string.forget_failed))
+                        )
                     },
                 )
         }

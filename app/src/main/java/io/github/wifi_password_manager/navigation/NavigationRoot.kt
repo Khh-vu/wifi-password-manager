@@ -57,7 +57,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                             viewModel.event.collectLatest { event ->
                                 when (event) {
                                     is NetworkListViewModel.Event.ShowMessage -> {
-                                        context.toast(resId = event.messageRes)
+                                        context.toast(event.message.asString(context))
                                     }
                                 }
                             }
@@ -74,7 +74,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                             viewModel.event.collectLatest { event ->
                                 when (event) {
                                     is SettingViewModel.Event.ShowMessage -> {
-                                        context.toast(resId = event.messageRes)
+                                        context.toast(event.message.asString(context))
                                     }
                                 }
                             }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.data.WifiNetwork
 import io.github.wifi_password_manager.services.WifiService
+import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
 import kotlin.time.Duration.Companion.milliseconds
@@ -51,7 +52,7 @@ class NetworkListViewModel(private val wifiService: WifiService) : ViewModel() {
     }
 
     sealed interface Event {
-        data class ShowMessage(val messageRes: Int) : Event
+        data class ShowMessage(val message: UiText) : Event
     }
 
     private val _state = MutableStateFlow(State())
@@ -97,7 +98,7 @@ class NetworkListViewModel(private val wifiService: WifiService) : ViewModel() {
     private fun onRefresh() {
         viewModelScope.launch {
             wifiService.refresh()
-            _event.tryEmit(Event.ShowMessage(R.string.refresh_success))
+            _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.refresh_success)))
         }
     }
 
