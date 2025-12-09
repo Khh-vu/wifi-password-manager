@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package io.github.wifi_password_manager.ui.screen.setting
 
 import android.util.Log
@@ -14,12 +16,18 @@ import io.github.vinceglb.filekit.readString
 import io.github.vinceglb.filekit.writeString
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.data.Settings
+import io.github.wifi_password_manager.data.WifiNetwork
+import io.github.wifi_password_manager.services.FileService
 import io.github.wifi_password_manager.services.SettingService
 import io.github.wifi_password_manager.services.WifiService
+import io.github.wifi_password_manager.utils.fromWifiConfiguration
+import io.github.wifi_password_manager.utils.toWifiConfigurations
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,6 +48,7 @@ import kotlinx.serialization.SerializationException
 class SettingViewModel(
     private val settingService: SettingService,
     private val wifiService: WifiService,
+    private val fileService: FileService,
 ) : ViewModel() {
     companion object {
         private const val TAG = "SettingViewModel"
@@ -55,6 +64,8 @@ class SettingViewModel(
         data class UpdateThemeMode(val themeMode: Settings.ThemeMode) : Action
 
         data class ToggleMaterialYou(val value: Boolean) : Action
+
+        data class ToggleAutoPersistEphemeralNetworks(val value: Boolean) : Action
 
         data object ImportNetworks : Action
 
@@ -87,101 +98,173 @@ class SettingViewModel(
 
     fun onAction(action: Action) {
         Log.d(TAG, "onAction: $action")
+        when (action) {
+            is Action.UpdateThemeMode -> onUpdateThemeMode(action.themeMode)
+            is Action.ToggleMaterialYou -> onToggleMaterialYou(action.value)
+            is Action.ToggleAutoPersistEphemeralNetworks ->
+                onToggleAutoPersistEphemeralNetworks(action.value)
+            is Action.ImportNetworks -> onImportNetworks()
+            is Action.ExportNetworks -> onExportNetworks()
+            is Action.ShowForgetAllDialog -> onShowForgetAllDialog()
+            is Action.HideForgetAllDialog -> _state.update { it.copy(showForgetAllDialog = false) }
+            is Action.ConfirmForgetAllNetworks -> onForgetAllNetworks()
+        }
+    }
+
+    private fun onUpdateThemeMode(value: Settings.ThemeMode) {
+        viewModelScope.launch { settingService.updateSettings { it.copy(themeMode = value) } }
+    }
+
+    private fun onToggleMaterialYou(value: Boolean) {
+        viewModelScope.launch { settingService.updateSettings { it.copy(useMaterialYou = value) } }
+    }
+
+    private fun onToggleAutoPersistEphemeralNetworks(value: Boolean) {
         viewModelScope.launch {
-            when (action) {
-                is Action.UpdateThemeMode ->
-                    settingService.updateSettings { it.copy(themeMode = action.themeMode) }
-                is Action.ToggleMaterialYou ->
-                    settingService.updateSettings { it.copy(useMaterialYou = action.value) }
-                is Action.ImportNetworks -> importNetworks()
-                is Action.ExportNetworks -> exportNetworks()
-                is Action.ShowForgetAllDialog -> showForgetAllDialog()
-                is Action.HideForgetAllDialog ->
-                    _state.update { it.copy(showForgetAllDialog = false) }
-                is Action.ConfirmForgetAllNetworks -> forgetAllNetworks()
-            }
+            settingService.updateSettings { it.copy(autoPersistEphemeralNetworks = value) }
         }
     }
 
     @OptIn(ExperimentalTime::class, FormatStringsInDatetimeFormats::class)
-    private suspend fun exportNetworks() {
-        val networks = wifiService.getPrivilegedConfiguredNetworks()
-        if (networks.isEmpty()) {
-            _event.emit(Event.ShowMessage(R.string.no_network_to_export))
+    private fun onExportNetworks() {
+        val configs = wifiService.getPrivilegedConfiguredNetworks()
+        if (configs.isEmpty()) {
+            _event.tryEmit(Event.ShowMessage(R.string.no_network_to_export))
             return
         }
 
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val formatter = LocalDateTime.Format { byUnicodePattern(pattern = "yyyy-MM-dd_HH:mm:ss") }
-        val file =
-            FileKit.openFileSaver(
-                suggestedName = "WiFi_${formatter.format(now)}",
-                extension = "json",
-            ) ?: return
-        Dispatchers.IO { file.writeString(wifiService.exportToJson()) }
-        _event.emit(Event.ShowMessage(R.string.export_networks_success))
+
+        runCatching {
+                viewModelScope.launch {
+                    val file =
+                        FileKit.openFileSaver(
+                            suggestedName = "WiFi_${formatter.format(now)}",
+                            extension = "json",
+                        ) ?: return@launch
+                    val networks = configs.map(WifiNetwork::fromWifiConfiguration)
+                    Dispatchers.IO { file.writeString(fileService.networksToJson(networks)) }
+                }
+            }
+            .fold(
+                onSuccess = { _event.tryEmit(Event.ShowMessage(R.string.export_networks_success)) },
+                onFailure = {
+                    Log.e(TAG, "Error exporting networks", it)
+                    _event.tryEmit(Event.ShowMessage(R.string.export_networks_failed))
+                },
+            )
     }
 
-    private suspend fun importNetworks() {
-        val files =
-            FileKit.openFilePicker(mode = FileKitMode.Multiple(), type = FileKitType.File("json"))
-                ?.takeIf { it.isNotEmpty() } ?: return
+    private fun onImportNetworks() {
+        viewModelScope.launch {
+            val files =
+                FileKit.openFilePicker(
+                        mode = FileKitMode.Multiple(),
+                        type = FileKitType.File("json"),
+                    )
+                    ?.takeIf { it.isNotEmpty() } ?: return@launch
 
-        _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true) }
 
-        try {
-            if (files.size == 1) {
-                importSingleFile(files.first())
-            } else {
-                importMultipleFiles(files)
+            try {
+                if (files.size == 1) {
+                    importSingleFile(files.first())
+                } else {
+                    importMultipleFiles(files)
+                }
+                _event.tryEmit(Event.ShowMessage(R.string.import_networks_success))
+            } catch (e: SerializationException) {
+                Log.e(TAG, "Error parsing JSON", e)
+                _event.tryEmit(Event.ShowMessage(R.string.invalid_json))
+            } catch (e: Throwable) {
+                Log.e(TAG, "Error importing networks", e)
+                _event.tryEmit(Event.ShowMessage(R.string.import_networks_failed))
+            } finally {
+                _state.update { it.copy(isLoading = false) }
             }
-            _event.emit(Event.ShowMessage(R.string.import_networks_success))
-        } catch (e: SerializationException) {
-            Log.e(TAG, "Error parsing JSON", e)
-            _event.emit(Event.ShowMessage(R.string.invalid_json))
-        } finally {
-            _state.update { it.copy(isLoading = false) }
         }
     }
 
     private suspend fun importSingleFile(file: PlatformFile) =
         Dispatchers.IO {
-            val networks = wifiService.getNetworks(file.readString())
-            if (networks.isNotEmpty()) wifiService.addOrUpdateNetworks(networks)
+            val networks = fileService.networksFromJson(file.readString())
+            if (networks.isEmpty()) {
+                _event.tryEmit(Event.ShowMessage(R.string.no_network_to_import))
+                return@IO
+            }
+
+            networks
+                .flatMap { network ->
+                    val configs = network.toWifiConfigurations()
+                    configs.map { async { wifiService.addOrUpdateNetworkPrivileged(it) } }
+                }
+                .awaitAll()
         }
 
     private suspend fun importMultipleFiles(files: List<PlatformFile>) {
         Dispatchers.IO {
-            val allNetworks =
+            val networks =
                 files
                     .flatMap { file ->
-                        runCatching { wifiService.getNetworks(file.readString()) }
+                        runCatching { fileService.networksFromJson(file.readString()) }
                             .onFailure {
                                 Log.e(TAG, "Error parsing JSON from file: ${file.name}", it)
                             }
                             .getOrDefault(emptyList())
                     }
                     .toSet()
-            if (allNetworks.isNotEmpty()) wifiService.addOrUpdateNetworks(allNetworks)
+
+            if (networks.isEmpty()) {
+                _event.tryEmit(Event.ShowMessage(R.string.no_network_to_import))
+                return@IO
+            }
+            networks
+                .flatMap { network ->
+                    val configs = network.toWifiConfigurations()
+                    configs.map { async { wifiService.addOrUpdateNetworkPrivileged(it) } }
+                }
+                .awaitAll()
         }
     }
 
-    private suspend fun showForgetAllDialog() {
-        val networks = wifiService.getPrivilegedConfiguredNetworks()
-        if (networks.isEmpty()) {
-            _event.emit(Event.ShowMessage(R.string.no_network_to_forget))
+    private fun onShowForgetAllDialog() {
+        val configs = wifiService.getPrivilegedConfiguredNetworks()
+        if (configs.isEmpty()) {
+            _event.tryEmit(Event.ShowMessage(R.string.no_network_to_forget))
             return
         }
 
         _state.update { it.copy(showForgetAllDialog = true) }
     }
 
-    private suspend fun forgetAllNetworks() {
-        _state.update { it.copy(isLoading = true, showForgetAllDialog = false) }
+    private fun onForgetAllNetworks() {
+        val configs = wifiService.getPrivilegedConfiguredNetworks()
+        val validConfigs = configs.filter { it.networkId != -1 }
 
-        Dispatchers.IO { wifiService.removeAllNetworks() }
+        if (validConfigs.isEmpty()) {
+            Log.d(TAG, "No valid networks to remove")
+            return
+        }
 
-        _state.update { it.copy(isLoading = false) }
-        _event.emit(Event.ShowMessage(R.string.forget_success))
+        viewModelScope.launch {
+            _state.update { it.copy(isLoading = true, showForgetAllDialog = false) }
+
+            runCatching {
+                    Dispatchers.IO {
+                        validConfigs
+                            .map { async { wifiService.removeNetwork(it.networkId) } }
+                            .awaitAll()
+                    }
+                    _state.update { it.copy(isLoading = false) }
+                }
+                .fold(
+                    onSuccess = { _event.tryEmit(Event.ShowMessage(R.string.forget_success)) },
+                    onFailure = {
+                        Log.e(TAG, "Failed to remove networks", it)
+                        _event.tryEmit(Event.ShowMessage(R.string.forget_failed))
+                    },
+                )
+        }
     }
 }

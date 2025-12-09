@@ -135,6 +135,45 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             Text(text = stringResource(R.string.forget_all_description))
                         },
                     )
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
+
+                    ListItem(
+                        modifier =
+                            Modifier.clickable {
+                                onAction(
+                                    SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
+                                        !state.settings.autoPersistEphemeralNetworks
+                                    )
+                                )
+                            },
+                        headlineContent = {
+                            Text(
+                                text =
+                                    stringResource(R.string.auto_persist_ephemeral_networks_action)
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text =
+                                    stringResource(
+                                        R.string.auto_persist_ephemeral_networks_description
+                                    )
+                            )
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = state.settings.autoPersistEphemeralNetworks,
+                                onCheckedChange = {
+                                    onAction(
+                                        SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
+                                            it
+                                        )
+                                    )
+                                },
+                            )
+                        },
+                    )
                 }
             }
 

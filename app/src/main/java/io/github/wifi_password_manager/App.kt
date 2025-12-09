@@ -5,6 +5,7 @@ import android.content.Context
 import io.github.wifi_password_manager.di.KoinApp
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.ksp.generated.startKoin
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import rikka.shizuku.ShizukuProvider
@@ -16,6 +17,7 @@ class App : Application() {
         KoinApp.startKoin {
             androidLogger()
             androidContext(this@App)
+            workManagerFactory()
         }
     }
 

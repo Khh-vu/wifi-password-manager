@@ -1,5 +1,6 @@
 package android.net.wifi;
 
+import android.content.pm.PackageManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -41,6 +42,14 @@ public class WifiConfigurationHidden implements Parcelable {
      * (e.g., {@code 01a243f405}).
      */
     public String SSID;
+
+    /**
+     * When set, this network configuration entry should only be used when
+     * associating with the AP having the specified BSSID. The value is
+     * a string in the format of an Ethernet MAC address, e.g.,
+     * <code>XX:XX:XX:XX:XX:XX</code> where each <code>X</code> is a hex digit.
+     */
+    public String BSSID;
 
     /**
      * Pre-shared key for use with WPA-PSK. Either an ASCII string enclosed in
@@ -141,10 +150,62 @@ public class WifiConfigurationHidden implements Parcelable {
     public boolean shared;
 
     /**
+     * Universal name for app creating the configuration
+     * see {@link PackageManager#getNameForUid(int)}
+     */
+    public String creatorName;
+
+    /**
+     * Universal name for app updating the configuration
+     * see {@link PackageManager#getNameForUid(int)}
+     */
+    public String lastUpdateName;
+
+    /**
      * Auto-join is allowed by user for this network.
      * Default true.
      */
     public boolean allowAutojoin;
+
+    /**
+     * Last time the system was connected to this configuration represented as the difference,
+     * measured in milliseconds, between the last connected time and midnight, January 1, 1970 UTC.
+     * <p>
+     * Note that this information is only in memory will be cleared (reset to 0) for all
+     * WifiConfiguration(s) after a reboot.
+     */
+    public long lastConnected;
+
+    /**
+     * Last time the system was disconnected to this configuration.
+     */
+    public long lastDisconnected;
+
+    /**
+     * Indicate that a WifiConfiguration is temporary and should not be saved
+     * nor considered by AutoJoin.
+     */
+    public boolean ephemeral;
+
+    /**
+     * Indicate that a WifiConfiguration is temporary and should not be saved
+     * nor considered by AutoJoin.
+     */
+    public boolean isEphemeral() {
+        throw new RuntimeException("Stub!");
+    }
+
+    /**
+     * True if this Wifi configuration is created from a {@link WifiNetworkSuggestion},
+     * false otherwise.
+     */
+    public boolean fromWifiNetworkSuggestion;
+
+    /**
+     * True if this Wifi configuration is created from a {@link WifiNetworkSpecifier},
+     * false otherwise.
+     */
+    public boolean fromWifiNetworkSpecifier;
 
     /**
      * Get the SSID in a human-readable format, with all additional formatting removed

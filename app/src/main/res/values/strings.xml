@@ -36,6 +36,8 @@
     <string name="advanced_section">Advanced</string>
     <string name="forget_all_action">Forget all networks</string>
     <string name="forget_all_description">Remove all saved WiFi networks from this device</string>
+    <string name="auto_persist_ephemeral_networks_action">Auto persist ephemeral networks</string>
+    <string name="auto_persist_ephemeral_networks_description">Automatically save temporary networks that would otherwise be forgotten after disconnecting</string>
 
     <!-- About Section -->
     <string name="about_section">About</string>
@@ -74,9 +76,13 @@
     <!-- Messages -->
     <string name="loading">Loading…</string>
     <string name="refresh_success">Refreshed successfully</string>
+    <string name="no_network_to_import">No networks found to import</string>
     <string name="import_networks_success">Imported networks successfully</string>
+    <string name="import_networks_failed">Failed to import networks</string>
     <string name="export_networks_success">Exported networks successfully</string>
+    <string name="export_networks_failed">Failed to export networks</string>
     <string name="forget_success">Forgot all networks successfully</string>
+    <string name="forget_failed">Failed to forget all networks</string>
     <string name="no_network_to_forget">No networks found to forget</string>
     <string name="no_network_to_export">No networks available to export</string>
     <string name="invalid_json">Unable to use the selected JSON file</string>

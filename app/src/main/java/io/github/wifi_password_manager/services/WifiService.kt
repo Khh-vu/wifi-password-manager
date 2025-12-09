@@ -6,34 +6,27 @@ import android.content.AttributionSource
 import android.content.AttributionSourceHidden
 import android.content.Context
 import android.net.wifi.IWifiManager
+import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import dev.rikka.tools.refine.Refine
-import io.github.wifi_password_manager.data.WifiNetwork
-import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.hasShizukuPermission
-import io.github.wifi_password_manager.utils.toWifiConfigurations
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.invoke
-import kotlinx.serialization.json.Json
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
 import rikka.shizuku.SystemServiceHelper
 
-class WifiService(private val context: Context, private val json: Json) {
+class WifiService(private val context: Context) {
     companion object {
         private const val TAG = "WifiService"
 
         private const val SHELL_PACKAGE = "com.android.shell"
     }
 
-    private val _configuredNetworks = MutableSharedFlow<List<WifiNetwork>>()
+    private val _configuredNetworks = MutableSharedFlow<List<WifiConfiguration>>()
     val configuredNetworks = _configuredNetworks.asSharedFlow()
 
     private val wifiManager by lazy {
@@ -54,13 +47,7 @@ class WifiService(private val context: Context, private val json: Json) {
     private val attributionSource: AttributionSource? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Refine.unsafeCast(
-                AttributionSourceHidden(
-                    Shizuku.getUid(),
-                    SHELL_PACKAGE,
-                    SHELL_PACKAGE,
-                    null as Set<String>?,
-                    null,
-                )
+                AttributionSourceHidden(Shizuku.getUid(), SHELL_PACKAGE, SHELL_PACKAGE, null, null)
             )
         } else {
             null
@@ -72,111 +59,43 @@ class WifiService(private val context: Context, private val json: Json) {
         _configuredNetworks.emit(value = networks)
     }
 
-    fun getPrivilegedConfiguredNetworks(): List<WifiNetwork> {
+    fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, returning empty list")
             return emptyList()
         }
-        return runCatching {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val bundle =
-                        Bundle().apply {
-                            putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
-                        }
-                    wifiManager.getPrivilegedConfiguredNetworks(user, SHELL_PACKAGE, bundle)?.list
-                } else {
-                    wifiManager.getPrivilegedConfiguredNetworks(user, SHELL_PACKAGE)?.list
-                }
-            }
-            .fold(
-                onSuccess = { configurations ->
-                    configurations?.map(WifiNetwork::fromWifiConfiguration).orEmpty().also {
-                        Log.d(TAG, "Found ${it.size} networks")
+        val configs =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val bundle =
+                    Bundle().apply {
+                        putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
                     }
-                },
-                onFailure = {
-                    Log.e(TAG, "Error getting configured networks", it)
-                    emptyList()
-                },
-            )
-    }
-
-    suspend fun addOrUpdateNetworks(networks: Collection<WifiNetwork>) {
-        if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot add/update networks")
-            return
-        }
-
-        if (networks.isEmpty()) return
-
-        runCatching {
-                Dispatchers.IO {
-                    networks
-                        .flatMap { network ->
-                            network.toWifiConfigurations().map { config ->
-                                async {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                        val result =
-                                            wifiManager.addOrUpdateNetworkPrivileged(config, user)
-
-                                        result?.statusCode ==
-                                            WifiManager.AddNetworkResult.STATUS_SUCCESS
-                                    } else {
-                                        wifiManager.addOrUpdateNetwork(config, user) != -1
-                                    }
-                                }
-                            }
-                        }
-                        .awaitAll()
-                }
+                wifiManager.getPrivilegedConfiguredNetworks(user, SHELL_PACKAGE, bundle)?.list
+            } else {
+                wifiManager.getPrivilegedConfiguredNetworks(user, SHELL_PACKAGE)?.list
             }
-            .fold(
-                onSuccess = { results ->
-                    refresh()
-                    Log.d(TAG, "Added or Updated ${results.count { it }}/${results.size} networks")
-                },
-                onFailure = { Log.e(TAG, "Error adding or updating networks", it) },
-            )
+        return configs.orEmpty()
     }
 
-    suspend fun removeAllNetworks() {
+    fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot remove networks")
-            return
+            Log.w(TAG, "Shizuku permission not available, cannot add/update network")
+            return false
         }
 
-        val networks = getPrivilegedConfiguredNetworks()
-        val validNetworks = networks.filter { it.networkId != -1 }
-
-        if (validNetworks.isEmpty()) {
-            Log.d(TAG, "No networks to remove")
-            return
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val result = wifiManager.addOrUpdateNetworkPrivileged(config, user)
+            result?.statusCode == WifiManager.AddNetworkResult.STATUS_SUCCESS
+        } else {
+            wifiManager.addOrUpdateNetwork(config, user) != -1
         }
-
-        runCatching {
-                Dispatchers.IO {
-                    validNetworks
-                        .map { network ->
-                            async { wifiManager.removeNetwork(network.networkId, user) }
-                        }
-                        .awaitAll()
-                }
-            }
-            .fold(
-                onSuccess = { results ->
-                    refresh()
-                    Log.d(TAG, "Removed ${results.count { it }}/${results.size} networks")
-                },
-                onFailure = { Log.e(TAG, "Error removing all networks", it) },
-            )
     }
 
-    suspend fun exportToJson(): String =
-        Dispatchers.Default {
-            val networks = getPrivilegedConfiguredNetworks()
-            json.encodeToString(networks)
+    fun removeNetwork(netId: Int): Boolean {
+        if (!context.hasShizukuPermission) {
+            Log.w(TAG, "Shizuku permission not available, cannot remove network")
+            return false
         }
-
-    suspend fun getNetworks(jsonString: String): List<WifiNetwork> =
-        Dispatchers.Default { json.decodeFromString(jsonString) }
+        return wifiManager.removeNetwork(netId, user)
+    }
 }

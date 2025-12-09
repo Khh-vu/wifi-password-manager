@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val useMaterialYou: Boolean = true,
+    val autoPersistEphemeralNetworks: Boolean = false,
 ) {
     @Serializable
     enum class ThemeMode {

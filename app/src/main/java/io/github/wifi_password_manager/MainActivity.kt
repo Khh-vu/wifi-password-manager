@@ -16,8 +16,11 @@ import io.github.wifi_password_manager.data.Settings
 import io.github.wifi_password_manager.navigation.NavigationRoot
 import io.github.wifi_password_manager.services.SettingService
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
+import io.github.wifi_password_manager.workers.PersistEphemeralNetworksWorker
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
         setupSplashScreen()
+        observeAutoPersistEphemeralNetworks()
 
         setContent {
             val settings by settingService.settings.collectAsStateWithLifecycle(Settings())
@@ -54,5 +58,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         installSplashScreen().apply { setKeepOnScreenCondition { keepSplashScreenOn } }
+    }
+
+    private fun observeAutoPersistEphemeralNetworks() {
+        lifecycleScope.launch {
+            settingService.settings
+                .map { it.autoPersistEphemeralNetworks }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    if (enabled) {
+                        PersistEphemeralNetworksWorker.schedule(applicationContext)
+                    } else {
+                        PersistEphemeralNetworksWorker.cancel(applicationContext)
+                    }
+                }
+        }
     }
 }

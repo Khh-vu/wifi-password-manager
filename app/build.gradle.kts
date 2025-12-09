@@ -31,8 +31,8 @@ android {
         applicationId = "io.github.wifi_password_manager"
         minSdk = 30
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.3"
+        versionCode = 5
+        versionName = "1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(platform(libs.androidx.compose.bom))
 
     // Material Components
@@ -129,6 +130,7 @@ dependencies {
     implementation(libs.shizuku.provider)
 
     // Koin
+    implementation(libs.koin.androidx.workmanager)
     implementation(libs.koin.annotations)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
