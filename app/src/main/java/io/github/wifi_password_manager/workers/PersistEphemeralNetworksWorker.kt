@@ -15,7 +15,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import dev.rikka.tools.refine.Refine
-import io.github.wifi_password_manager.services.WifiService
+import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.hasShizukuPermission
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ import kotlinx.coroutines.invoke
 class PersistEphemeralNetworksWorker(
     appContext: Context,
     params: WorkerParameters,
-    private val wifiService: WifiService,
+    private val wifiRepository: WifiRepository,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
@@ -68,7 +68,7 @@ class PersistEphemeralNetworksWorker(
         }
 
         return try {
-            val configs = wifiService.getPrivilegedConfiguredNetworks()
+            val configs = wifiRepository.getPrivilegedConfiguredNetworks()
             val ephemeralConfigs =
                 configs.filter { Refine.unsafeCast<WifiConfigurationHidden>(it).isEphemeral }
             if (ephemeralConfigs.isEmpty()) {
@@ -88,7 +88,7 @@ class PersistEphemeralNetworksWorker(
 
             Dispatchers.IO {
                 persistentConfigs
-                    .map { async { wifiService.addOrUpdateNetworkPrivileged(it) } }
+                    .map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
                     .awaitAll()
             }
 

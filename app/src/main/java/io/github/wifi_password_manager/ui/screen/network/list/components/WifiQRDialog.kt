@@ -26,8 +26,8 @@ import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
 import io.github.alexzhirkevich.qrose.wifi
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.data.WifiNetwork
-import io.github.wifi_password_manager.data.WifiNetwork.SecurityType
+import io.github.wifi_password_manager.domain.model.WifiNetwork
+import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.MOCK
 

@@ -1,6 +1,4 @@
-@file:Suppress("DEPRECATION")
-
-package io.github.wifi_password_manager.data
+package io.github.wifi_password_manager.domain.model
 
 import io.github.wifi_password_manager.utils.ImmutableSetSerializer
 import kotlinx.collections.immutable.ImmutableSet

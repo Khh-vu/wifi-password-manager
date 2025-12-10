@@ -15,11 +15,11 @@ import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.readString
 import io.github.vinceglb.filekit.writeString
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.data.Settings
-import io.github.wifi_password_manager.data.WifiNetwork
-import io.github.wifi_password_manager.services.FileService
-import io.github.wifi_password_manager.services.SettingService
-import io.github.wifi_password_manager.services.WifiService
+import io.github.wifi_password_manager.domain.model.Settings
+import io.github.wifi_password_manager.domain.model.WifiNetwork
+import io.github.wifi_password_manager.domain.repository.FileRepository
+import io.github.wifi_password_manager.domain.repository.SettingRepository
+import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.toWifiConfigurations
@@ -29,12 +29,12 @@ import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.invoke
@@ -47,9 +47,9 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.SerializationException
 
 class SettingViewModel(
-    private val settingService: SettingService,
-    private val wifiService: WifiService,
-    private val fileService: FileService,
+    private val settingRepository: SettingRepository,
+    private val wifiRepository: WifiRepository,
+    private val fileRepository: FileRepository,
 ) : ViewModel() {
     companion object {
         private const val TAG = "SettingViewModel"
@@ -85,7 +85,7 @@ class SettingViewModel(
 
     private val _state = MutableStateFlow(State())
     val state =
-        combine(_state, settingService.settings) { state, settings ->
+        combine(_state, settingRepository.settings) { state, settings ->
                 state.copy(settings = settings)
             }
             .stateIn(
@@ -94,8 +94,8 @@ class SettingViewModel(
                 initialValue = State(),
             )
 
-    private val _event = MutableSharedFlow<Event>()
-    val event = _event.asSharedFlow()
+    private val _event = Channel<Event>()
+    val event = _event.receiveAsFlow()
 
     fun onAction(action: Action) {
         Log.d(TAG, "onAction: $action")
@@ -113,24 +113,26 @@ class SettingViewModel(
     }
 
     private fun onUpdateThemeMode(value: Settings.ThemeMode) {
-        viewModelScope.launch { settingService.updateSettings { it.copy(themeMode = value) } }
+        viewModelScope.launch { settingRepository.updateSettings { it.copy(themeMode = value) } }
     }
 
     private fun onToggleMaterialYou(value: Boolean) {
-        viewModelScope.launch { settingService.updateSettings { it.copy(useMaterialYou = value) } }
+        viewModelScope.launch {
+            settingRepository.updateSettings { it.copy(useMaterialYou = value) }
+        }
     }
 
     private fun onToggleAutoPersistEphemeralNetworks(value: Boolean) {
         viewModelScope.launch {
-            settingService.updateSettings { it.copy(autoPersistEphemeralNetworks = value) }
+            settingRepository.updateSettings { it.copy(autoPersistEphemeralNetworks = value) }
         }
     }
 
     @OptIn(ExperimentalTime::class, FormatStringsInDatetimeFormats::class)
     private fun onExportNetworks() {
-        val configs = wifiService.getPrivilegedConfiguredNetworks()
+        val configs = wifiRepository.getPrivilegedConfiguredNetworks()
         if (configs.isEmpty()) {
-            _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_export)))
+            _event.trySend(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_export)))
             return
         }
 
@@ -145,18 +147,18 @@ class SettingViewModel(
                             extension = "json",
                         ) ?: return@launch
                     val networks = configs.map(WifiNetwork::fromWifiConfiguration)
-                    Dispatchers.IO { file.writeString(fileService.networksToJson(networks)) }
+                    Dispatchers.IO { file.writeString(fileRepository.networksToJson(networks)) }
                 }
             }
             .fold(
                 onSuccess = {
-                    _event.tryEmit(
+                    _event.trySend(
                         Event.ShowMessage(UiText.StringResource(R.string.export_networks_success))
                     )
                 },
                 onFailure = {
                     Log.e(TAG, "Error exporting networks", it)
-                    _event.tryEmit(
+                    _event.trySend(
                         Event.ShowMessage(UiText.StringResource(R.string.export_networks_failed))
                     )
                 },
@@ -180,15 +182,15 @@ class SettingViewModel(
                 } else {
                     importMultipleFiles(files)
                 }
-                _event.tryEmit(
+                _event.trySend(
                     Event.ShowMessage(UiText.StringResource(R.string.import_networks_success))
                 )
             } catch (e: SerializationException) {
                 Log.e(TAG, "Error parsing JSON", e)
-                _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.invalid_json)))
+                _event.trySend(Event.ShowMessage(UiText.StringResource(R.string.invalid_json)))
             } catch (e: Throwable) {
                 Log.e(TAG, "Error importing networks", e)
-                _event.tryEmit(
+                _event.trySend(
                     Event.ShowMessage(UiText.StringResource(R.string.import_networks_failed))
                 )
             } finally {
@@ -199,9 +201,9 @@ class SettingViewModel(
 
     private suspend fun importSingleFile(file: PlatformFile) =
         Dispatchers.IO {
-            val networks = fileService.networksFromJson(file.readString())
+            val networks = fileRepository.networksFromJson(file.readString())
             if (networks.isEmpty()) {
-                _event.tryEmit(
+                _event.trySend(
                     Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import))
                 )
                 return@IO
@@ -210,7 +212,7 @@ class SettingViewModel(
             networks
                 .flatMap { network ->
                     val configs = network.toWifiConfigurations()
-                    configs.map { async { wifiService.addOrUpdateNetworkPrivileged(it) } }
+                    configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
                 }
                 .awaitAll()
         }
@@ -220,7 +222,7 @@ class SettingViewModel(
             val networks =
                 files
                     .flatMap { file ->
-                        runCatching { fileService.networksFromJson(file.readString()) }
+                        runCatching { fileRepository.networksFromJson(file.readString()) }
                             .onFailure {
                                 Log.e(TAG, "Error parsing JSON from file: ${file.name}", it)
                             }
@@ -229,7 +231,7 @@ class SettingViewModel(
                     .toSet()
 
             if (networks.isEmpty()) {
-                _event.tryEmit(
+                _event.trySend(
                     Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import))
                 )
                 return@IO
@@ -237,16 +239,16 @@ class SettingViewModel(
             networks
                 .flatMap { network ->
                     val configs = network.toWifiConfigurations()
-                    configs.map { async { wifiService.addOrUpdateNetworkPrivileged(it) } }
+                    configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
                 }
                 .awaitAll()
         }
     }
 
     private fun onShowForgetAllDialog() {
-        val configs = wifiService.getPrivilegedConfiguredNetworks()
+        val configs = wifiRepository.getPrivilegedConfiguredNetworks()
         if (configs.isEmpty()) {
-            _event.tryEmit(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_forget)))
+            _event.trySend(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_forget)))
             return
         }
 
@@ -254,7 +256,7 @@ class SettingViewModel(
     }
 
     private fun onForgetAllNetworks() {
-        val configs = wifiService.getPrivilegedConfiguredNetworks()
+        val configs = wifiRepository.getPrivilegedConfiguredNetworks()
         val validConfigs = configs.filter { it.networkId != -1 }
 
         if (validConfigs.isEmpty()) {
@@ -268,20 +270,20 @@ class SettingViewModel(
             runCatching {
                     Dispatchers.IO {
                         validConfigs
-                            .map { async { wifiService.removeNetwork(it.networkId) } }
+                            .map { async { wifiRepository.removeNetwork(it.networkId) } }
                             .awaitAll()
                     }
                     _state.update { it.copy(isLoading = false) }
                 }
                 .fold(
                     onSuccess = {
-                        _event.tryEmit(
+                        _event.trySend(
                             Event.ShowMessage(UiText.StringResource(R.string.forget_success))
                         )
                     },
                     onFailure = {
                         Log.e(TAG, "Failed to remove networks", it)
-                        _event.tryEmit(
+                        _event.trySend(
                             Event.ShowMessage(UiText.StringResource(R.string.forget_failed))
                         )
                     },

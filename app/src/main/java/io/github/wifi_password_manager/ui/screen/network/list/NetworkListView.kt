@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.data.WifiNetwork
+import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.SettingScreen
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList

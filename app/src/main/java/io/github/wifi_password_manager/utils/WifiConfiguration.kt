@@ -4,7 +4,7 @@ package io.github.wifi_password_manager.utils
 
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiConfigurationHidden
-import io.github.wifi_password_manager.data.WifiNetwork
+import io.github.wifi_password_manager.domain.model.WifiNetwork
 
 val WifiConfigurationHidden.simpleKey: String
     get() {

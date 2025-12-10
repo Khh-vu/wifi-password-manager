@@ -2,23 +2,36 @@ package io.github.wifi_password_manager
 
 import android.app.Application
 import android.content.Context
-import io.github.wifi_password_manager.di.KoinApp
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import io.github.wifi_password_manager.domain.repository.SettingRepository
+import io.github.wifi_password_manager.workers.PersistEphemeralNetworksWorker
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.annotation.KoinApplication
 import org.koin.ksp.generated.startKoin
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import rikka.shizuku.ShizukuProvider
 
+@KoinApplication
 class App : Application() {
+    private val settingRepository by inject<SettingRepository>()
+
     override fun onCreate() {
         super.onCreate()
 
-        KoinApp.startKoin {
+        startKoin {
             androidLogger()
             androidContext(this@App)
             workManagerFactory()
         }
+
+        observeAutoPersistEphemeralNetworks()
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -26,5 +39,20 @@ class App : Application() {
 
         ShizukuProvider.enableMultiProcessSupport(true)
         HiddenApiBypass.addHiddenApiExemptions("")
+    }
+
+    private fun observeAutoPersistEphemeralNetworks() {
+        ProcessLifecycleOwner.get().lifecycleScope.launch {
+            settingRepository.settings
+                .map { it.autoPersistEphemeralNetworks }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    if (enabled) {
+                        PersistEphemeralNetworksWorker.schedule(this@App)
+                    } else {
+                        PersistEphemeralNetworksWorker.cancel(this@App)
+                    }
+                }
+        }
     }
 }

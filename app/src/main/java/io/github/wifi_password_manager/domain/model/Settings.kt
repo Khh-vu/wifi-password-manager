@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.data
+package io.github.wifi_password_manager.domain.model
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable

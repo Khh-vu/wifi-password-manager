@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package io.github.wifi_password_manager.services
+package io.github.wifi_password_manager.data.repository
 
 import android.content.AttributionSource
 import android.content.AttributionSourceHidden
@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import dev.rikka.tools.refine.Refine
+import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.hasShizukuPermission
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,7 +20,7 @@ import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
 import rikka.shizuku.SystemServiceHelper
 
-class WifiService(private val context: Context) {
+class WifiRepositoryImpl(private val context: Context) : WifiRepository {
     companion object {
         private const val TAG = "WifiService"
 
@@ -27,7 +28,7 @@ class WifiService(private val context: Context) {
     }
 
     private val _configuredNetworks = MutableSharedFlow<List<WifiConfiguration>>()
-    val configuredNetworks = _configuredNetworks.asSharedFlow()
+    override val configuredNetworks = _configuredNetworks.asSharedFlow()
 
     private val wifiManager by lazy {
         SystemServiceHelper.getSystemService(Context.WIFI_SERVICE)
@@ -54,12 +55,12 @@ class WifiService(private val context: Context) {
         }
     }
 
-    suspend fun refresh() {
+    override suspend fun refresh() {
         val networks = getPrivilegedConfiguredNetworks()
         _configuredNetworks.emit(value = networks)
     }
 
-    fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
+    override fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, returning empty list")
             return emptyList()
@@ -77,7 +78,7 @@ class WifiService(private val context: Context) {
         return configs.orEmpty()
     }
 
-    fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
+    override fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, cannot add/update network")
             return false
@@ -91,7 +92,7 @@ class WifiService(private val context: Context) {
         }
     }
 
-    fun removeNetwork(netId: Int): Boolean {
+    override fun removeNetwork(netId: Int): Boolean {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, cannot remove network")
             return false

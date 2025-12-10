@@ -13,8 +13,8 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.toClipEntry
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.data.WifiNetwork
-import io.github.wifi_password_manager.data.WifiNetwork.SecurityType
+import io.github.wifi_password_manager.domain.model.WifiNetwork
+import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import kotlin.random.Random
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
