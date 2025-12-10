@@ -46,6 +46,11 @@
     <string name="version_title">Version</string>
     <string name="build_type_title">Build Type</string>
 
+    <!-- Quick Settings Tiles -->
+    <string name="auto_persist">Auto-persist</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+
     <!-- WiFi Card -->
     <string name="copy_action">Copy</string>
     <string name="copy_description">Copy the WiFi Password</string>
