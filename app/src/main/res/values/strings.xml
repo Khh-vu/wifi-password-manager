@@ -48,6 +48,7 @@
     <string name="about_section">About</string>
     <string name="license_title">License</string>
     <string name="license_description">See open source licenses</string>
+    <string name="source_code_title">Source Code</string>
     <string name="version_title">Version</string>
     <string name="build_type_title">Build Type</string>
 

@@ -19,6 +19,7 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -38,6 +39,7 @@ import io.github.wifi_password_manager.utils.plus
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Action) -> Unit) {
+    val uriHandler = LocalUriHandler.current
     val navBackStack = LocalNavBackStack.current
 
     Scaffold(
@@ -186,6 +188,17 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         supportingContent = {
                             Text(text = stringResource(R.string.license_description))
                         },
+                    )
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
+
+                    val sourceCodeUrl = "https://github.com/Khh-vu/wifi-password-manager"
+                    ListItem(
+                        modifier = Modifier.clickable { uriHandler.openUri(sourceCodeUrl) },
+                        headlineContent = {
+                            Text(text = stringResource(R.string.source_code_title))
+                        },
+                        supportingContent = { Text(text = sourceCodeUrl) },
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
