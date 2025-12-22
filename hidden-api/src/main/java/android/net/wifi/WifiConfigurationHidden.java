@@ -1,8 +1,6 @@
 package android.net.wifi;
 
 import android.content.pm.PackageManager;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -13,7 +11,7 @@ import dev.rikka.tools.refine.RefineAs;
 
 @SuppressWarnings("deprecation")
 @RefineAs(WifiConfiguration.class)
-public class WifiConfigurationHidden implements Parcelable {
+public class WifiConfigurationHidden {
 
     public WifiConfigurationHidden() {
         throw new RuntimeException("Stub!");
@@ -222,44 +220,6 @@ public class WifiConfigurationHidden implements Parcelable {
      * @return One of the {@link WifiConfiguration.KeyMgmt} constants. e.g. {@link WifiConfiguration.KeyMgmt#WPA2_PSK}.
      */
     public int getAuthType() {
-        throw new RuntimeException("Stub!");
-    }
-
-    /**
-     * return the SSID + security type in String format.
-     */
-    public String getSsidAndSecurityTypeString() {
-        throw new RuntimeException("Stub!");
-    }
-
-    /**
-     * Implement the Parcelable interface
-     */
-    public static final @NonNull Creator<WifiConfigurationHidden> CREATOR = new Creator<>() {
-        @Override
-        public WifiConfigurationHidden createFromParcel(Parcel source) {
-            throw new RuntimeException("Stub!");
-        }
-
-        @Override
-        public WifiConfigurationHidden[] newArray(int size) {
-            throw new RuntimeException("Stub!");
-        }
-    };
-
-    /**
-     * Implement the Parcelable interface
-     */
-    @Override
-    public int describeContents() {
-        throw new RuntimeException("Stub!");
-    }
-
-    /**
-     * Implement the Parcelable interface
-     */
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
         throw new RuntimeException("Stub!");
     }
 }
