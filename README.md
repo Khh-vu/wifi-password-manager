@@ -40,6 +40,8 @@ An Android application for managing saved WiFi network passwords using privilege
 
 ## Security & Privacy
 
+- **App Lock**: Protect access with biometric authentication or device credentials
+- **Secure Screen**: Prevents screenshots and screen recording when enabled
 - **Local Storage**: All data remains on your device
 - **No Network Access**: App doesn't connect to the internet
 - **Sensitive Data Protection**: Clipboard operations marked as sensitive
