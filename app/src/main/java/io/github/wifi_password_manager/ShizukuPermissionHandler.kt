@@ -102,9 +102,7 @@ private fun ShizukuErrorDialog(onDismiss: () -> Unit) {
                             )
                         )
                     } else {
-                        context.launchUrl(
-                            "https://play.google.com/store/apps/details?id=${ShizukuProvider.MANAGER_APPLICATION_ID}"
-                        )
+                        context.launchUrl("https://shizuku.rikka.app/download/")
                     }
                     onDismiss()
                 }
