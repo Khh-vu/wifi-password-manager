@@ -1,0 +1,9 @@
+View, manage, backup/restore saved WiFi passwords using Shizuku.
+
+<b>Features:</b>
+
+- View all saved networks with their passwords
+- Copy passwords and generate QR codes
+- Add notes to networks
+- Import/export networks as JSON
+- Auto-save temporary networks

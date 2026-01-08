@@ -1,0 +1,3 @@
+- Added app lock with biometric/device credentials
+- Added secure screen to prevent screenshots
+- Implemented note functionality for WiFi networks
