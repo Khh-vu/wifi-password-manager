@@ -14,6 +14,10 @@ An Android application for managing saved WiFi network passwords using privilege
 - **Material Design 3**: Modern UI with dynamic theming and dark/light mode support
 - **Privileged Access**: Uses Shizuku for system-level WiFi management
 
+## Screenshots
+
+<img src="fastlane/android/metadata/en-US/images/phoneScreenshots/1.png" width="250" alt="List screen" /><img src="fastlane/android/metadata/en-US/images/phoneScreenshots/2.png" width="250" alt="Search screen" /><img src="fastlane/android/metadata/en-US/images/phoneScreenshots/3.png" width="250" alt="Settings screen" />
+
 ## Requirements
 
 - **Android 11 (API 30) or higher**
@@ -45,6 +49,14 @@ An Android application for managing saved WiFi network passwords using privilege
 - **Local Storage**: All data remains on your device
 - **No Network Access**: App doesn't connect to the internet
 - **Sensitive Data Protection**: Clipboard operations marked as sensitive
+
+## Verification
+
+To verify the authenticity of downloaded APK files, you can check the SHA-256 certificate fingerprint using [apksigner](https://developer.android.com/tools/apksigner#usage-verify):
+
+```
+34:FF:A2:EE:65:8F:E0:36:B6:C5:D2:92:AE:B2:51:45:DE:69:57:ED:52:ED:D9:9F:4B:EB:8D:6B:36:31:C1:FF
+```
 
 ## Acknowledgments
 
