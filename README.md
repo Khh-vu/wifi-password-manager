@@ -1,6 +1,6 @@
 # WiFi Password Manager
 
-An Android application for managing saved WiFi network passwords using privileged system access through [Shizuku](https://shizuku.rikka.app/).
+An Android application for managing saved WiFi network passwords using privileged system access through [Shizuku](https://shizuku.rikka.app/) or root access.
 
 ## Key Features
 
@@ -12,7 +12,7 @@ An Android application for managing saved WiFi network passwords using privilege
 - **Auto-Persist Ephemeral Networks**: Automatically save temporary WiFi networks to make them permanent
 - **Quick Settings Tile**: Toggle auto-persist feature directly from Quick Settings panel
 - **Material Design 3**: Modern UI with dynamic theming and dark/light mode support
-- **Privileged Access**: Uses Shizuku for system-level WiFi management
+- **Privileged Access**: Uses Shizuku or root access for system-level WiFi management
 
 ## Screenshots
 
@@ -21,17 +21,19 @@ An Android application for managing saved WiFi network passwords using privilege
 ## Requirements
 
 - **Android 11 (API 30) or higher**
-- **[Shizuku](https://shizuku.rikka.app/)**: Required for privileged system access
+- **For system-level WiFi management**: [Shizuku](https://shizuku.rikka.app/) or root access
 
 ## Technical Stack
 
 ### Architecture
+
 - **MVVM Pattern**: Clean separation of concerns
 - **Jetpack Compose**: Modern declarative UI framework
 - **Kotlin Coroutines**: Asynchronous programming
 - **Koin**: Dependency injection
 
 ### Key Libraries
+
 - **Jetpack Compose**: UI framework
 - **Material 3**: Design system
 - **Navigation3**: App navigation
@@ -40,6 +42,7 @@ An Android application for managing saved WiFi network passwords using privilege
 - **Kotlinx Serialization**: JSON handling
 - **FileKit**: File operations
 - **Shizuku**: Privileged API access
+- **libsu**: Root access support
 - **HiddenApiBypass**: Bypasses hidden API restrictions
 
 ## Security & Privacy
