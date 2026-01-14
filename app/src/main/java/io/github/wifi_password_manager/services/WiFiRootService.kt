@@ -18,6 +18,7 @@ import com.topjohnwu.superuser.ipc.RootService
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.IWifiRootService
 import io.github.wifi_password_manager.ipc.WifiNetworkParcel
+import io.github.wifi_password_manager.utils.WifiManagerHelper
 import rikka.shizuku.SystemServiceHelper
 
 class WiFiRootService : RootService() {
@@ -54,17 +55,21 @@ class WiFiRootService : RootService() {
         }
 
         private fun getConfiguredNetworks(): List<WifiConfiguration> {
-            val configs =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val bundle =
-                        Bundle().apply {
-                            putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
-                        }
-                    wifiManager.getPrivilegedConfiguredNetworks(USER, packageName, bundle)?.list
+            val extras =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Bundle().apply {
+                        putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+                    }
                 } else {
-                    wifiManager.getPrivilegedConfiguredNetworks(USER, packageName)?.list
+                    null
                 }
-            return configs.orEmpty()
+
+            return WifiManagerHelper.getWifiConfigurations(
+                wifiManager = wifiManager,
+                packageName = USER,
+                featureId = packageName,
+                extras = extras,
+            )
         }
 
         private fun addOrUpdateNetwork(config: WifiConfiguration): Boolean {

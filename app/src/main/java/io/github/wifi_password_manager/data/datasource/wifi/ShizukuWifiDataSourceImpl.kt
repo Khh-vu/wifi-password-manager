@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import dev.rikka.tools.refine.Refine
+import io.github.wifi_password_manager.utils.WifiManagerHelper
 import io.github.wifi_password_manager.utils.hasShizukuPermission
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
@@ -40,7 +41,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
             }
 
     private val attributionSource: AttributionSource? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             Refine.unsafeCast(
                 AttributionSourceHidden(Shizuku.getUid(), SHELL_PACKAGE, SHELL_PACKAGE, null, null)
             )
@@ -55,17 +56,21 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
             return emptyList()
         }
 
-        val configs =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                val bundle =
-                    Bundle().apply {
-                        putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
-                    }
-                wifiManager.getPrivilegedConfiguredNetworks(user, SHELL_PACKAGE, bundle)?.list
+        val extras =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Bundle().apply {
+                    putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+                }
             } else {
-                wifiManager.getPrivilegedConfiguredNetworks(user, SHELL_PACKAGE)?.list
+                null
             }
-        return configs.orEmpty()
+
+        return WifiManagerHelper.getWifiConfigurations(
+            wifiManager = wifiManager,
+            packageName = user,
+            featureId = SHELL_PACKAGE,
+            extras = extras,
+        )
     }
 
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
