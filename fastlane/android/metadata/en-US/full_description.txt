@@ -1,4 +1,4 @@
-View, manage, backup/restore saved WiFi passwords using Shizuku.
+View, manage, backup/restore saved WiFi passwords using Shizuku or root access.
 
 <b>Features:</b>
 

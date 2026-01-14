@@ -1,1 +1,1 @@
-Simple app using Shizuku to manage WiFi passwords
+Simple app using Shizuku or root access to manage WiFi passwords

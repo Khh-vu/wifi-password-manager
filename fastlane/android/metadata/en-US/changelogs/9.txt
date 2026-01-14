@@ -1,0 +1,2 @@
+- Added support for direct root access
+- Fixed an issue where the app crash on Android 12
