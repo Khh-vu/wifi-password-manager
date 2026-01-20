@@ -19,6 +19,7 @@
 
     <!-- Lock Screen -->
     <string name="lock_title">App Locked</string>
+    <string name="lock_description">App is locked</string>
     <string name="unlock">Unlock</string>
 
     <!-- Network List Screen -->

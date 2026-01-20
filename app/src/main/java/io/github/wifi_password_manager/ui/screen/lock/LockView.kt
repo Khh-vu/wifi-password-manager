@@ -82,7 +82,7 @@ fun LockView(onAuthenticated: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Lock,
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.lock_description),
                     modifier = Modifier.size(80.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
