@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WiFi Password Manager</string>
+
+    <!-- Common -->
     <string name="cancel">Отмена</string>
     <string name="ok">ОК</string>
     <string name="clear">Очистить</string>
@@ -11,14 +12,17 @@
     <string name="delete">Удалить</string>
     <string name="warning">Внимание</string>
 
+    <!-- Theme Mode -->
     <string name="theme_mode_light">Светлая</string>
     <string name="theme_mode_dark">Тёмная</string>
     <string name="theme_mode_system">Системная</string>
 
+    <!-- Lock Screen -->
     <string name="lock_title">Приложение заблокировано</string>
     <string name="lock_description">Приложение заблокировано</string>
     <string name="unlock">Разблокировать</string>
 
+    <!-- Network List Screen -->
     <string name="network_list_title">Сохранённые сети WiFi</string>
     <string name="search_hint">Поиск по SSID или заметке</string>
     <string name="search_tooltip">Поиск</string>
@@ -26,19 +30,24 @@
     <string name="no_networks_found">Сети WiFi не найдены</string>
     <string name="no_networks_available">На этом устройстве нет сохранённых сетей WiFi</string>
 
+    <!-- Settings Screen -->
     <string name="settings_title">Настройки</string>
     <string name="settings_tooltip">Настройки</string>
+
+    <!-- Appearance Section -->
     <string name="appearance_section">Внешний вид</string>
     <string name="app_theme_title">Тема приложения</string>
     <string name="app_theme_description">Изменить внешний вид приложения</string>
     <string name="material_you_title">Material You</string>
 
+    <!-- Import & Export Section -->
     <string name="import_export_section">Импорт и экспорт</string>
     <string name="import_action">Импортировать сети</string>
     <string name="import_description">Импорт сетей WiFi из файлов JSON</string>
     <string name="export_action">Экспортировать сети</string>
     <string name="export_description">Экспорт сетей WiFi в файл JSON</string>
 
+    <!-- Security Section -->
     <string name="security_section">Безопасность</string>
     <string name="app_lock_title">Блокировка приложения</string>
     <string name="app_lock_description">Запрашивать блокировку экрана при входе</string>
@@ -47,12 +56,14 @@
     <string name="secure_screen_title">Защита экрана</string>
     <string name="secure_screen_description">Блокировать скриншоты и скрывать содержимое на небезопасных экранах</string>
 
+    <!-- Advanced Section -->
     <string name="advanced_section">Дополнительно</string>
     <string name="forget_all_action">Забыть все сети</string>
     <string name="forget_all_description">Удалить все сохранённые сети WiFi с этого устройства</string>
     <string name="auto_persist_ephemeral_networks_action">Автосохранение временных сетей</string>
     <string name="auto_persist_ephemeral_networks_description">Автоматически сохранять временные сети, которые иначе были бы забыты после отключения (может вызвать разрывы соединения)</string>
-
+    
+    <!-- About Section -->
     <string name="about_section">О приложении</string>
     <string name="license_title">Лицензия</string>
     <string name="license_description">Просмотреть лицензии открытого ПО</string>
@@ -60,7 +71,10 @@
     <string name="version_title">Версия</string>
     <string name="build_type_title">Тип сборки</string>
 
+    <!-- Quick Settings Tiles -->
     <string name="auto_persist">Автосохранение</string>
+
+    <!-- WiFi Card -->
     <string name="copy_action">Копировать</string>
     <string name="copy_description">Копировать пароль WiFi</string>
     <string name="password_label">Пароль</string>
@@ -74,25 +88,32 @@
     <string name="edit_note">Изменить заметку</string>
     <string name="delete_note">Удалить заметку</string>
     <string name="note_deleted">Заметка удалена</string>
+
+    <!-- Note Screen -->
     <string name="note_hint">Введите вашу заметку здесь…</string>
     <string name="note_title">Заметка для %1$s</string>
     <string name="empty_note_discarded">Пустая заметка отклонена</string>
     <string name="note_saved">Заметка сохранена</string>
     <string name="note_save_failed">Не удалось сохранить заметку</string>
-
+    
+    <!-- Security Types -->
     <string name="security_open">Открытая</string>
     <string name="security_owe">Enhanced Open</string>
     <string name="security_wpa2">WPA/WPA2</string>
     <string name="security_wpa3">WPA3-Personal</string>
     <string name="security_wep">WEP</string>
 
+    <!-- Shizuku Permission Dialog -->
     <string name="shizuku_required_title">Требуется Shizuku</string>
     <string name="shizuku_required_message">Для работы приложения необходим Shizuku. Если он установлен, пожалуйста, запустите его. В противном случае установите Shizuku.</string>
     <string name="open_shizuku">Открыть Shizuku</string>
     <string name="install_shizuku">Установить Shizuku</string>
 
+    <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Забыть все сети?</string>
     <string name="forget_all_confirmation_message">Это безвозвратно удалит все сохранённые сети WiFi с этого устройства. Это действие нельзя отменить.</string>
+    
+    <!-- Messages -->
     <string name="loading">Загрузка…</string>
     <string name="refresh_success">Обновлено успешно</string>
     <string name="no_network_to_import">Сети для импорта не найдены</string>
