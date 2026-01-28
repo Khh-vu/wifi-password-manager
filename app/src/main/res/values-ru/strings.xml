@@ -1,1 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WiFi Password Manager</string>
+    <string name="cancel">Отмена</string>
+    <string name="ok">ОК</string>
+    <string name="clear">Очистить</string>
+    <string name="back">Назад</string>
+    <string name="save">Сохранить</string>
+    <string name="on">Вкл.</string>
+    <string name="off">Выкл.</string>
+    <string name="delete">Удалить</string>
+    <string name="warning">Внимание</string>
 
+    <string name="theme_mode_light">Светлая</string>
+    <string name="theme_mode_dark">Тёмная</string>
+    <string name="theme_mode_system">Системная</string>
+
+    <string name="lock_title">Приложение заблокировано</string>
+    <string name="lock_description">Приложение заблокировано</string>
+    <string name="unlock">Разблокировать</string>
+
+    <string name="network_list_title">Сохранённые сети WiFi</string>
+    <string name="search_hint">Поиск по SSID или заметке</string>
+    <string name="search_tooltip">Поиск</string>
+    <string name="refresh_description">Обновить</string>
+    <string name="no_networks_found">Сети WiFi не найдены</string>
+    <string name="no_networks_available">На этом устройстве нет сохранённых сетей WiFi</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_tooltip">Настройки</string>
+    <string name="appearance_section">Внешний вид</string>
+    <string name="app_theme_title">Тема приложения</string>
+    <string name="app_theme_description">Изменить внешний вид приложения</string>
+    <string name="material_you_title">Material You</string>
+
+    <string name="import_export_section">Импорт и экспорт</string>
+    <string name="import_action">Импортировать сети</string>
+    <string name="import_description">Импорт сетей WiFi из файлов JSON</string>
+    <string name="export_action">Экспортировать сети</string>
+    <string name="export_description">Экспорт сетей WiFi в файл JSON</string>
+
+    <string name="security_section">Безопасность</string>
+    <string name="app_lock_title">Блокировка приложения</string>
+    <string name="app_lock_description">Запрашивать блокировку экрана при входе</string>
+    <string name="app_lock_disable_title">Подтвердите личность для отключения блокировки</string>
+    <string name="app_lock_enable_title">Подтвердите личность для включения блокировки</string>
+    <string name="secure_screen_title">Защита экрана</string>
+    <string name="secure_screen_description">Блокировать скриншоты и скрывать содержимое на небезопасных экранах</string>
+
+    <string name="advanced_section">Дополнительно</string>
+    <string name="forget_all_action">Забыть все сети</string>
+    <string name="forget_all_description">Удалить все сохранённые сети WiFi с этого устройства</string>
+    <string name="auto_persist_ephemeral_networks_action">Автосохранение временных сетей</string>
+    <string name="auto_persist_ephemeral_networks_description">Автоматически сохранять временные сети, которые иначе были бы забыты после отключения (может вызвать разрывы соединения)</string>
+
+    <string name="about_section">О приложении</string>
+    <string name="license_title">Лицензия</string>
+    <string name="license_description">Просмотреть лицензии открытого ПО</string>
+    <string name="source_code_title">Исходный код</string>
+    <string name="version_title">Версия</string>
+    <string name="build_type_title">Тип сборки</string>
+
+    <string name="auto_persist">Автосохранение</string>
+    <string name="copy_action">Копировать</string>
+    <string name="copy_description">Копировать пароль WiFi</string>
+    <string name="password_label">Пароль</string>
+    <string name="password_mask_character">•</string>
+    <string name="no_password">Без пароля</string>
+    <string name="show_wifi_qr_code">Показать QR-код WiFi</string>
+    <string name="wifi_qr_code">QR-код WiFi</string>
+    <string name="more_options">Другие варианты</string>
+    <string name="note_label">Заметка</string>
+    <string name="add_note">Добавить заметку</string>
+    <string name="edit_note">Изменить заметку</string>
+    <string name="delete_note">Удалить заметку</string>
+    <string name="note_deleted">Заметка удалена</string>
+    <string name="note_hint">Введите вашу заметку здесь…</string>
+    <string name="note_title">Заметка для %1$s</string>
+    <string name="empty_note_discarded">Пустая заметка отклонена</string>
+    <string name="note_saved">Заметка сохранена</string>
+    <string name="note_save_failed">Не удалось сохранить заметку</string>
+
+    <string name="security_open">Открытая</string>
+    <string name="security_owe">Enhanced Open</string>
+    <string name="security_wpa2">WPA/WPA2</string>
+    <string name="security_wpa3">WPA3-Personal</string>
+    <string name="security_wep">WEP</string>
+
+    <string name="shizuku_required_title">Требуется Shizuku</string>
+    <string name="shizuku_required_message">Для работы приложения необходим Shizuku. Если он установлен, пожалуйста, запустите его. В противном случае установите Shizuku.</string>
+    <string name="open_shizuku">Открыть Shizuku</string>
+    <string name="install_shizuku">Установить Shizuku</string>
+
+    <string name="forget_all_confirmation_title">Забыть все сети?</string>
+    <string name="forget_all_confirmation_message">Это безвозвратно удалит все сохранённые сети WiFi с этого устройства. Это действие нельзя отменить.</string>
+    <string name="loading">Загрузка…</string>
+    <string name="refresh_success">Обновлено успешно</string>
+    <string name="no_network_to_import">Сети для импорта не найдены</string>
+    <string name="import_networks_success">Сети успешно импортированы</string>
+    <string name="import_networks_failed">Ошибка при импорте сетей</string>
+    <string name="export_networks_success">Сети успешно экспортированы</string>
+    <string name="export_networks_failed">Ошибка при экспорте сетей</string>
+    <string name="forget_success">Все сети успешно удалены</string>
+    <string name="forget_failed">Не удалось удалить все сети</string>
+    <string name="no_network_to_forget">Сети для удаления не найдены</string>
+    <string name="no_network_to_export">Нет доступных сетей для экспорта</string>
+    <string name="invalid_json">Невозможно использовать выбранный файл JSON</string>
+    <string name="app_lock_required">Для доступа используйте блокировку экрана</string>
+    <string name="app_lock_too_many_attempts">Слишком много попыток. Попробуйте позже.</string>
+    <string name="app_lock_permanently_locked">Биометрия заблокирована. Используйте пароль устройства.</string>
+    <string name="app_lock_authentication_failed">Ошибка аутентификации.</string>
+</resources>
