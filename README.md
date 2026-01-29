@@ -21,7 +21,7 @@ An Android application for managing saved WiFi network passwords using privilege
 
 ## Screenshots
 
-<img src="fastlane/android/metadata/en-US/images/phoneScreenshots/1.png" width="250" alt="List screen" /><img src="fastlane/android/metadata/en-US/images/phoneScreenshots/2.png" width="250" alt="Search screen" /><img src="fastlane/android/metadata/en-US/images/phoneScreenshots/3.png" width="250" alt="Settings screen" />
+<img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" width="250" alt="List screen" /><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" width="250" alt="Search screen" /><img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width="250" alt="Settings screen" />
 
 ## Requirements
 
