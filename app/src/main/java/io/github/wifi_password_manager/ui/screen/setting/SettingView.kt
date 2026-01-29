@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -52,6 +53,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
     val uriHandler = LocalUriHandler.current
     val navBackStack = LocalNavBackStack.current
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     Scaffold(
         topBar = {
@@ -168,7 +170,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         val request =
                             AuthenticationRequest.biometricRequest(
                                 title =
-                                    context.getString(
+                                    resources.getString(
                                         if (appLockEnabled) {
                                             R.string.app_lock_disable_title
                                         } else {
