@@ -58,7 +58,7 @@ jobs:
             --verify-tag \
             --title "${{ github.ref_name }}" \
             --generate-notes \
-            --notes-file fastlane/android/metadata/en-US/changelogs/${{ steps.version.outputs.VERSION_CODE }}.txt \
+            --notes-file fastlane/metadata/android/en-US/changelogs/${{ steps.version.outputs.VERSION_CODE }}.txt \
             ./app/build/outputs/apk/release/app-release.apk
         env:
           GH_TOKEN: ${{ github.token }}

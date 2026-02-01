@@ -26,41 +26,41 @@ import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun ThemeModeItem(themeMode: Settings.ThemeMode, onThemeModeChange: (Settings.ThemeMode) -> Unit) {
+fun LanguageItem(language: Settings.Language, onLanguageChange: (Settings.Language) -> Unit) {
     var showBottomSheet by retain { mutableStateOf(false) }
 
     ListItem(
         onClick = { showBottomSheet = true },
-        content = { Text(text = stringResource(R.string.app_theme_title)) },
-        supportingContent = { Text(text = stringResource(R.string.app_theme_description)) },
-        trailingContent = { Text(text = stringResource(themeMode.resId)) },
+        content = { Text(text = stringResource(R.string.language_title)) },
+        supportingContent = { Text(text = stringResource(R.string.language_description)) },
+        trailingContent = { Text(text = language.displayName) },
         shapes = UiConfig.listItemShapes(),
     )
 
     if (showBottomSheet) {
-        ThemeModeSelectionSheet(
+        LanguageSelectionSheet(
             onDismiss = { showBottomSheet = false },
-            themeMode = themeMode,
-            onThemeModeChange = onThemeModeChange,
+            language = language,
+            onLanguageChange = onLanguageChange,
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun ThemeModeSelectionSheet(
+private fun LanguageSelectionSheet(
     onDismiss: () -> Unit,
-    themeMode: Settings.ThemeMode,
-    onThemeModeChange: (Settings.ThemeMode) -> Unit,
+    language: Settings.Language,
+    onLanguageChange: (Settings.Language) -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = { onDismiss() }) {
         Column(modifier = Modifier.padding(horizontal = 12.dp)) {
-            Settings.ThemeMode.entries.forEach {
+            Settings.Language.entries.forEach {
                 ListItem(
-                    onClick = { onThemeModeChange(it) },
-                    selected = it == themeMode,
-                    leadingContent = { RadioButton(selected = it == themeMode, onClick = null) },
-                    content = { Text(text = stringResource(it.resId)) },
+                    onClick = { onLanguageChange(it) },
+                    selected = it == language,
+                    leadingContent = { RadioButton(selected = it == language, onClick = null) },
+                    content = { Text(text = it.displayName) },
                     colors =
                         ListItemDefaults.colors(containerColor = BottomSheetDefaults.ContainerColor),
                 )
@@ -71,20 +71,20 @@ private fun ThemeModeSelectionSheet(
 
 @PreviewLightDark
 @Composable
-private fun ThemeModeItemPreview() {
+private fun LanguageItemPreview() {
     WiFiPasswordManagerTheme {
-        ThemeModeItem(themeMode = Settings.ThemeMode.SYSTEM, onThemeModeChange = {})
+        LanguageItem(language = Settings.Language.ENGLISH, onLanguageChange = {})
     }
 }
 
 @PreviewLightDark
 @Composable
-private fun ThemeModeSelectionSheetPreview() {
+private fun LanguageSelectionSheetPreview() {
     WiFiPasswordManagerTheme {
-        ThemeModeSelectionSheet(
+        LanguageSelectionSheet(
             onDismiss = {},
-            themeMode = Settings.ThemeMode.entries.random(),
-            onThemeModeChange = {},
+            language = Settings.Language.entries.random(),
+            onLanguageChange = {},
         )
     }
 }

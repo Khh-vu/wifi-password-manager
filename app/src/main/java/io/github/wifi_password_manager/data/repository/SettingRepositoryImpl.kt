@@ -9,8 +9,11 @@ import io.github.wifi_password_manager.domain.repository.SettingRepository
 import java.io.InputStream
 import java.io.OutputStream
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.invoke
 import kotlinx.serialization.json.Json
 
@@ -40,11 +43,12 @@ class SettingRepositoryImpl(
                 },
         )
 
-    override val settings: Flow<Settings> = context.dataStore.data
-
-    override suspend fun getSettings(): Settings {
-        return settings.firstOrNull() ?: Settings()
-    }
+    override val settings: StateFlow<Settings> =
+        context.dataStore.data.stateIn(
+            scope = CoroutineScope(dispatcher + SupervisorJob()),
+            started = SharingStarted.Eagerly,
+            initialValue = Settings(),
+        )
 
     override suspend fun updateSettings(transform: suspend (Settings) -> Settings) {
         context.dataStore.updateData(transform)

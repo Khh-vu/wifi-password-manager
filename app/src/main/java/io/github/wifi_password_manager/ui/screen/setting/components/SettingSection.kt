@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,13 +32,15 @@ fun SettingSection(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @PreviewLightDark
 @Composable
 private fun SettingBoxPreview() {
     WiFiPasswordManagerTheme {
         SettingSection(title = "Setting") {
             ListItem(
-                headlineContent = { Text(text = "Setting 1") },
+                onClick = {},
+                content = { Text(text = "Setting 1") },
                 supportingContent = { Text(text = "Description") },
             )
         }

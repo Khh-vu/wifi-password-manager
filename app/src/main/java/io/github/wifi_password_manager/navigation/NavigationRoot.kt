@@ -2,7 +2,6 @@ package io.github.wifi_password_manager.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,8 +22,8 @@ import io.github.wifi_password_manager.ui.screen.note.NoteView
 import io.github.wifi_password_manager.ui.screen.note.NoteViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingView
 import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
+import io.github.wifi_password_manager.ui.shared.ObserveAsEvent
 import io.github.wifi_password_manager.utils.toast
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -66,12 +65,10 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         val viewModel = koinViewModel<NetworkListViewModel>()
                         val state by viewModel.state.collectAsStateWithLifecycle()
 
-                        LaunchedEffect(Unit) {
-                            viewModel.event.collectLatest { event ->
-                                when (event) {
-                                    is NetworkListViewModel.Event.ShowMessage -> {
-                                        context.toast(event.message.asString(context))
-                                    }
+                        ObserveAsEvent(viewModel.event) { event ->
+                            when (event) {
+                                is NetworkListViewModel.Event.ShowMessage -> {
+                                    context.toast(event.message.asString(context))
                                 }
                             }
                         }
@@ -83,12 +80,10 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         val viewModel = koinViewModel<SettingViewModel>()
                         val state by viewModel.state.collectAsStateWithLifecycle()
 
-                        LaunchedEffect(Unit) {
-                            viewModel.event.collectLatest { event ->
-                                when (event) {
-                                    is SettingViewModel.Event.ShowMessage -> {
-                                        context.toast(event.message.asString(context))
-                                    }
+                        ObserveAsEvent(viewModel.event) { event ->
+                            when (event) {
+                                is SettingViewModel.Event.ShowMessage -> {
+                                    context.toast(event.message.asString(context))
                                 }
                             }
                         }
@@ -102,15 +97,13 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         val viewModel = koinViewModel<NoteViewModel> { parametersOf(it.network) }
                         val state by viewModel.state.collectAsStateWithLifecycle()
 
-                        LaunchedEffect(Unit) {
-                            viewModel.event.collectLatest { event ->
-                                when (event) {
-                                    is NoteViewModel.Event.ShowMessage -> {
-                                        context.toast(event.message.asString(context))
-                                    }
-                                    is NoteViewModel.Event.NavigateBack -> {
-                                        backStack.removeLastOrNull()
-                                    }
+                        ObserveAsEvent(viewModel.event) { event ->
+                            when (event) {
+                                is NoteViewModel.Event.ShowMessage -> {
+                                    context.toast(event.message.asString(context))
+                                }
+                                is NoteViewModel.Event.NavigateBack -> {
+                                    backStack.removeLastOrNull()
                                 }
                             }
                         }

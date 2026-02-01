@@ -60,6 +60,8 @@ class SettingViewModel(
     )
 
     sealed interface Action {
+        data class UpdateLanguage(val language: Settings.Language) : Action
+
         data class UpdateThemeMode(val themeMode: Settings.ThemeMode) : Action
 
         data class ToggleMaterialYou(val value: Boolean) : Action
@@ -102,6 +104,7 @@ class SettingViewModel(
     fun onAction(action: Action) {
         Log.d(TAG, "onAction: $action")
         when (action) {
+            is Action.UpdateLanguage -> onUpdateLanguage(action.language)
             is Action.UpdateThemeMode -> onUpdateThemeMode(action.themeMode)
             is Action.ToggleMaterialYou -> onToggleMaterialYou(action.value)
             is Action.ToggleAppLock -> onToggleAppLock(action.value)
@@ -115,6 +118,10 @@ class SettingViewModel(
             is Action.HideForgetAllDialog -> _state.update { it.copy(showForgetAllDialog = false) }
             is Action.ConfirmForgetAllNetworks -> onForgetAllNetworks()
         }
+    }
+
+    private fun onUpdateLanguage(value: Settings.Language) {
+        viewModelScope.launch { settingRepository.updateSettings { it.copy(language = value) } }
     }
 
     private fun onUpdateThemeMode(value: Settings.ThemeMode) {

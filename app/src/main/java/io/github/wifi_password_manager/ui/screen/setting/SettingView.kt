@@ -1,11 +1,6 @@
 package io.github.wifi_password_manager.ui.screen.setting
 
 import android.os.Build
-import androidx.biometric.AuthenticationRequest
-import androidx.biometric.AuthenticationResult
-import androidx.biometric.BiometricPrompt
-import androidx.biometric.compose.rememberAuthenticationLauncher
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,10 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -35,22 +26,22 @@ import io.github.wifi_password_manager.BuildConfig
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
+import io.github.wifi_password_manager.ui.UiConfig
+import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllConfirmDialog
+import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.LoadingDialog
 import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
-import io.github.wifi_password_manager.utils.isBiometricAuthenticationSupported
 import io.github.wifi_password_manager.utils.plus
-import io.github.wifi_password_manager.utils.toast
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Action) -> Unit) {
     val uriHandler = LocalUriHandler.current
     val navBackStack = LocalNavBackStack.current
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -75,6 +66,12 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             // Appearance Section
             item {
                 SettingSection(title = stringResource(R.string.appearance_section)) {
+                    LanguageItem(language = state.settings.language) {
+                        onAction(SettingViewModel.Action.UpdateLanguage(it))
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
+
                     ThemeModeItem(themeMode = state.settings.themeMode) {
                         onAction(SettingViewModel.Action.UpdateThemeMode(it))
                     }
@@ -83,17 +80,14 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                         ListItem(
-                            modifier =
-                                Modifier.clickable {
-                                    onAction(
-                                        SettingViewModel.Action.ToggleMaterialYou(
-                                            !state.settings.useMaterialYou
-                                        )
+                            onClick = {
+                                onAction(
+                                    SettingViewModel.Action.ToggleMaterialYou(
+                                        !state.settings.useMaterialYou
                                     )
-                                },
-                            headlineContent = {
-                                Text(text = stringResource(R.string.material_you_title))
+                                )
                             },
+                            content = { Text(text = stringResource(R.string.material_you_title)) },
                             trailingContent = {
                                 Switch(
                                     checked = state.settings.useMaterialYou,
@@ -102,6 +96,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                     },
                                 )
                             },
+                            shapes = UiConfig.listItemShapes(),
                         )
                     }
                 }
@@ -111,23 +106,23 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             item {
                 SettingSection(title = stringResource(R.string.import_export_section)) {
                     ListItem(
-                        modifier =
-                            Modifier.clickable { onAction(SettingViewModel.Action.ImportNetworks) },
-                        headlineContent = { Text(text = stringResource(R.string.import_action)) },
+                        onClick = { onAction(SettingViewModel.Action.ImportNetworks) },
+                        content = { Text(text = stringResource(R.string.import_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.import_description))
                         },
+                        shapes = UiConfig.listItemShapes(),
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        modifier =
-                            Modifier.clickable { onAction(SettingViewModel.Action.ExportNetworks) },
-                        headlineContent = { Text(text = stringResource(R.string.export_action)) },
+                        onClick = { onAction(SettingViewModel.Action.ExportNetworks) },
+                        content = { Text(text = stringResource(R.string.export_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.export_description))
                         },
+                        shapes = UiConfig.listItemShapes(),
                     )
                 }
             }
@@ -135,73 +130,22 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             // Security Section
             item {
                 SettingSection(title = stringResource(R.string.security_section)) {
-                    val isAvailable = context.isBiometricAuthenticationSupported()
-                    val appLockEnabled by rememberUpdatedState(state.settings.appLockEnabled)
-                    val launcher = rememberAuthenticationLauncher { result ->
-                        when (result) {
-                            is AuthenticationResult.Error -> {
-                                when (result.errorCode) {
-                                    BiometricPrompt.ERROR_USER_CANCELED,
-                                    BiometricPrompt.ERROR_NEGATIVE_BUTTON,
-                                    BiometricPrompt.ERROR_TIMEOUT,
-                                    BiometricPrompt.ERROR_CANCELED -> Unit
-                                    BiometricPrompt.ERROR_LOCKOUT ->
-                                        context.toast(R.string.app_lock_too_many_attempts)
-                                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT ->
-                                        context.toast(R.string.app_lock_permanently_locked)
-                                    else -> context.toast(R.string.app_lock_authentication_failed)
-                                }
-                            }
-                            is AuthenticationResult.Success -> {
-                                onAction(SettingViewModel.Action.ToggleAppLock(!appLockEnabled))
-                            }
-                        }
-                    }
-                    val handleToggle by rememberUpdatedState {
-                        val request =
-                            AuthenticationRequest.biometricRequest(
-                                title =
-                                    context.getString(
-                                        if (appLockEnabled) {
-                                            R.string.app_lock_disable_title
-                                        } else {
-                                            R.string.app_lock_enable_title
-                                        }
-                                    ),
-                                authFallback =
-                                    AuthenticationRequest.Biometric.Fallback.DeviceCredential,
-                            ) {}
-                        launcher.launch(request)
-                    }
-                    ListItem(
-                        modifier = Modifier.clickable(enabled = isAvailable) { handleToggle() },
-                        headlineContent = { Text(text = stringResource(R.string.app_lock_title)) },
-                        supportingContent = {
-                            Text(text = stringResource(R.string.app_lock_description))
-                        },
-                        trailingContent = {
-                            Switch(
-                                checked = state.settings.appLockEnabled && isAvailable,
-                                onCheckedChange = { handleToggle() },
-                                enabled = isAvailable,
-                            )
-                        },
+                    AppLockItem(
+                        appLockEnabled = state.settings.appLockEnabled,
+                        onToggleAppLock = { onAction(SettingViewModel.Action.ToggleAppLock(it)) },
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        modifier =
-                            Modifier.clickable {
-                                onAction(
-                                    SettingViewModel.Action.ToggleSecureScreen(
-                                        !state.settings.secureScreenEnabled
-                                    )
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleSecureScreen(
+                                    !state.settings.secureScreenEnabled
                                 )
-                            },
-                        headlineContent = {
-                            Text(text = stringResource(R.string.secure_screen_title))
+                            )
                         },
+                        content = { Text(text = stringResource(R.string.secure_screen_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.secure_screen_description))
                         },
@@ -213,6 +157,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 },
                             )
                         },
+                        shapes = UiConfig.listItemShapes(),
                     )
                 }
             }
@@ -221,30 +166,25 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             item {
                 SettingSection(title = stringResource(R.string.advanced_section)) {
                     ListItem(
-                        modifier =
-                            Modifier.clickable {
-                                onAction(SettingViewModel.Action.ShowForgetAllDialog)
-                            },
-                        headlineContent = {
-                            Text(text = stringResource(R.string.forget_all_action))
-                        },
+                        onClick = { onAction(SettingViewModel.Action.ShowForgetAllDialog) },
+                        content = { Text(text = stringResource(R.string.forget_all_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.forget_all_description))
                         },
+                        shapes = UiConfig.listItemShapes(),
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        modifier =
-                            Modifier.clickable {
-                                onAction(
-                                    SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
-                                        !state.settings.autoPersistEphemeralNetworks
-                                    )
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
+                                    !state.settings.autoPersistEphemeralNetworks
                                 )
-                            },
-                        headlineContent = {
+                            )
+                        },
+                        content = {
                             Text(
                                 text =
                                     stringResource(R.string.auto_persist_ephemeral_networks_action)
@@ -270,6 +210,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 },
                             )
                         },
+                        shapes = UiConfig.listItemShapes(),
                     )
                 }
             }
@@ -278,38 +219,40 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             item {
                 SettingSection(title = stringResource(R.string.about_section)) {
                     ListItem(
-                        modifier = Modifier.clickable { navBackStack.add(Route.LicenseScreen) },
-                        headlineContent = { Text(text = stringResource(R.string.license_title)) },
+                        onClick = { navBackStack.add(Route.LicenseScreen) },
+                        content = { Text(text = stringResource(R.string.license_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.license_description))
                         },
+                        shapes = UiConfig.listItemShapes(),
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     val sourceCodeUrl = "https://github.com/Khh-vu/wifi-password-manager"
                     ListItem(
-                        modifier = Modifier.clickable { uriHandler.openUri(sourceCodeUrl) },
-                        headlineContent = {
-                            Text(text = stringResource(R.string.source_code_title))
-                        },
+                        onClick = { uriHandler.openUri(sourceCodeUrl) },
+                        content = { Text(text = stringResource(R.string.source_code_title)) },
                         supportingContent = { Text(text = sourceCodeUrl) },
+                        shapes = UiConfig.listItemShapes(),
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        headlineContent = { Text(text = stringResource(R.string.version_title)) },
+                        onClick = {},
+                        content = { Text(text = stringResource(R.string.version_title)) },
                         supportingContent = { Text(text = BuildConfig.VERSION_NAME) },
+                        shapes = UiConfig.listItemShapes(),
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        headlineContent = {
-                            Text(text = stringResource(R.string.build_type_title))
-                        },
+                        onClick = {},
+                        content = { Text(text = stringResource(R.string.build_type_title)) },
                         supportingContent = { Text(text = BuildConfig.BUILD_TYPE) },
+                        shapes = UiConfig.listItemShapes(),
                     )
                 }
             }

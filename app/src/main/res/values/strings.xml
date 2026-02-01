@@ -36,6 +36,8 @@
 
     <!-- Appearance Section -->
     <string name="appearance_section">Appearance</string>
+    <string name="language_title">Language</string>
+    <string name="language_description">Change the app\'s language</string>
     <string name="app_theme_title">App Theme</string>
     <string name="app_theme_description">Change the app\'s appearance</string>
     <string name="material_you_title">Material You</string>
@@ -55,6 +57,9 @@
     <string name="app_lock_enable_title">Authenticate to enable App Lock</string>
     <string name="secure_screen_title">Secure Screen</string>
     <string name="secure_screen_description">Block screenshots and prevent display on insecure screens</string>
+    <string name="lock_screen_required_title">Lock Screen Required</string>
+    <string name="lock_screen_required_message">To use App Lock, you need to set up a screen lock on your device first.</string>
+    <string name="open_settings">Open Settings</string>
 
     <!-- Advanced Section -->
     <string name="advanced_section">Advanced</string>
@@ -130,4 +135,5 @@
     <string name="app_lock_too_many_attempts">Too many attempts. Try again later.</string>
     <string name="app_lock_permanently_locked">Biometric locked. Use device credentials.</string>
     <string name="app_lock_authentication_failed">Authentication failed.</string>
+    <string name="app_lock_disabled">Screen lock was removed. App Lock has been disabled.</string>
 </resources>

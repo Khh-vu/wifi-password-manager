@@ -29,6 +29,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -42,6 +43,7 @@ import io.github.wifi_password_manager.utils.toast
 @Composable
 fun LockView(onAuthenticated: () -> Unit) {
     val context = LocalContext.current
+    val resources = LocalResources.current
 
     val launcher = rememberAuthenticationLauncher { result ->
         when (result) {
@@ -66,7 +68,7 @@ fun LockView(onAuthenticated: () -> Unit) {
     val startAuthentication by rememberUpdatedState {
         val request =
             AuthenticationRequest.biometricRequest(
-                title = context.getString(R.string.app_lock_required),
+                title = resources.getString(R.string.app_lock_required),
                 authFallback = AuthenticationRequest.Biometric.Fallback.DeviceCredential,
             ) {}
         launcher.launch(request)

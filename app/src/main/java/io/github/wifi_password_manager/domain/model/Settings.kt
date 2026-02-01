@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 @Immutable
 @Serializable
 data class Settings(
+    val language: Language = Language.ENGLISH,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val useMaterialYou: Boolean = true,
     val autoPersistEphemeralNetworks: Boolean = false,
@@ -41,5 +42,11 @@ data class Settings(
                     DARK -> R.string.theme_mode_dark
                     SYSTEM -> R.string.theme_mode_system
                 }
+    }
+
+    @Serializable
+    enum class Language(val code: String, val displayName: String) {
+        ENGLISH("en", "English"),
+        RUSSIAN("ru", "Русский"),
     }
 }
