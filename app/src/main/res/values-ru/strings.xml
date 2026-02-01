@@ -36,6 +36,8 @@
 
     <!-- Appearance Section -->
     <string name="appearance_section">Внешний вид</string>
+    <string name="language_title">Язык</string>
+    <string name="language_description">Изменить язык приложения</string>
     <string name="app_theme_title">Тема приложения</string>
     <string name="app_theme_description">Изменить внешний вид приложения</string>
     <string name="material_you_title">Material You</string>
@@ -55,6 +57,9 @@
     <string name="app_lock_enable_title">Подтвердите личность для включения блокировки</string>
     <string name="secure_screen_title">Защита экрана</string>
     <string name="secure_screen_description">Блокировать скриншоты и скрывать содержимое на небезопасных экранах</string>
+    <string name="lock_screen_required_title">Требуется блокировка экрана</string>
+    <string name="lock_screen_required_message">Чтобы использовать блокировку приложения, сначала необходимо настроить блокировку экрана на вашем устройстве.</string>
+    <string name="open_settings">Открыть настройки</string>
 
     <!-- Advanced Section -->
     <string name="advanced_section">Дополнительно</string>
@@ -130,4 +135,5 @@
     <string name="app_lock_too_many_attempts">Слишком много попыток. Попробуйте позже.</string>
     <string name="app_lock_permanently_locked">Биометрия заблокирована. Используйте пароль устройства.</string>
     <string name="app_lock_authentication_failed">Ошибка аутентификации.</string>
+    <string name="app_lock_disabled">Блокировка экрана была удалена. Защита приложения отключена.</string>
 </resources>
