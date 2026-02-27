@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import com.skydoves.compose.stability.runtime.TraceRecomposition
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
@@ -23,7 +22,6 @@ import io.github.wifi_password_manager.utils.DeviceConfiguration
 import io.github.wifi_password_manager.utils.MOCK
 import io.github.wifi_password_manager.utils.plus
 
-@TraceRecomposition(tag = "NetworkList")
 @Composable
 fun NetworkList(
     modifier: Modifier = Modifier,
