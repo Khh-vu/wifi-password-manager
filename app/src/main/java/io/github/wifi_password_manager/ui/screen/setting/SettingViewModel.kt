@@ -20,6 +20,7 @@ import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.UiText
+import io.github.wifi_password_manager.utils.groupAndSortedBySsid
 import io.github.wifi_password_manager.utils.toWifiConfigurations
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
@@ -164,7 +165,7 @@ class SettingViewModel(
                             suggestedName = "WiFi_${LocalDateTime.now().format(formatter)}",
                             extension = "json",
                         ) ?: return@launch
-                    val networks = wifiRepository.getAllNetworksList()
+                    val networks = wifiRepository.getAllNetworksList().groupAndSortedBySsid()
                     Dispatchers.IO { file.writeString(fileRepository.networksToJson(networks)) }
                 }
                 .fold(
