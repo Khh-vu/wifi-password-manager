@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.skydoves.compose.stability.runtime.ComposeStabilityAnalyzer
 import com.topjohnwu.superuser.Shell
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.workers.PersistEphemeralNetworksWorker
@@ -36,6 +37,7 @@ class App : Application() {
             workManagerFactory()
         }
 
+        ComposeStabilityAnalyzer.setEnabled(BuildConfig.DEBUG)
         observeAutoPersistEphemeralNetworks()
     }
 

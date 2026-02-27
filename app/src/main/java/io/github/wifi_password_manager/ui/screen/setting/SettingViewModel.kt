@@ -21,9 +21,7 @@ import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.toWifiConfigurations
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -37,12 +35,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.SerializationException
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class SettingViewModel(
     private val settingRepository: SettingRepository,
@@ -152,7 +147,6 @@ class SettingViewModel(
         }
     }
 
-    @OptIn(ExperimentalTime::class, FormatStringsInDatetimeFormats::class)
     private fun onExportNetworks() {
         viewModelScope.launch {
             runCatching {
@@ -164,12 +158,10 @@ class SettingViewModel(
                         return@launch
                     }
 
-                    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                    val formatter =
-                        LocalDateTime.Format { byUnicodePattern(pattern = "yyyy-MM-dd_HH:mm:ss") }
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss")
                     val file =
                         FileKit.openFileSaver(
-                            suggestedName = "WiFi_${formatter.format(now)}",
+                            suggestedName = "WiFi_${LocalDateTime.now().format(formatter)}",
                             extension = "json",
                         ) ?: return@launch
                     val networks = wifiRepository.getAllNetworksList()

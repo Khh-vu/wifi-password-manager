@@ -16,16 +16,13 @@ import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import kotlin.random.Random
-import kotlinx.collections.immutable.persistentSetOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toImmutableSet
 
 fun WifiNetwork.Companion.fromWifiConfiguration(config: WifiConfiguration): WifiNetwork {
     val network = Refine.unsafeCast<WifiConfigurationHidden>(config)
     return WifiNetwork(
         networkId = network.networkId,
         ssid = network.printableSsid,
-        securityType = persistentSetOf(network.securityType),
+        securityType = setOf(network.securityType),
         password = network.simpleKey,
         hidden = network.hiddenSSID,
         autojoin = network.allowAutojoin,
@@ -46,14 +43,13 @@ val WifiNetwork.Companion.MOCK
                         } else {
                             ""
                         },
-                    securityType = persistentSetOf(type),
+                    securityType = setOf(type),
                     hidden = Random.nextBoolean(),
                     autojoin = Random.nextBoolean(),
                     private = Random.nextBoolean(),
                     note = if (Random.nextBoolean()) "Note $it" else null,
                 )
             }
-            .toImmutableList()
 
 fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
     groupBy { it.ssid }
@@ -61,7 +57,7 @@ fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
         .map { duplicateNetworks ->
             duplicateNetworks
                 .first()
-                .copy(securityType = duplicateNetworks.flatMap { it.securityType }.toImmutableSet())
+                .copy(securityType = duplicateNetworks.flatMap { it.securityType }.toSet())
         }
         .sortedBy { it.ssid.lowercase() }
 

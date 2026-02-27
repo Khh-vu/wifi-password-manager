@@ -3,7 +3,6 @@ package io.github.wifi_password_manager.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import io.github.wifi_password_manager.domain.model.WifiNetwork
-import kotlinx.collections.immutable.toImmutableSet
 
 @Entity(tableName = "wifi_networks")
 data class WifiNetworkEntity(
@@ -36,7 +35,7 @@ fun WifiNetworkEntity.toDomain(): WifiNetwork {
         networkId = networkId,
         ssid = ssid,
         securityType =
-            securityTypes.split(",").map(WifiNetwork.SecurityType::valueOf).toImmutableSet(),
+            securityTypes.split(",").map(WifiNetwork.SecurityType::valueOf).toSet(),
         password = password,
         hidden = hidden,
         autojoin = autojoin,

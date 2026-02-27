@@ -19,10 +19,8 @@ junitVersion = "1.3.0"
 koin = "4.1.1"
 koinAnnotations = "2.3.1"
 kotlin = "2.3.10"
-kotlinxCollectionsImmutable = "0.4.0"
-kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.10.0"
-ksp = "2.3.4"
+ksp = "2.3.6"
 ktfmt = "0.25.0"
 leakcanary = "3.0-alpha-8"
 libsu = "6.0.0"
@@ -77,8 +75,6 @@ koin-compose = { group = "io.insert-koin", name = "koin-compose", version.ref = 
 koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel", version.ref = "koin" }
 koin-core = { group = "io.insert-koin", name = "koin-core", version.ref = "koin" }
 koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinAnnotations" }
-kotlinx-collections-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
-kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanary" }
 libsu-core = { module = "com.github.topjohnwu.libsu:core", version.ref = "libsu" }
