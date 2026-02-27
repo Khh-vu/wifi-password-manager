@@ -4,9 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.aboutLibraries)
-    alias(libs.plugins.aboutLibraries.android)
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
@@ -75,7 +73,13 @@ android {
         compose = true
         buildConfig = true
     }
-    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+    packaging {
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+        jniLibs {
+            keepDebugSymbols +=
+                setOf("**/libandroidx.graphics.path.so", "**/libdatastore_shared_counter.so")
+        }
+    }
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false

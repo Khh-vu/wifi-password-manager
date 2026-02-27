@@ -1,7 +1,4 @@
-plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-}
+plugins { alias(libs.plugins.android.library) }
 
 android {
     namespace = "io.github.wifi_password_manager.hidden_api"
