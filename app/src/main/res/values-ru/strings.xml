@@ -6,16 +6,20 @@
     <string name="ok">ОК</string>
     <string name="clear">Очистить</string>
     <string name="back">Назад</string>
-    <string name="save">Сохранить</string>
     <string name="on">Вкл.</string>
     <string name="off">Выкл.</string>
-    <string name="delete">Удалить</string>
     <string name="warning">Внимание</string>
 
     <!-- Theme Mode -->
     <string name="theme_mode_light">Светлая</string>
     <string name="theme_mode_dark">Тёмная</string>
     <string name="theme_mode_system">Системная</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">Обычный (JSON)</string>
+    <string name="export_option_plain_description">Форматированный JSON. Легко читать и редактировать</string>
+    <string name="export_option_compressed">Сжатый (GZip)</string>
+    <string name="export_option_compressed_description">JSON сжатый GZip. Меньший размер файла</string>
 
     <!-- Lock Screen -->
     <string name="lock_title">Приложение заблокировано</string>
@@ -45,9 +49,9 @@
     <!-- Import & Export Section -->
     <string name="import_export_section">Импорт и экспорт</string>
     <string name="import_action">Импортировать сети</string>
-    <string name="import_description">Импорт сетей WiFi из файлов JSON</string>
+    <string name="import_description">Импорт сетей WiFi из файлов JSON или GZip</string>
     <string name="export_action">Экспортировать сети</string>
-    <string name="export_description">Экспорт сетей WiFi в файл JSON</string>
+    <string name="export_description">Экспорт сетей WiFi в файл</string>
 
     <!-- Security Section -->
     <string name="security_section">Безопасность</string>

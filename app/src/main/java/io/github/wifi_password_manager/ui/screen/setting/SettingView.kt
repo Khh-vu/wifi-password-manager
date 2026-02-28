@@ -28,6 +28,7 @@ import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
 import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
+import io.github.wifi_password_manager.ui.screen.setting.components.ExportDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllConfirmDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
@@ -117,7 +118,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ExportNetworks) },
+                        onClick = { onAction(SettingViewModel.Action.ShowExportDialog) },
                         content = { Text(text = stringResource(R.string.export_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.export_description))
@@ -258,15 +259,22 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             }
         }
 
-        if (state.isLoading) {
-            LoadingDialog()
-        }
-
-        if (state.showForgetAllDialog) {
-            ForgetAllConfirmDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
-                onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks) },
-            )
+        when {
+            state.isLoading -> {
+                LoadingDialog()
+            }
+            state.showForgetAllDialog -> {
+                ForgetAllConfirmDialog(
+                    onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
+                    onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks) },
+                )
+            }
+            state.showExportDialog -> {
+                ExportDialog(
+                    onDismiss = { onAction(SettingViewModel.Action.HideExportDialog) },
+                    onSelect = { onAction(SettingViewModel.Action.ConfirmExport(it)) },
+                )
+            }
         }
     }
 }

@@ -6,16 +6,20 @@
     <string name="ok">好的</string>
     <string name="clear">清除</string>
     <string name="back">退格</string>
-    <string name="save">保存</string>
     <string name="on">开启</string>
     <string name="off">关闭</string>
-    <string name="delete">删除</string>
     <string name="warning">警告</string>
 
     <!-- Theme Mode -->
     <string name="theme_mode_light">亮色</string>
     <string name="theme_mode_dark">深色</string>
     <string name="theme_mode_system">跟随系统</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">纯文本（JSON）</string>
+    <string name="export_option_plain_description">格式化的JSON。易于阅读和编辑</string>
+    <string name="export_option_compressed">压缩（GZip）</string>
+    <string name="export_option_compressed_description">GZip压缩的JSON。文件大小更小</string>
 
     <!-- Lock Screen -->
     <string name="lock_title">应用锁定</string>
@@ -45,9 +49,9 @@
     <!-- Import & Export Section -->
     <string name="import_export_section">导入&amp;导出</string>
     <string name="import_action">导入网络</string>
-    <string name="import_description">从JSON文件导入WiFi网络</string>
+    <string name="import_description">从JSON或GZip文件导入WiFi网络</string>
     <string name="export_action">导出网络</string>
-    <string name="export_description">将 WiFi 网络导出到JSON文件</string>
+    <string name="export_description">将WiFi网络导出到文件</string>
 
     <!-- Security Section -->
     <string name="security_section">安全</string>

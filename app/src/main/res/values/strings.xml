@@ -6,16 +6,20 @@
     <string name="ok">OK</string>
     <string name="clear">Clear</string>
     <string name="back">Back</string>
-    <string name="save">Save</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-    <string name="delete">Delete</string>
     <string name="warning">Warning</string>
 
     <!-- Theme Mode -->
     <string name="theme_mode_light">Light</string>
     <string name="theme_mode_dark">Dark</string>
     <string name="theme_mode_system">System</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">Plain (JSON)</string>
+    <string name="export_option_plain_description">Pretty-printed JSON. Easy to read and edit</string>
+    <string name="export_option_compressed">Compressed (GZip)</string>
+    <string name="export_option_compressed_description">GZip compressed JSON. Smaller file size</string>
 
     <!-- Lock Screen -->
     <string name="lock_title">App Locked</string>
@@ -45,9 +49,9 @@
     <!-- Import & Export Section -->
     <string name="import_export_section">Import &amp; Export</string>
     <string name="import_action">Import networks</string>
-    <string name="import_description">Import WiFi networks from JSON file(s)</string>
+    <string name="import_description">Import WiFi networks from JSON or GZip file(s)</string>
     <string name="export_action">Export networks</string>
-    <string name="export_description">Export WiFi networks to a JSON file</string>
+    <string name="export_description">Export WiFi networks to a file</string>
 
     <!-- Security Section -->
     <string name="security_section">Security</string>

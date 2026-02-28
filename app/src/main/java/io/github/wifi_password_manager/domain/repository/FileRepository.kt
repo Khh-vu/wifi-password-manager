@@ -6,4 +6,8 @@ interface FileRepository {
     suspend fun networksToJson(networks: List<WifiNetwork>): String
 
     suspend fun networksFromJson(jsonString: String): List<WifiNetwork>
+
+    suspend fun networksToGZip(networks: List<WifiNetwork>): ByteArray
+
+    suspend fun networksFromGZip(data: ByteArray): List<WifiNetwork>
 }
