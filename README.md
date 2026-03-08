@@ -82,4 +82,5 @@ To verify the authenticity of downloaded APK files, you can check the SHA-256 ce
 
 ## Disclaimer
 
-Use at your own risk. I'm not responsible for any misuse or damage caused by this application.
+- This app is designed for AOSP-based ROMs. Custom ROMs or operating systems with heavily modified Android frameworks may not be fully supported or compatible.
+- Use at your own risk. I'm not responsible for any misuse or damage caused by this application.
