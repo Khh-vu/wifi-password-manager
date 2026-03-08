@@ -52,6 +52,12 @@
     <string name="import_description">从JSON或GZip文件导入WiFi网络</string>
     <string name="export_action">导出网络</string>
     <string name="export_description">将WiFi网络导出到文件</string>
+    <string name="export_format">格式</string>
+    <string name="encrypt_export">加密导出</string>
+    <string name="password">密码</string>
+    <string name="password_required">需要密码来加密和解密文件</string>
+    <string name="show_password">显示密码</string>
+    <string name="hide_password">隐藏密码</string>
 
     <!-- Security Section -->
     <string name="security_section">安全</string>
@@ -122,6 +128,10 @@
     <string name="forget_all_confirmation_title">忘记了所有网络？</string>
     <string name="forget_all_confirmation_message">这将从此设备永久删除所有保存的WiFi网络。此操作无法撤消。</string>
 
+    <!-- Import Password Dialog -->
+    <string name="import_password_title">输入密码</string>
+    <string name="import_password_description">此文件已加密。输入密码以解密。</string>
+
     <!-- Messages -->
     <string name="loading">加载中......</string>
     <string name="refresh_success">刷新成功</string>
@@ -135,6 +145,7 @@
     <string name="no_network_to_forget">找不到被忘记的网络</string>
     <string name="no_network_to_export">没有可以导出的网络</string>
     <string name="invalid_json">无法使用选定的JSON文件</string>
+    <string name="wrong_password">解密失败。密码错误？</string>
     <string name="app_lock_required">输入您的屏幕锁以访问</string>
     <string name="app_lock_too_many_attempts">尝试过多。请稍后再试。</string>
     <string name="app_lock_permanently_locked">生物特征已锁定。使用设备凭据。</string>

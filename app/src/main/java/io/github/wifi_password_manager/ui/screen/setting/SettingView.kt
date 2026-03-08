@@ -30,6 +30,7 @@ import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ExportDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllConfirmDialog
+import io.github.wifi_password_manager.ui.screen.setting.components.ImportPasswordDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
@@ -272,7 +273,17 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             state.showExportDialog -> {
                 ExportDialog(
                     onDismiss = { onAction(SettingViewModel.Action.HideExportDialog) },
-                    onSelect = { onAction(SettingViewModel.Action.ConfirmExport(it)) },
+                    onSelect = { option, password ->
+                        onAction(SettingViewModel.Action.ConfirmExport(option, password))
+                    },
+                )
+            }
+            state.showImportPasswordDialog -> {
+                ImportPasswordDialog(
+                    onDismiss = { onAction(SettingViewModel.Action.HideImportPasswordDialog) },
+                    onConfirm = { password ->
+                        onAction(SettingViewModel.Action.ConfirmImportWithPassword(password))
+                    },
                 )
             }
         }
