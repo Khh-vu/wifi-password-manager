@@ -30,12 +30,9 @@ An Android application for managing saved WiFi network passwords using privilege
 
 ## Installation
 
-<a href="https://apt.izzysoft.de/packages/io.github.wifi_password_manager">
-    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="80" alt="Get it on IzzyOnDroid" />
-</a>
-<a href="https://github.com/Khh-vu/wifi-password-manager/releases">
-    <img src=".github/assets/github_badge.png" height="80" alt="Get it on GitHub" />
-</a>
+[<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/io.github.wifi_password_manager)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/packages/io.github.wifi_password_manager)
+[<img src=".github/assets/github_badge.png" alt="Get it on GitHub" height="80">](https://github.com/Khh-vu/wifi-password-manager/releases)
 
 ## Technical Stack
 
