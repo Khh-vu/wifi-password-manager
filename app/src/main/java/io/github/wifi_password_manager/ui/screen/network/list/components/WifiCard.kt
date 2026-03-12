@@ -9,12 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material.icons.filled.DeleteOutline
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.QrCode2
-import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -40,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -133,7 +128,7 @@ private fun SSIDItem(
         trailingContent = {
             TooltipIconButton(
                 onClick = { expanded = true },
-                imageVector = Icons.Filled.MoreVert,
+                painter = painterResource(R.drawable.ic_more_vert),
                 tooltip = stringResource(R.string.more_options),
                 positioning = TooltipAnchorPosition.Below,
             )
@@ -165,7 +160,7 @@ private fun SSIDItem(
                     shape = MenuDefaults.standaloneItemShape,
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Filled.QrCode2,
+                            painter = painterResource(R.drawable.ic_qr_code_2),
                             contentDescription = stringResource(R.string.show_wifi_qr_code),
                         )
                     },
@@ -192,7 +187,7 @@ private fun SSIDItem(
                     },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Outlined.EditNote,
+                            painter = painterResource(R.drawable.ic_edit_note),
                             contentDescription =
                                 stringResource(
                                     if (network.note != null) R.string.edit_note
@@ -212,7 +207,7 @@ private fun SSIDItem(
                         shape = MenuDefaults.standaloneItemShape,
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Filled.DeleteOutline,
+                                painter = painterResource(R.drawable.ic_delete),
                                 contentDescription = stringResource(R.string.delete_note),
                             )
                         },
@@ -245,7 +240,7 @@ private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
                 shapes = ButtonDefaults.shapes(),
             ) {
                 Icon(
-                    imageVector = Icons.Filled.ContentCopy,
+                    painter = painterResource(R.drawable.ic_content_copy),
                     contentDescription = stringResource(R.string.copy_description),
                 )
                 Spacer(modifier = Modifier.width(8.dp))

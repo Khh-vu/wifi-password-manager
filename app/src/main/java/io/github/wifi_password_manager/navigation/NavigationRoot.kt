@@ -6,6 +6,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
@@ -33,6 +34,8 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val resources = LocalResources.current
+
     val backStack =
         rememberNavBackStack(
             configuration =
@@ -68,7 +71,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         ObserveAsEvent(viewModel.event) { event ->
                             when (event) {
                                 is NetworkListViewModel.Event.ShowMessage -> {
-                                    context.toast(event.message.asString(context))
+                                    context.toast(event.message.asString(resources))
                                 }
                             }
                         }
@@ -83,7 +86,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         ObserveAsEvent(viewModel.event) { event ->
                             when (event) {
                                 is SettingViewModel.Event.ShowMessage -> {
-                                    context.toast(event.message.asString(context))
+                                    context.toast(event.message.asString(resources))
                                 }
                             }
                         }
@@ -100,7 +103,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         ObserveAsEvent(viewModel.event) { event ->
                             when (event) {
                                 is NoteViewModel.Event.ShowMessage -> {
-                                    context.toast(event.message.asString(context))
+                                    context.toast(event.message.asString(resources))
                                 }
                                 is NoteViewModel.Event.NavigateBack -> {
                                     backStack.removeLastOrNull()

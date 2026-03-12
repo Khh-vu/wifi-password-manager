@@ -6,8 +6,6 @@ import androidx.biometric.AuthenticationRequest
 import androidx.biometric.AuthenticationResult
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.compose.rememberAuthenticationLauncher
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -26,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import io.github.wifi_password_manager.R
@@ -127,7 +126,7 @@ private fun LockScreenRequiredDialog(onDismiss: () -> Unit) {
         onDismissRequest = { onDismiss() },
         icon = {
             Icon(
-                imageVector = Icons.Filled.Lock,
+                painter = painterResource(R.drawable.ic_lock),
                 contentDescription = stringResource(R.string.lock_screen_required_title),
             )
         },
