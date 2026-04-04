@@ -7,9 +7,9 @@ import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.screen.note.NoteViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
-import org.koin.android.annotation.KoinViewModel
 import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.InjectedParam
+import org.koin.core.annotation.KoinViewModel
 import org.koin.core.annotation.Module
 
 @Module

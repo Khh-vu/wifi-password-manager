@@ -9,7 +9,7 @@ import org.koin.core.annotation.Single
 @Configuration
 class AppModule {
     @Single
-    fun json() = Json {
+    fun json(): Json = Json {
         ignoreUnknownKeys = true
         encodeDefaults = true
         isLenient = true

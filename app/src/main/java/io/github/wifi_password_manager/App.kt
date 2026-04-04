@@ -16,7 +16,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.annotation.KoinApplication
-import org.koin.ksp.generated.startKoin
+import org.koin.plugin.module.dsl.startKoin
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import rikka.shizuku.ShizukuProvider
 
@@ -31,8 +31,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
-            androidLogger()
+        startKoin<App> {
+            if (BuildConfig.DEBUG) androidLogger()
             androidContext(this@App)
             workManagerFactory()
         }

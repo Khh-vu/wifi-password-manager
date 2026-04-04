@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
     alias(libs.plugins.aboutLibraries)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.koin.compiler)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
@@ -88,19 +89,13 @@ android {
 
 composeCompiler {
     stabilityConfigurationFiles.addAll(
-        rootProject.layout.projectDirectory.file("stability_config.conf"),
+        rootProject.layout.projectDirectory.file("stability_config.conf")
     )
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     metricsDestination = layout.buildDirectory.dir("compose_compiler")
 }
 
 ktfmt { kotlinLangStyle() }
-
-ksp {
-    arg("KOIN_CONFIG_CHECK", "true")
-    arg("KOIN_DEFAULT_MODULE", "false")
-    arg("KOIN_LOG_TIMES", "true")
-}
 
 dependencies {
     // AndroidX
@@ -154,7 +149,7 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.core)
-    ksp(libs.koin.ksp.compiler)
+    implementation(platform(libs.koin.bom))
 
     // QR Code
     implementation(libs.qrose)

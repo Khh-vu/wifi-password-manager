@@ -12,6 +12,8 @@ pluginManagement {
     }
 }
 
+plugins { id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0" }
+
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -25,4 +27,5 @@ dependencyResolutionManagement {
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "wifi-password-manager"
-include(":app",":hidden-api")
+
+include(":app", ":hidden-api")
