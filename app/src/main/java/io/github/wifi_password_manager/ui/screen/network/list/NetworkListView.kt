@@ -84,24 +84,26 @@ fun NetworkListView(
             }
         },
         floatingActionButton = {
-            TooltipBox(
-                positionProvider =
-                    TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Above
-                    ),
-                tooltip = {
-                    PlainTooltip { Text(text = stringResource(R.string.refresh_description)) }
-                },
-                state = rememberTooltipState(),
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier.navigationBarsPadding().imePadding(),
-                    onClick = { onAction(NetworkListViewModel.Action.Refresh) },
+            if (!state.isCacheMode) {
+                TooltipBox(
+                    positionProvider =
+                        TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Above
+                        ),
+                    tooltip = {
+                        PlainTooltip { Text(text = stringResource(R.string.refresh_description)) }
+                    },
+                    state = rememberTooltipState(),
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_refresh),
-                        contentDescription = stringResource(R.string.refresh_description),
-                    )
+                    FloatingActionButton(
+                        modifier = Modifier.navigationBarsPadding().imePadding(),
+                        onClick = { onAction(NetworkListViewModel.Action.Refresh) },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_refresh),
+                            contentDescription = stringResource(R.string.refresh_description),
+                        )
+                    }
                 }
             }
         },

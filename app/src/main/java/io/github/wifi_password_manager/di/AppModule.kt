@@ -1,5 +1,7 @@
 package io.github.wifi_password_manager.di
 
+import android.content.Context
+import io.github.wifi_password_manager.manager.PrivilegedManager
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
@@ -17,4 +19,6 @@ class AppModule {
         coerceInputValues = true
         explicitNulls = false
     }
+
+    @Single fun privilegedManager(context: Context) = PrivilegedManager(context)
 }

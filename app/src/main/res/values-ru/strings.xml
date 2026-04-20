@@ -21,6 +21,12 @@
     <string name="export_option_compressed">Сжатый (GZip)</string>
     <string name="export_option_compressed_description">JSON сжатый GZip. Меньший размер файла</string>
 
+    <!-- No Access Screen -->
+    <string name="no_access_title">Требуется привилегированный доступ</string>
+    <string name="no_access_description">Этому приложению требуется Shizuku или root-доступ для чтения паролей WiFi. Пожалуйста, предоставьте привилегированный доступ для продолжения.</string>
+    <string name="continue_in_cache_mode">Продолжить в режиме кэширования</string>
+    <string name="grant_access">Предоставить доступ</string>
+
     <!-- Lock Screen -->
     <string name="lock_title">Приложение заблокировано</string>
     <string name="lock_description">Приложение заблокировано</string>
@@ -73,10 +79,12 @@
 
     <!-- Advanced Section -->
     <string name="advanced_section">Дополнительно</string>
-    <string name="forget_all_action">Забыть все сети</string>
+    <string name="forget_all_title">Забыть все сети</string>
     <string name="forget_all_description">Удалить все сохранённые сети WiFi с этого устройства</string>
-    <string name="auto_persist_ephemeral_networks_action">Автосохранение временных сетей</string>
+    <string name="auto_persist_ephemeral_networks_title">Автосохранение временных сетей</string>
     <string name="auto_persist_ephemeral_networks_description">Автоматически сохранять временные сети, которые иначе были бы забыты после отключения (может вызвать разрывы соединения)</string>
+    <string name="allow_cache_mode_title">Разрешить режим кэширования</string>
+    <string name="allow_cache_mode_description">Разрешите приложению работать без Shizuku или root-прав. Привилегированные функции будут отключены, а данные WiFi будут считываться из кэша.</string>
 
     <!-- About Section -->
     <string name="about_section">О приложении</string>

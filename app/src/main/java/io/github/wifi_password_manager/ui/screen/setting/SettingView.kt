@@ -113,6 +113,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             Text(text = stringResource(R.string.import_description))
                         },
                         shapes = UiConfig.listItemShapes(),
+                        enabled = !state.isCacheMode,
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
@@ -124,6 +125,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             Text(text = stringResource(R.string.export_description))
                         },
                         shapes = UiConfig.listItemShapes(),
+                        enabled = !state.isCacheMode,
                     )
                 }
             }
@@ -168,11 +170,12 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 SettingSection(title = stringResource(R.string.advanced_section)) {
                     ListItem(
                         onClick = { onAction(SettingViewModel.Action.ShowForgetAllDialog) },
-                        content = { Text(text = stringResource(R.string.forget_all_action)) },
+                        content = { Text(text = stringResource(R.string.forget_all_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.forget_all_description))
                         },
                         shapes = UiConfig.listItemShapes(),
+                        enabled = !state.isCacheMode,
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
@@ -188,7 +191,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         content = {
                             Text(
                                 text =
-                                    stringResource(R.string.auto_persist_ephemeral_networks_action)
+                                    stringResource(R.string.auto_persist_ephemeral_networks_title)
                             )
                         },
                         supportingContent = {
@@ -208,6 +211,31 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                             it
                                         )
                                     )
+                                },
+                            )
+                        },
+                        shapes = UiConfig.listItemShapes(),
+                    )
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
+
+                    ListItem(
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleAllowCacheMode(
+                                    !state.settings.allowCacheMode
+                                )
+                            )
+                        },
+                        content = { Text(text = stringResource(R.string.allow_cache_mode_title)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.allow_cache_mode_description))
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = state.settings.allowCacheMode,
+                                onCheckedChange = {
+                                    onAction(SettingViewModel.Action.ToggleAllowCacheMode(it))
                                 },
                             )
                         },

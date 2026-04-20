@@ -21,6 +21,12 @@
     <string name="export_option_compressed">Compressed (GZip)</string>
     <string name="export_option_compressed_description">GZip compressed JSON. Smaller file size</string>
 
+    <!-- No Access Screen -->
+    <string name="no_access_title">Privileged Access Required</string>
+    <string name="no_access_description">This app requires Shizuku or root access to read WiFi passwords. Please grant privileged access to continue.</string>
+    <string name="continue_in_cache_mode">Continue in Cache Mode</string>
+    <string name="grant_access">Grant Access</string>
+
     <!-- Lock Screen -->
     <string name="lock_title">App Locked</string>
     <string name="lock_description">App is locked</string>
@@ -73,10 +79,12 @@
 
     <!-- Advanced Section -->
     <string name="advanced_section">Advanced</string>
-    <string name="forget_all_action">Forget all networks</string>
+    <string name="forget_all_title">Forget all networks</string>
     <string name="forget_all_description">Remove all saved WiFi networks from this device</string>
-    <string name="auto_persist_ephemeral_networks_action">Auto persist ephemeral networks</string>
+    <string name="auto_persist_ephemeral_networks_title">Auto persist ephemeral networks</string>
     <string name="auto_persist_ephemeral_networks_description">Automatically save temporary networks that would otherwise be forgotten after disconnecting (may cause disconnects)</string>
+    <string name="allow_cache_mode_title">Allow cache mode</string>
+    <string name="allow_cache_mode_description">Allow the app to run without Shizuku or root. Privileged functionalities will be disabled and WiFi data will be read from cache.</string>
 
     <!-- About Section -->
     <string name="about_section">About</string>

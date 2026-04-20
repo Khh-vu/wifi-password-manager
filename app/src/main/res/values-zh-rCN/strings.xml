@@ -21,6 +21,12 @@
     <string name="export_option_compressed">压缩（GZip）</string>
     <string name="export_option_compressed_description">GZip压缩的JSON。文件大小更小</string>
 
+    <!-- No Access Screen -->
+    <string name="no_access_title">需要特权访问</string>
+    <string name="no_access_description">此应用需要Shizuku或root权限来读取WiFi密码。请授予特权访问以继续。</string>
+    <string name="continue_in_cache_mode">继续使用缓存模式</string>
+    <string name="grant_access">授予访问权限</string>
+
     <!-- Lock Screen -->
     <string name="lock_title">应用锁定</string>
     <string name="lock_description">应用已锁定</string>
@@ -73,10 +79,12 @@
 
     <!-- Advanced Section -->
     <string name="advanced_section">高级</string>
-    <string name="forget_all_action">忘记所有网络</string>
+    <string name="forget_all_title">忘记所有网络</string>
     <string name="forget_all_description">从此设备删除所有保存的 WiFi 网络</string>
-    <string name="auto_persist_ephemeral_networks_action">自动持久性网络</string>
+    <string name="auto_persist_ephemeral_networks_title">自动持久性网络</string>
     <string name="auto_persist_ephemeral_networks_description">自动保存断开连接后会被遗忘的临时网络（可能导致断开连接）</string>
+    <string name="allow_cache_mode_title">允许缓存模式</string>
+    <string name="allow_cache_mode_description">允许应用在无 Shizuku 或 root 权限的情况下运行。特权功能将被禁用，WiFi 数据将从缓存中读取。</string>
 
     <!-- About Section -->
     <string name="about_section">关于</string>

@@ -17,6 +17,7 @@ data class Settings(
     val autoPersistEphemeralNetworks: Boolean = false,
     val appLockEnabled: Boolean = false,
     val secureScreenEnabled: Boolean = false,
+    val allowCacheMode: Boolean = false,
 ) {
     @Serializable
     enum class ThemeMode {

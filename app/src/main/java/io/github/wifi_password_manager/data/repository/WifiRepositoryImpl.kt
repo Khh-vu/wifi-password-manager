@@ -5,15 +5,17 @@ package io.github.wifi_password_manager.data.repository
 import android.content.Context
 import android.net.wifi.WifiConfiguration
 import android.util.Log
-import com.topjohnwu.superuser.Shell
+import io.github.wifi_password_manager.data.datasource.wifi.CachedWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.RootWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.ShizukuWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.WifiDataSource
 import io.github.wifi_password_manager.data.local.dao.WifiNetworkDao
 import io.github.wifi_password_manager.data.local.entity.toDomain
 import io.github.wifi_password_manager.data.local.entity.toEntity
+import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.repository.WifiRepository
+import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +25,7 @@ import kotlinx.coroutines.invoke
 class WifiRepositoryImpl(
     private val context: Context,
     private val wifiNetworkDao: WifiNetworkDao,
+    private val privilegedManager: PrivilegedManager,
     private val dispatcher: CoroutineDispatcher,
 ) : WifiRepository {
     companion object {
@@ -30,12 +33,20 @@ class WifiRepositoryImpl(
     }
 
     private val dataSource: WifiDataSource by lazy {
-        if (Shell.isAppGrantedRoot() == true) {
-            Log.d(TAG, "Using RootWifiDataSource")
-            RootWifiDataSourceImpl(context)
-        } else {
-            Log.d(TAG, "Using ShizukuWifiDataSource")
-            ShizukuWifiDataSourceImpl(context)
+        val mode = privilegedManager.currentMode
+        when (mode) {
+            PrivilegedMode.ROOT -> {
+                Log.d(TAG, "Using RootWifiDataSource")
+                RootWifiDataSourceImpl(context)
+            }
+            PrivilegedMode.SHIZUKU -> {
+                Log.d(TAG, "Using ShizukuWifiDataSource")
+                ShizukuWifiDataSourceImpl(context)
+            }
+            PrivilegedMode.NONE -> {
+                Log.d(TAG, "Using CachedWifiDataSource")
+                CachedWifiDataSourceImpl(wifiNetworkDao)
+            }
         }
     }
 
@@ -46,11 +57,10 @@ class WifiRepositoryImpl(
         }
 
         val existingNetworks = wifiNetworkDao.getAllNetworksList()
-        val networksWithNotes =
-            networks.map { network ->
-                val existingNote = existingNetworks.firstOrNull { it.ssid == network.ssid }?.note
-                network.copy(note = existingNote ?: network.note).toEntity()
-            }
+        val networksWithNotes = networks.map { network ->
+            val existingNote = existingNetworks.firstOrNull { it.ssid == network.ssid }?.note
+            network.copy(note = existingNote ?: network.note).toEntity()
+        }
         wifiNetworkDao.upsertNetworks(networksWithNotes)
 
         val systemSsids = networks.map { it.ssid }

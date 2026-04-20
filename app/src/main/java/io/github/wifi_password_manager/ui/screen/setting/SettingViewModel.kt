@@ -3,6 +3,7 @@
 package io.github.wifi_password_manager.ui.screen.setting
 
 import android.util.Log
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.vinceglb.filekit.FileKit
@@ -19,11 +20,13 @@ import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.write
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.ExportOption
+import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.model.Settings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
+import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.Crypto
 import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
@@ -51,11 +54,13 @@ class SettingViewModel(
     private val settingRepository: SettingRepository,
     private val wifiRepository: WifiRepository,
     private val fileRepository: FileRepository,
+    privilegedManager: PrivilegedManager,
 ) : ViewModel() {
     companion object {
         private const val TAG = "SettingViewModel"
     }
 
+    @Immutable
     data class State(
         val settings: Settings = Settings(),
         val isLoading: Boolean = false,
@@ -63,6 +68,7 @@ class SettingViewModel(
         val showExportDialog: Boolean = false,
         val showImportPasswordDialog: Boolean = false,
         val pendingImportFiles: List<PlatformFile> = emptyList(),
+        val isCacheMode: Boolean = true,
     )
 
     sealed interface Action {
@@ -77,6 +83,8 @@ class SettingViewModel(
         data class ToggleSecureScreen(val value: Boolean) : Action
 
         data class ToggleAutoPersistEphemeralNetworks(val value: Boolean) : Action
+
+        data class ToggleAllowCacheMode(val value: Boolean) : Action
 
         data object ImportNetworks : Action
 
@@ -103,8 +111,9 @@ class SettingViewModel(
 
     private val _state = MutableStateFlow(State())
     val state =
-        combine(_state, settingRepository.settings) { state, settings ->
-                state.copy(settings = settings)
+        combine(_state, settingRepository.settings, privilegedManager.mode) { state, settings, mode
+                ->
+                state.copy(settings = settings, isCacheMode = mode == PrivilegedMode.NONE)
             }
             .stateIn(
                 scope = viewModelScope,
@@ -125,6 +134,7 @@ class SettingViewModel(
             is Action.ToggleSecureScreen -> onToggleSecureScreen(action.value)
             is Action.ToggleAutoPersistEphemeralNetworks ->
                 onToggleAutoPersistEphemeralNetworks(action.value)
+            is Action.ToggleAllowCacheMode -> onToggleAllowCacheMode(action.value)
 
             is Action.ImportNetworks -> onImportNetworks()
             is Action.HideImportPasswordDialog ->
@@ -173,7 +183,14 @@ class SettingViewModel(
         }
     }
 
+    private fun onToggleAllowCacheMode(value: Boolean) {
+        viewModelScope.launch {
+            settingRepository.updateSettings { it.copy(allowCacheMode = value) }
+        }
+    }
+
     private fun onShowExportDialog() {
+        if (state.value.isCacheMode) return
         viewModelScope.launch {
             val count = wifiRepository.getNetworkCount()
             if (count == 0) {
@@ -237,6 +254,7 @@ class SettingViewModel(
     }
 
     private fun onImportNetworks() {
+        if (state.value.isCacheMode) return
         viewModelScope.launch {
             val files =
                 FileKit.openFilePicker(
@@ -296,37 +314,35 @@ class SettingViewModel(
         }
     }
 
-    private suspend fun importSingleFile(file: PlatformFile, password: String?) =
-        Dispatchers.IO {
-            val networks = parseNetworksFromFile(file, password)
-            if (networks.isEmpty()) {
-                _event.send(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import)))
-                return@IO
-            }
-
-            networks
-                .flatMap { network ->
-                    val configs = network.toWifiConfigurations()
-                    configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
-                }
-                .awaitAll()
-
-            wifiRepository.refresh()
-
-            networks
-                .filter { it.note != null }
-                .map { async { wifiRepository.updateNote(it.ssid, it.note) } }
-                .awaitAll()
+    private suspend fun importSingleFile(file: PlatformFile, password: String?) = Dispatchers.IO {
+        val networks = parseNetworksFromFile(file, password)
+        if (networks.isEmpty()) {
+            _event.send(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import)))
+            return@IO
         }
+
+        networks
+            .flatMap { network ->
+                val configs = network.toWifiConfigurations()
+                configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
+            }
+            .awaitAll()
+
+        wifiRepository.refresh()
+
+        networks
+            .filter { it.note != null }
+            .map { async { wifiRepository.updateNote(it.ssid, it.note) } }
+            .awaitAll()
+    }
 
     private suspend fun importMultipleFiles(files: List<PlatformFile>, password: String?) {
         Dispatchers.IO {
-            val allNetworks =
-                files.flatMap { file ->
-                    runCatching { parseNetworksFromFile(file, password) }
-                        .onFailure { Log.e(TAG, "Error parsing file: ${file.name}", it) }
-                        .getOrDefault(emptyList())
-                }
+            val allNetworks = files.flatMap { file ->
+                runCatching { parseNetworksFromFile(file, password) }
+                    .onFailure { Log.e(TAG, "Error parsing file: ${file.name}", it) }
+                    .getOrDefault(emptyList())
+            }
 
             val networks =
                 allNetworks
@@ -377,24 +393,37 @@ class SettingViewModel(
         password: String?,
     ): List<WifiNetwork> {
         val data = file.readBytes()
-        return when (file.extension) {
-            "bin" if password != null -> {
-                val (option, decrypted) = Crypto.decrypt(data, password)
-                when (option) {
-                    ExportOption.PLAIN -> fileRepository.networksFromJson(String(decrypted))
-                    ExportOption.COMPRESSED -> fileRepository.networksFromGZip(decrypted)
+        val list =
+            when (file.extension) {
+                "bin" if password != null -> {
+                    val (option, decrypted) = Crypto.decrypt(data, password)
+                    when (option) {
+                        ExportOption.PLAIN -> fileRepository.networksFromJson(String(decrypted))
+                        ExportOption.COMPRESSED -> fileRepository.networksFromGZip(decrypted)
+                    }
+                }
+                "gz" -> {
+                    fileRepository.networksFromGZip(data)
+                }
+                else -> {
+                    fileRepository.networksFromJson(String(data))
                 }
             }
-            "gz" -> {
-                fileRepository.networksFromGZip(data)
-            }
-            else -> {
-                fileRepository.networksFromJson(String(data))
+        return list.map { network ->
+            if (network.password.isNotBlank()) {
+                val securityType =
+                    network.securityType.filterNot {
+                        it in setOf(WifiNetwork.SecurityType.OPEN, WifiNetwork.SecurityType.OWE)
+                    }
+                network.copy(securityType = securityType.toSet())
+            } else {
+                network
             }
         }
     }
 
     private fun onShowForgetAllDialog() {
+        if (state.value.isCacheMode) return
         viewModelScope.launch {
             val count = wifiRepository.getNetworkCount()
             if (count == 0) {
