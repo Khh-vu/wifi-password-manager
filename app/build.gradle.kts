@@ -28,12 +28,12 @@ kotlin {
 
 android {
     namespace = "io.github.wifi_password_manager"
-    compileSdk { version = release(36) }
+    compileSdk { version = release(37) }
 
     defaultConfig {
         applicationId = "io.github.wifi_password_manager"
         minSdk { version = release(30) }
-        targetSdk { version = release(36) }
+        targetSdk { version = release(37) }
         versionCode = 12
         versionName = "1.11"
 

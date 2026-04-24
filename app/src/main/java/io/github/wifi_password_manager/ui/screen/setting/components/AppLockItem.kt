@@ -66,6 +66,7 @@ fun AppLockItem(
             is AuthenticationResult.Success -> {
                 onToggleAppLock(!appLockEnabledState)
             }
+            is AuthenticationResult.CustomFallbackSelected -> {}
         }
     }
 
@@ -80,7 +81,7 @@ fun AppLockItem(
                             R.string.app_lock_enable_title
                         }
                     ),
-                authFallback = AuthenticationRequest.Biometric.Fallback.DeviceCredential,
+                AuthenticationRequest.Biometric.Fallback.DeviceCredential,
             ) {}
         launcher.launch(request)
     }

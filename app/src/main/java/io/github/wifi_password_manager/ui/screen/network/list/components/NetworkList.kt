@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -29,7 +29,7 @@ fun NetworkList(
     networks: List<WifiNetwork>,
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     when (val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)) {
         DeviceConfiguration.MOBILE_PORTRAIT -> {
             LazyColumn(

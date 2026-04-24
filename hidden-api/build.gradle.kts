@@ -2,7 +2,7 @@ plugins { alias(libs.plugins.android.library) }
 
 android {
     namespace = "io.github.wifi_password_manager.hidden_api"
-    compileSdk { version = release(36) }
+    compileSdk { version = release(37) }
 
     defaultConfig {
         minSdk { version = release(30) }

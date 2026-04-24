@@ -62,13 +62,14 @@ fun LockView(onAuthenticated: () -> Unit) {
             is AuthenticationResult.Success -> {
                 onAuthenticated()
             }
+            is AuthenticationResult.CustomFallbackSelected -> {}
         }
     }
     val startAuthentication by rememberUpdatedState {
         val request =
             AuthenticationRequest.biometricRequest(
                 title = resources.getString(R.string.app_lock_required),
-                authFallback = AuthenticationRequest.Biometric.Fallback.DeviceCredential,
+                AuthenticationRequest.Biometric.Fallback.DeviceCredential,
             ) {}
         launcher.launch(request)
     }
