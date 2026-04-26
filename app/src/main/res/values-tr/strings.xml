@@ -1,0 +1,162 @@
+<resources>
+    <string name="app_name">WiFi Password Manager</string>
+
+    <!-- Common -->
+    <string name="cancel">İptal</string>
+    <string name="ok">Tamam</string>
+    <string name="clear">Temizle</string>
+    <string name="back">Geri</string>
+    <string name="on">Açık</string>
+    <string name="off">Kapalı</string>
+    <string name="warning">Uyarı</string>
+
+    <!-- Theme Mode -->
+    <string name="theme_mode_light">Açık</string>
+    <string name="theme_mode_dark">Koyu</string>
+    <string name="theme_mode_system">Sistem</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">Düz (JSON)</string>
+    <string name="export_option_plain_description">Güzel biçimlendirilmiş JSON. Okuması ve düzenlemesi kolay</string>
+    <string name="export_option_compressed">Sıkıştırılmış (GZip)</string>
+    <string name="export_option_compressed_description">GZip sıkıştırılmış JSON. Daha küçük dosya boyutu</string>
+
+    <!-- No Access Screen -->
+    <string name="no_access_title">Ayrıcalıklı Erişim Gereklidir</string>
+    <string name="no_access_description">Bu uygulama, WiFi şifrelerini okuyabilmek için Shizuku veya root erişimi gerektirir. Devam etmek için lütfen ayrıcalıklı erişim izni verin.</string>
+    <string name="continue_in_cache_mode">Önbellek Modunda Devam Et</string>
+    <string name="grant_access">Erişim Ver</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_title">Uygulama Kilitli</string>
+    <string name="lock_description">Uygulama kilitlendi</string>
+    <string name="unlock">Kilidi Aç</string>
+
+    <!-- Network List Screen -->
+    <string name="network_list_title">Kaydedilmiş WiFi Bağlantıları</string>
+    <string name="search_hint">SSID veya Not'a Göre Ara</string>
+    <string name="search_tooltip">Ara</string>
+    <string name="refresh_description">Yenile</string>
+    <string name="no_networks_found">Hiçbir WiFi ağı bulunamadı</string>
+    <string name="no_networks_available">Bu cihazda kayıtlı WiFi ağı bulunmamaktadır</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_tooltip">Ayarlar</string>
+
+    <!-- Appearance Section -->
+    <string name="appearance_section">Görünüm</string>
+    <string name="language_title">Dil</string>
+    <string name="language_description">Uygulama dilini değiştir</string>
+    <string name="app_theme_title">Uygulama Teması</string>
+    <string name="app_theme_description">Uygulama görünümünü değiştir</string>
+    <string name="material_you_title">Material You</string>
+
+    <!-- Import & Export Section -->
+    <string name="import_export_section">İçe &amp; Dışa aktar</string>
+    <string name="import_action">Ağları içe aktar</string>
+    <string name="import_description">JSON veya GZip dosyalarından WiFi ağlarını içe aktarın</string>
+    <string name="export_action">Ağları dışa aktar</string>
+    <string name="export_description">WiFi ağlarını bir dosyaya dışa aktarın</string>
+    <string name="export_format">Biçim</string>
+    <string name="encrypt_export">Dışa aktarmayı şifrele</string>
+    <string name="password">Şifre</string>
+    <string name="password_required">Dosyayı şifrelemek ve şifresini çözmek için parola gereklidir</string>
+    <string name="show_password">Şifreyi göster</string>
+    <string name="hide_password">Şifreyi gizle</string>
+
+    <!-- Security Section -->
+    <string name="security_section">Güvenlik</string>
+    <string name="app_lock_title">Uygulamayı Kilitle</string>
+    <string name="app_lock_description">Uygulamayı açmak için ekran kilidi gereklidir</string>
+    <string name="app_lock_disable_title">Uygulama Kilidini devre dışı bırakmak için kimlik doğrulaması yapın</string>
+    <string name="app_lock_enable_title">Uygulama Kilidini etkinleştirmek için kimlik doğrulaması yapın</string>
+    <string name="secure_screen_title">Güvenli Ekran</string>
+    <string name="secure_screen_description">Ekran görüntüsü alımını engelleyin ve güvenli olmayan ekranlarda görüntülenmesini önleyin</string>
+    <string name="lock_screen_required_title">Kilit Ekranı Gerekli</string>
+    <string name="lock_screen_required_message">Uygulama Kilidi'ni kullanmak için öncelikle cihazınızda bir ekran kilidi ayarlamanız gerekir.</string>
+    <string name="open_settings">Ayarlar'ı Aç</string>
+
+    <!-- Advanced Section -->
+    <string name="advanced_section">Gelişmiş</string>
+    <string name="forget_all_title">Tüm ağları unut</string>
+    <string name="forget_all_description">Bu cihazdan kaydedilmiş tüm WiFi ağlarını kaldırır</string>
+    <string name="auto_persist_ephemeral_networks_title">Geçici ağları otomatik hatırla</string>
+    <string name="auto_persist_ephemeral_networks_description">Bağlantı kesildikten sonra unutulabilecek geçici ağları otomatik olarak kaydedin (bağlantı kesintilerine neden olabilir)</string>
+    <string name="allow_cache_mode_title">Önbellek moduna izin ver</string>
+    <string name="allow_cache_mode_description">Uygulamanın Shizuku veya root erişimi olmadan çalışmasına izin verir. Ayrıcalıklı işlevler devre dışı bırakılacak ve WiFi verileri önbellekten okunacaktır.</string>
+
+    <!-- About Section -->
+    <string name="about_section">About</string>
+    <string name="license_title">License</string>
+    <string name="license_description">See open source licenses</string>
+    <string name="source_code_title">Source Code</string>
+    <string name="version_title">Version</string>
+    <string name="build_type_title">Build Type</string>
+
+    <!-- Quick Settings Tiles -->
+    <string name="auto_persist">Auto-persist</string>
+
+    <!-- WiFi Card -->
+    <string name="copy_action">Copy</string>
+    <string name="copy_description">Copy the WiFi Password</string>
+    <string name="password_label">Password</string>
+    <string name="password_mask_character">•</string>
+    <string name="no_password">No password</string>
+    <string name="show_wifi_qr_code">Show WiFi QR Code</string>
+    <string name="wifi_qr_code">WiFi QR Code</string>
+    <string name="more_options">More options</string>
+    <string name="note_label">Note</string>
+    <string name="add_note">Add note</string>
+    <string name="edit_note">Edit note</string>
+    <string name="delete_note">Delete note</string>
+    <string name="note_deleted">Note deleted</string>
+
+    <!-- Note Screen -->
+    <string name="note_hint">Enter your note here…</string>
+    <string name="note_title">Note for %1$s</string>
+    <string name="empty_note_discarded">Empty note discarded</string>
+    <string name="note_saved">Note saved</string>
+    <string name="note_save_failed">Failed to save note</string>
+
+    <!-- Security Types -->
+    <string name="security_open">None</string>
+    <string name="security_owe">Enhanced Open</string>
+    <string name="security_wpa2">WPA/WPA2</string>
+    <string name="security_wpa3">WPA3-Personal</string>
+    <string name="security_wep">WEP</string>
+
+    <!-- Shizuku Permission Dialog -->
+    <string name="shizuku_required_title">Shizuku Required</string>
+    <string name="shizuku_required_message">Shizuku is required to use this app. If you have Shizuku installed, please start it. Otherwise, please install Shizuku.</string>
+    <string name="open_shizuku">Open Shizuku</string>
+    <string name="install_shizuku">Install Shizuku</string>
+
+    <!-- Forget All Networks Confirmation Dialog -->
+    <string name="forget_all_confirmation_title">Forget all networks?</string>
+    <string name="forget_all_confirmation_message">This will permanently remove all saved WiFi networks from this device. This action cannot be undone.</string>
+
+    <!-- Import Password Dialog -->
+    <string name="import_password_title">Enter Password</string>
+    <string name="import_password_description">This file is encrypted. Enter the password to decrypt it.</string>
+
+    <!-- Messages -->
+    <string name="loading">Loading…</string>
+    <string name="refresh_success">Refreshed successfully</string>
+    <string name="no_network_to_import">No networks found to import</string>
+    <string name="import_networks_success">Imported networks successfully</string>
+    <string name="import_networks_failed">Failed to import networks</string>
+    <string name="export_networks_success">Exported networks successfully</string>
+    <string name="export_networks_failed">Failed to export networks</string>
+    <string name="forget_success">Forgot all networks successfully</string>
+    <string name="forget_failed">Failed to forget all networks</string>
+    <string name="no_network_to_forget">No networks found to forget</string>
+    <string name="no_network_to_export">No networks available to export</string>
+    <string name="invalid_json">Unable to use the selected JSON file</string>
+    <string name="wrong_password">Decryption failed. Wrong password?</string>
+    <string name="app_lock_required">Enter your screen lock to access</string>
+    <string name="app_lock_too_many_attempts">Too many attempts. Try again later.</string>
+    <string name="app_lock_permanently_locked">Biometric locked. Use device credentials.</string>
+    <string name="app_lock_authentication_failed">Authentication failed.</string>
+    <string name="app_lock_disabled">Screen lock was removed. App Lock has been disabled.</string>
+</resources>
