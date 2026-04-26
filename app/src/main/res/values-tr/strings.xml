@@ -87,43 +87,43 @@
     <string name="allow_cache_mode_description">Uygulamanın Shizuku veya root erişimi olmadan çalışmasına izin verir. Ayrıcalıklı işlevler devre dışı bırakılacak ve WiFi verileri önbellekten okunacaktır.</string>
 
     <!-- About Section -->
-    <string name="about_section">About</string>
-    <string name="license_title">License</string>
-    <string name="license_description">See open source licenses</string>
-    <string name="source_code_title">Source Code</string>
-    <string name="version_title">Version</string>
-    <string name="build_type_title">Build Type</string>
+    <string name="about_section">Hakkında</string>
+    <string name="license_title">Lisans</string>
+    <string name="license_description">Açık kaynak lisansları görüntüle</string>
+    <string name="source_code_title">Kaynak Kodu</string>
+    <string name="version_title">Sürüm</string>
+    <string name="build_type_title">Yapı Türü</string>
 
     <!-- Quick Settings Tiles -->
-    <string name="auto_persist">Auto-persist</string>
+    <string name="auto_persist">Otomatik hatırla</string>
 
     <!-- WiFi Card -->
-    <string name="copy_action">Copy</string>
-    <string name="copy_description">Copy the WiFi Password</string>
-    <string name="password_label">Password</string>
+    <string name="copy_action">Kopyala</string>
+    <string name="copy_description">WiFi Şifresini kopyala</string>
+    <string name="password_label">Şifre</string>
     <string name="password_mask_character">•</string>
-    <string name="no_password">No password</string>
-    <string name="show_wifi_qr_code">Show WiFi QR Code</string>
-    <string name="wifi_qr_code">WiFi QR Code</string>
-    <string name="more_options">More options</string>
-    <string name="note_label">Note</string>
-    <string name="add_note">Add note</string>
-    <string name="edit_note">Edit note</string>
-    <string name="delete_note">Delete note</string>
-    <string name="note_deleted">Note deleted</string>
+    <string name="no_password">Hiç şifre yok</string>
+    <string name="show_wifi_qr_code">WiFi QR Kodunu göster</string>
+    <string name="wifi_qr_code">WiFi QR Kodu</string>
+    <string name="more_options">Daha fazla seçenek</string>
+    <string name="note_label">Not</string>
+    <string name="add_note">Not ekle</string>
+    <string name="edit_note">Notu düzenle</string>
+    <string name="delete_note">Notu sil</string>
+    <string name="note_deleted">Not silindi</string>
 
     <!-- Note Screen -->
-    <string name="note_hint">Enter your note here…</string>
-    <string name="note_title">Note for %1$s</string>
-    <string name="empty_note_discarded">Empty note discarded</string>
-    <string name="note_saved">Note saved</string>
-    <string name="note_save_failed">Failed to save note</string>
+    <string name="note_hint">Notunuzu buraya girin…</string>
+    <string name="note_title">%1$s için not</string>
+    <string name="empty_note_discarded">Boş not silindi</string>
+    <string name="note_saved">Not kaydedildi</string>
+    <string name="note_save_failed">Not kaydedilemedi</string>
 
     <!-- Security Types -->
-    <string name="security_open">None</string>
+    <string name="security_open">Yok</string>
     <string name="security_owe">Enhanced Open</string>
     <string name="security_wpa2">WPA/WPA2</string>
-    <string name="security_wpa3">WPA3-Personal</string>
+    <string name="security_wpa3">WPA3-Kişisel</string>
     <string name="security_wep">WEP</string>
 
     <!-- Shizuku Permission Dialog -->
