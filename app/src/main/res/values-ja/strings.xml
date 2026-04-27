@@ -1,0 +1,162 @@
+<resources>
+    <string name="app_name">WiFi Password Manager</string>
+
+    <!-- Common -->
+    <string name="cancel">キャンセル</string>
+    <string name="ok">OK</string>
+    <string name="clear">クリア</string>
+    <string name="back">戻る</string>
+    <string name="on">オン</string>
+    <string name="off">オフ</string>
+    <string name="warning">警告</string>
+
+    <!-- Theme Mode -->
+    <string name="theme_mode_light">ライト</string>
+    <string name="theme_mode_dark">ダーク</string>
+    <string name="theme_mode_system">システム</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">プレーン（JSON）</string>
+    <string name="export_option_plain_description">整形済みJSON。読みやすく編集しやすい</string>
+    <string name="export_option_compressed">圧縮（GZip）</string>
+    <string name="export_option_compressed_description">GZip圧縮されたJSON。ファイルサイズが小さい</string>
+
+    <!-- No Access Screen -->
+    <string name="no_access_title">特権アクセスが必要</string>
+    <string name="no_access_description">このアプリはWiFiパスワードを読み取るためにShizukuまたはrootアクセスが必要です。続行するには特権アクセスを許可してください。</string>
+    <string name="continue_in_cache_mode">キャッシュモードで続行</string>
+    <string name="grant_access">アクセスを許可</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_title">アプリがロックされています</string>
+    <string name="lock_description">アプリはロックされています</string>
+    <string name="unlock">ロック解除</string>
+
+    <!-- Network List Screen -->
+    <string name="network_list_title">保存済みWiFiネットワーク</string>
+    <string name="search_hint">SSIDまたはメモで検索</string>
+    <string name="search_tooltip">検索</string>
+    <string name="refresh_description">更新</string>
+    <string name="no_networks_found">WiFiネットワークが見つかりません</string>
+    <string name="no_networks_available">このデバイスに保存済みWiFiネットワークはありません</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">設定</string>
+    <string name="settings_tooltip">設定</string>
+
+    <!-- Appearance Section -->
+    <string name="appearance_section">外観</string>
+    <string name="language_title">言語</string>
+    <string name="language_description">アプリの言語を変更する</string>
+    <string name="app_theme_title">アプリテーマ</string>
+    <string name="app_theme_description">アプリの外観を変更する</string>
+    <string name="material_you_title">Material You</string>
+
+    <!-- Import & Export Section -->
+    <string name="import_export_section">インポート &amp; エクスポート</string>
+    <string name="import_action">ネットワークをインポート</string>
+    <string name="import_description">JSONまたはGZipファイルからWiFiネットワークをインポート</string>
+    <string name="export_action">ネットワークをエクスポート</string>
+    <string name="export_description">WiFiネットワークをファイルにエクスポート</string>
+    <string name="export_format">フォーマット</string>
+    <string name="encrypt_export">エクスポートを暗号化</string>
+    <string name="password">パスワード</string>
+    <string name="password_required">ファイルの暗号化と復号にパスワードが必要です</string>
+    <string name="show_password">パスワードを表示</string>
+    <string name="hide_password">パスワードを非表示</string>
+
+    <!-- Security Section -->
+    <string name="security_section">セキュリティ</string>
+    <string name="app_lock_title">アプリロック</string>
+    <string name="app_lock_description">アプリを開く際に画面ロックを要求する</string>
+    <string name="app_lock_disable_title">アプリロックを無効にするために認証する</string>
+    <string name="app_lock_enable_title">アプリロックを有効にするために認証する</string>
+    <string name="secure_screen_title">セキュア画面</string>
+    <string name="secure_screen_description">スクリーンショットをブロックし、安全でない画面への表示を防ぐ</string>
+    <string name="lock_screen_required_title">画面ロックが必要</string>
+    <string name="lock_screen_required_message">アプリロックを使用するには、まずデバイスに画面ロックを設定する必要があります。</string>
+    <string name="open_settings">設定を開く</string>
+
+    <!-- Advanced Section -->
+    <string name="advanced_section">詳細設定</string>
+    <string name="forget_all_title">すべてのネットワークを削除</string>
+    <string name="forget_all_description">このデバイスから保存済みWiFiネットワークをすべて削除する</string>
+    <string name="auto_persist_ephemeral_networks_title">一時ネットワークを自動保存</string>
+    <string name="auto_persist_ephemeral_networks_description">切断後に削除される一時ネットワークを自動的に保存します（切断が発生することがあります）</string>
+    <string name="allow_cache_mode_title">キャッシュモードを許可</string>
+    <string name="allow_cache_mode_description">Shizukuまたはrootなしでアプリを実行できます。特権機能は無効になり、WiFiデータはキャッシュから読み込まれます。</string>
+
+    <!-- About Section -->
+    <string name="about_section">このアプリについて</string>
+    <string name="license_title">ライセンス</string>
+    <string name="license_description">オープンソースライセンスを表示</string>
+    <string name="source_code_title">ソースコード</string>
+    <string name="version_title">バージョン</string>
+    <string name="build_type_title">ビルドタイプ</string>
+
+    <!-- Quick Settings Tiles -->
+    <string name="auto_persist">自動保存</string>
+
+    <!-- WiFi Card -->
+    <string name="copy_action">コピー</string>
+    <string name="copy_description">WiFiパスワードをコピー</string>
+    <string name="password_label">パスワード</string>
+    <string name="password_mask_character">•</string>
+    <string name="no_password">パスワードなし</string>
+    <string name="show_wifi_qr_code">WiFi QRコードを表示</string>
+    <string name="wifi_qr_code">WiFi QRコード</string>
+    <string name="more_options">その他のオプション</string>
+    <string name="note_label">メモ</string>
+    <string name="add_note">メモを追加</string>
+    <string name="edit_note">メモを編集</string>
+    <string name="delete_note">メモを削除</string>
+    <string name="note_deleted">メモを削除しました</string>
+
+    <!-- Note Screen -->
+    <string name="note_hint">ここにメモを入力…</string>
+    <string name="note_title">%1$s のメモ</string>
+    <string name="empty_note_discarded">空のメモは破棄されました</string>
+    <string name="note_saved">メモを保存しました</string>
+    <string name="note_save_failed">メモの保存に失敗しました</string>
+
+    <!-- Security Types -->
+    <string name="security_open">なし</string>
+    <string name="security_owe">Enhanced Open</string>
+    <string name="security_wpa2">WPA/WPA2</string>
+    <string name="security_wpa3">WPA3-Personal</string>
+    <string name="security_wep">WEP</string>
+
+    <!-- Shizuku Permission Dialog -->
+    <string name="shizuku_required_title">Shizukuが必要</string>
+    <string name="shizuku_required_message">このアプリを使用するにはShizukuが必要です。Shizukuがインストールされている場合は起動してください。インストールされていない場合はShizukuをインストールしてください。</string>
+    <string name="open_shizuku">Shizukuを開く</string>
+    <string name="install_shizuku">Shizukuをインストール</string>
+
+    <!-- Forget All Networks Confirmation Dialog -->
+    <string name="forget_all_confirmation_title">すべてのネットワークを削除しますか？</string>
+    <string name="forget_all_confirmation_message">このデバイスから保存済みWiFiネットワークがすべて完全に削除されます。この操作は取り消せません。</string>
+
+    <!-- Import Password Dialog -->
+    <string name="import_password_title">パスワードを入力</string>
+    <string name="import_password_description">このファイルは暗号化されています。復号するためにパスワードを入力してください。</string>
+
+    <!-- Messages -->
+    <string name="loading">読み込み中…</string>
+    <string name="refresh_success">更新しました</string>
+    <string name="no_network_to_import">インポートするネットワークが見つかりません</string>
+    <string name="import_networks_success">ネットワークをインポートしました</string>
+    <string name="import_networks_failed">ネットワークのインポートに失敗しました</string>
+    <string name="export_networks_success">ネットワークをエクスポートしました</string>
+    <string name="export_networks_failed">ネットワークのエクスポートに失敗しました</string>
+    <string name="forget_success">すべてのネットワークを削除しました</string>
+    <string name="forget_failed">すべてのネットワークの削除に失敗しました</string>
+    <string name="no_network_to_forget">削除するネットワークが見つかりません</string>
+    <string name="no_network_to_export">エクスポートできるネットワークがありません</string>
+    <string name="invalid_json">選択したJSONファイルを使用できません</string>
+    <string name="wrong_password">復号に失敗しました。パスワードが間違っていますか？</string>
+    <string name="app_lock_required">アクセスするには画面ロックを入力してください</string>
+    <string name="app_lock_too_many_attempts">試行回数が多すぎます。後でもう一度お試しください。</string>
+    <string name="app_lock_permanently_locked">生体認証がロックされています。デバイスの認証情報を使用してください。</string>
+    <string name="app_lock_authentication_failed">認証に失敗しました。</string>
+    <string name="app_lock_disabled">画面ロックが削除されました。アプリロックが無効になりました。</string>
+</resources>
