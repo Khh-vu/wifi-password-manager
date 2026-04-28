@@ -1,0 +1,112 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "7dd1b24daee346de00a6329d3ea7490a",
+    "entities": [
+      {
+        "tableName": "wifi_networks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`ssid` TEXT NOT NULL, `networkId` INTEGER NOT NULL, `securityTypes` TEXT NOT NULL, `password` TEXT NOT NULL, `hidden` INTEGER NOT NULL, `autojoin` INTEGER NOT NULL, `private` INTEGER NOT NULL, `note` TEXT, PRIMARY KEY(`ssid`, `securityTypes`))",
+        "fields": [
+          {
+            "fieldPath": "ssid",
+            "columnName": "ssid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "networkId",
+            "columnName": "networkId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "securityTypes",
+            "columnName": "securityTypes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hidden",
+            "columnName": "hidden",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "autojoin",
+            "columnName": "autojoin",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "private",
+            "columnName": "private",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "ssid",
+            "securityTypes"
+          ]
+        }
+      },
+      {
+        "tableName": "wifi_networks_fts",
+        "createSql": "CREATE VIRTUAL TABLE IF NOT EXISTS `${TABLE_NAME}` USING FTS4(`ssid` TEXT NOT NULL, `note` TEXT NOT NULL, content=`wifi_networks`)",
+        "fields": [
+          {
+            "fieldPath": "ssid",
+            "columnName": "ssid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": []
+        },
+        "ftsVersion": "FTS4",
+        "ftsOptions": {
+          "tokenizer": "simple",
+          "tokenizerArgs": [],
+          "contentTable": "wifi_networks",
+          "languageIdColumnName": "",
+          "matchInfo": "FTS4",
+          "notIndexedColumns": [],
+          "prefixSizes": [],
+          "preferredOrder": "ASC"
+        },
+        "contentSyncTriggers": [
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_wifi_networks_fts_BEFORE_UPDATE BEFORE UPDATE ON `wifi_networks` BEGIN DELETE FROM `wifi_networks_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_wifi_networks_fts_BEFORE_DELETE BEFORE DELETE ON `wifi_networks` BEGIN DELETE FROM `wifi_networks_fts` WHERE `docid`=OLD.`rowid`; END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_wifi_networks_fts_AFTER_UPDATE AFTER UPDATE ON `wifi_networks` BEGIN INSERT INTO `wifi_networks_fts`(`docid`, `ssid`, `note`) VALUES (NEW.`rowid`, NEW.`ssid`, NEW.`note`); END",
+          "CREATE TRIGGER IF NOT EXISTS room_fts_content_sync_wifi_networks_fts_AFTER_INSERT AFTER INSERT ON `wifi_networks` BEGIN INSERT INTO `wifi_networks_fts`(`docid`, `ssid`, `note`) VALUES (NEW.`rowid`, NEW.`ssid`, NEW.`note`); END"
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7dd1b24daee346de00a6329d3ea7490a')"
+    ]
+  }
+}

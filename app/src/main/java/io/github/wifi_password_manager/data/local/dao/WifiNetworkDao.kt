@@ -14,7 +14,7 @@ interface WifiNetworkDao {
     @Query(
         """
             SELECT wifi_networks.* FROM wifi_networks
-            JOIN wifi_networks_fts ON wifi_networks.rowid = wifi_networks_fts.rowid
+            JOIN wifi_networks_fts ON wifi_networks.ssid = wifi_networks_fts.ssid
             WHERE wifi_networks_fts MATCH :query
         """
     )
@@ -29,16 +29,7 @@ interface WifiNetworkDao {
 
     @Query("DELETE FROM wifi_networks WHERE ssid = :ssid") suspend fun deleteNetwork(ssid: Int)
 
-    @Query(
-        """
-        DELETE FROM wifi_networks 
-        WHERE ssid IN (:excludingSsids)
-        AND rowid NOT IN (
-            SELECT MIN(rowid) FROM wifi_networks 
-            GROUP BY ssid, securityTypes, password, hidden, autojoin, private, note
-        )
-    """
-    )
+    @Query("DELETE FROM wifi_networks WHERE ssid NOT IN (:excludingSsids)")
     suspend fun deleteNetworks(excludingSsids: List<String>)
 
     @Query("DELETE FROM wifi_networks") suspend fun deleteNetworks()

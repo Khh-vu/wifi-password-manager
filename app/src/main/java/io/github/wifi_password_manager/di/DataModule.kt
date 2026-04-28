@@ -18,6 +18,7 @@ class DataModule {
                 context = context.applicationContext,
                 name = context.getDatabasePath(AppDatabase.DATABASE_NAME).absolutePath,
             )
+            .addMigrations(AppDatabase.MIGRATION_1_2)
             .fallbackToDestructiveMigration(false)
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
