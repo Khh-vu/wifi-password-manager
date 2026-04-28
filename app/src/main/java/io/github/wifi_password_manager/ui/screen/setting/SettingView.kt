@@ -125,7 +125,6 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             Text(text = stringResource(R.string.export_description))
                         },
                         shapes = UiConfig.listItemShapes(),
-                        enabled = !state.isCacheMode,
                     )
                 }
             }

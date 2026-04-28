@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package io.github.wifi_password_manager.ui.screen.setting
 
 import android.util.Log
@@ -190,7 +188,6 @@ class SettingViewModel(
     }
 
     private fun onShowExportDialog() {
-        if (state.value.isCacheMode) return
         viewModelScope.launch {
             val count = wifiRepository.getNetworkCount()
             if (count == 0) {
