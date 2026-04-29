@@ -50,5 +50,6 @@ data class Settings(
         ENGLISH("en", "English"),
         RUSSIAN("ru", "Русский"),
         CHINESE_SIMPLIFIED("zh-CN", "中文 (简体)"),
+        JAPANESE("ja", "日本語"),
     }
 }
