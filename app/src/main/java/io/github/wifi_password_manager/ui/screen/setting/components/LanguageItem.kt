@@ -55,16 +55,20 @@ private fun LanguageSelectionSheet(
 ) {
     ModalBottomSheet(onDismissRequest = { onDismiss() }) {
         Column(modifier = Modifier.padding(horizontal = 12.dp)) {
-            Settings.Language.entries.forEach {
-                ListItem(
-                    onClick = { onLanguageChange(it) },
-                    selected = it == language,
-                    leadingContent = { RadioButton(selected = it == language, onClick = null) },
-                    content = { Text(text = it.displayName) },
-                    colors =
-                        ListItemDefaults.colors(containerColor = BottomSheetDefaults.ContainerColor),
-                )
-            }
+            Settings.Language.entries
+                .sortedBy { it.code }
+                .forEach {
+                    ListItem(
+                        onClick = { onLanguageChange(it) },
+                        selected = it == language,
+                        leadingContent = { RadioButton(selected = it == language, onClick = null) },
+                        content = { Text(text = it.displayName) },
+                        colors =
+                            ListItemDefaults.colors(
+                                containerColor = BottomSheetDefaults.ContainerColor
+                            ),
+                    )
+                }
         }
     }
 }

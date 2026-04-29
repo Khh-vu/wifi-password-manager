@@ -1,0 +1,4 @@
+- Added view cached networks feature
+- Fixed network data not refreshing
+- Fixed an issue causing “auto persist ephemeral networks” feature to fail silently
+- Added Japanese localization

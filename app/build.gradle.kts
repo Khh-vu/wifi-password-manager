@@ -4,9 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.aboutLibraries)
-    alias(libs.plugins.aboutLibraries.android)
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.koin.compiler)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
@@ -29,14 +28,14 @@ kotlin {
 
 android {
     namespace = "io.github.wifi_password_manager"
-    compileSdk { version = release(36) }
+    compileSdk { version = release(37) }
 
     defaultConfig {
         applicationId = "io.github.wifi_password_manager"
         minSdk { version = release(30) }
-        targetSdk { version = release(36) }
-        versionCode = 10
-        versionName = "1.9"
+        targetSdk { version = release(37) }
+        versionCode = 13
+        versionName = "1.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,7 +74,13 @@ android {
         compose = true
         buildConfig = true
     }
-    packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
+    packaging {
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
+        jniLibs {
+            keepDebugSymbols +=
+                setOf("**/libandroidx.graphics.path.so", "**/libdatastore_shared_counter.so")
+        }
+    }
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
@@ -83,17 +88,14 @@ android {
 }
 
 composeCompiler {
+    stabilityConfigurationFiles.addAll(
+        rootProject.layout.projectDirectory.file("stability_config.conf")
+    )
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     metricsDestination = layout.buildDirectory.dir("compose_compiler")
 }
 
 ktfmt { kotlinLangStyle() }
-
-ksp {
-    arg("KOIN_CONFIG_CHECK", "true")
-    arg("KOIN_DEFAULT_MODULE", "false")
-    arg("KOIN_LOG_TIMES", "true")
-}
 
 dependencies {
     // AndroidX
@@ -104,7 +106,6 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.lifecycle.process)
-    implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
@@ -128,8 +129,6 @@ dependencies {
     // JetBrains
     implementation(libs.adaptive)
     implementation(libs.adaptive.navigation3)
-    implementation(libs.kotlinx.collections.immutable)
-    implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.viewmodel.navigation3)
@@ -150,7 +149,7 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.core)
-    ksp(libs.koin.ksp.compiler)
+    implementation(platform(libs.koin.bom))
 
     // QR Code
     implementation(libs.qrose)

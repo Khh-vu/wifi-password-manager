@@ -1,0 +1,3 @@
+- Fixed long passwords are truncated on display
+- Optimized exported file size
+- Added GZip compression and encryption options for import/export

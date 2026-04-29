@@ -4,8 +4,6 @@ import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
@@ -18,6 +16,7 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
@@ -28,7 +27,9 @@ import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
 import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
+import io.github.wifi_password_manager.ui.screen.setting.components.ExportDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllConfirmDialog
+import io.github.wifi_password_manager.ui.screen.setting.components.ImportPasswordDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
@@ -49,7 +50,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 navigationIcon = {
                     TooltipIconButton(
                         onClick = { navBackStack.removeLastOrNull() },
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(R.drawable.ic_arrow_back),
                         tooltip = stringResource(R.string.back),
                         positioning = TooltipAnchorPosition.Below,
                     )
@@ -112,12 +113,13 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             Text(text = stringResource(R.string.import_description))
                         },
                         shapes = UiConfig.listItemShapes(),
+                        enabled = !state.isCacheMode,
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
 
                     ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ExportNetworks) },
+                        onClick = { onAction(SettingViewModel.Action.ShowExportDialog) },
                         content = { Text(text = stringResource(R.string.export_action)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.export_description))
@@ -167,11 +169,12 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 SettingSection(title = stringResource(R.string.advanced_section)) {
                     ListItem(
                         onClick = { onAction(SettingViewModel.Action.ShowForgetAllDialog) },
-                        content = { Text(text = stringResource(R.string.forget_all_action)) },
+                        content = { Text(text = stringResource(R.string.forget_all_title)) },
                         supportingContent = {
                             Text(text = stringResource(R.string.forget_all_description))
                         },
                         shapes = UiConfig.listItemShapes(),
+                        enabled = !state.isCacheMode,
                     )
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
@@ -187,7 +190,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         content = {
                             Text(
                                 text =
-                                    stringResource(R.string.auto_persist_ephemeral_networks_action)
+                                    stringResource(R.string.auto_persist_ephemeral_networks_title)
                             )
                         },
                         supportingContent = {
@@ -207,6 +210,31 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                             it
                                         )
                                     )
+                                },
+                            )
+                        },
+                        shapes = UiConfig.listItemShapes(),
+                    )
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.surfaceContainer)
+
+                    ListItem(
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleAllowCacheMode(
+                                    !state.settings.allowCacheMode
+                                )
+                            )
+                        },
+                        content = { Text(text = stringResource(R.string.allow_cache_mode_title)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.allow_cache_mode_description))
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = state.settings.allowCacheMode,
+                                onCheckedChange = {
+                                    onAction(SettingViewModel.Action.ToggleAllowCacheMode(it))
                                 },
                             )
                         },
@@ -258,15 +286,32 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             }
         }
 
-        if (state.isLoading) {
-            LoadingDialog()
-        }
-
-        if (state.showForgetAllDialog) {
-            ForgetAllConfirmDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
-                onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks) },
-            )
+        when {
+            state.isLoading -> {
+                LoadingDialog()
+            }
+            state.showForgetAllDialog -> {
+                ForgetAllConfirmDialog(
+                    onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
+                    onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks) },
+                )
+            }
+            state.showExportDialog -> {
+                ExportDialog(
+                    onDismiss = { onAction(SettingViewModel.Action.HideExportDialog) },
+                    onSelect = { option, password ->
+                        onAction(SettingViewModel.Action.ConfirmExport(option, password))
+                    },
+                )
+            }
+            state.showImportPasswordDialog -> {
+                ImportPasswordDialog(
+                    onDismiss = { onAction(SettingViewModel.Action.HideImportPasswordDialog) },
+                    onConfirm = { password ->
+                        onAction(SettingViewModel.Action.ConfirmImportWithPassword(password))
+                    },
+                )
+            }
         }
     }
 }

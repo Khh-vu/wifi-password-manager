@@ -15,28 +15,31 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.topjohnwu.superuser.Shell
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
+import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.repository.SettingRepository
+import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.navigation.NavigationRoot
 import io.github.wifi_password_manager.ui.screen.lock.LockView
+import io.github.wifi_password_manager.ui.screen.noaccess.NoAccessView
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.isBiometricAuthenticationSupported
 import io.github.wifi_password_manager.utils.toast
-import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : AppCompatActivity() {
+    private val privilegedManager by inject<PrivilegedManager>()
     private val settingRepository by inject<SettingRepository>()
+
     private var isAuthenticated by mutableStateOf(false)
-    private var isRoot by mutableStateOf<Boolean?>(null)
+    private var privilegedMode by mutableStateOf<PrivilegedMode?>(null)
+    private var skipPrivilegedCheck by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,13 +60,18 @@ class MainActivity : AppCompatActivity() {
             ) {
                 when {
                     settings.appLockEnabled && !isAuthenticated -> {
-                        LockView(onAuthenticated = { isAuthenticated = true })
+                        LockView { isAuthenticated = true }
                     }
-                    isRoot == true -> {
+                    privilegedMode?.hasPrivilegedAccess == true ||
+                        (privilegedMode == PrivilegedMode.NONE && skipPrivilegedCheck) -> {
                         NavigationRoot()
                     }
-                    isRoot == false -> {
-                        ShizukuPermissionHandler { NavigationRoot() }
+                    else -> {
+                        NoAccessView(
+                            allowSkip = settings.allowCacheMode,
+                            onAccessGranted = { privilegedMode = privilegedManager.currentMode },
+                            onSkip = { skipPrivilegedCheck = true },
+                        )
                     }
                 }
             }
@@ -75,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen().apply { setKeepOnScreenCondition { keepSplashScreenOn } }
 
         lifecycleScope.launch {
+            privilegedManager.refresh()
             val settings = settingRepository.settings.value
 
             if (settings.appLockEnabled && !isBiometricAuthenticationSupported()) {
@@ -83,14 +92,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             isAuthenticated = !settingRepository.settings.value.appLockEnabled
-
-            isRoot =
-                runCatching {
-                        withContext(Shell.EXECUTOR.asCoroutineDispatcher()) {
-                            Shell.getShell().isRoot
-                        }
-                    }
-                    .getOrElse { false }
+            privilegedMode = privilegedManager.currentMode
 
             delay(500.milliseconds)
             keepSplashScreenOn = false
@@ -124,11 +126,7 @@ class MainActivity : AppCompatActivity() {
                     .map { it.language }
                     .distinctUntilChanged()
                     .collect { language ->
-                        val localeList =
-                            LocaleListCompat.forLanguageTags(
-                                if ('-' in language.code) language.code.split("-").first()
-                                else language.code
-                            )
+                        val localeList = LocaleListCompat.forLanguageTags(language.code)
                         AppCompatDelegate.setApplicationLocales(localeList)
                     }
             }

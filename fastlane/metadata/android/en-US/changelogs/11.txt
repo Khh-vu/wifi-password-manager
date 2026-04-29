@@ -1,0 +1,3 @@
+- Added Chinese localization
+- Fixed forget all networks functionality
+- Fixed duplicate Wifi entries appearing in exported file

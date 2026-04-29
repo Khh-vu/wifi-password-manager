@@ -1,7 +1,5 @@
 package io.github.wifi_password_manager.ui.screen.license
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +9,7 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
@@ -33,7 +32,7 @@ fun LicenseView() {
                 navigationIcon = {
                     TooltipIconButton(
                         onClick = { navBackStack.removeLastOrNull() },
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        painter = painterResource(R.drawable.ic_arrow_back),
                         tooltip = stringResource(R.string.back),
                         positioning = TooltipAnchorPosition.Below,
                     )

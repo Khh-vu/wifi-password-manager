@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -74,7 +72,7 @@ fun SearchBar(
             leadingIcon = {
                 TooltipIconButton(
                     onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    painter = painterResource(R.drawable.ic_arrow_back),
                     tooltip = stringResource(R.string.back),
                     positioning = TooltipAnchorPosition.Below,
                 )
@@ -83,7 +81,7 @@ fun SearchBar(
                 Row {
                     TooltipIconButton(
                         onClick = { onAction(NetworkListViewModel.Action.SearchTextChanged("")) },
-                        imageVector = Icons.Filled.Clear,
+                        painter = painterResource(R.drawable.ic_clear_all),
                         tooltip = stringResource(R.string.clear),
                         positioning = TooltipAnchorPosition.Below,
                     )

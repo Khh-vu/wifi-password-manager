@@ -1,6 +1,6 @@
 package io.github.wifi_password_manager.utils
 
-import android.content.Context
+import android.content.res.Resources
 import androidx.annotation.StringRes
 
 sealed interface UiText {
@@ -9,10 +9,10 @@ sealed interface UiText {
 
     class StringResource(@param:StringRes val resId: Int, vararg val args: Any) : UiText
 
-    fun asString(context: Context): String {
+    fun asString(resources: Resources): String {
         return when (this) {
             is DynamicString -> value
-            is StringResource -> context.getString(resId, *args)
+            is StringResource -> resources.getString(resId, *args)
         }
     }
 }

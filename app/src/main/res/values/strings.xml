@@ -6,16 +6,26 @@
     <string name="ok">OK</string>
     <string name="clear">Clear</string>
     <string name="back">Back</string>
-    <string name="save">Save</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-    <string name="delete">Delete</string>
     <string name="warning">Warning</string>
 
     <!-- Theme Mode -->
     <string name="theme_mode_light">Light</string>
     <string name="theme_mode_dark">Dark</string>
     <string name="theme_mode_system">System</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">Plain (JSON)</string>
+    <string name="export_option_plain_description">Pretty-printed JSON. Easy to read and edit</string>
+    <string name="export_option_compressed">Compressed (GZip)</string>
+    <string name="export_option_compressed_description">GZip compressed JSON. Smaller file size</string>
+
+    <!-- No Access Screen -->
+    <string name="no_access_title">Privileged Access Required</string>
+    <string name="no_access_description">This app requires Shizuku or root access to read WiFi passwords. Please grant privileged access to continue.</string>
+    <string name="continue_in_cache_mode">Continue in Cache Mode</string>
+    <string name="grant_access">Grant Access</string>
 
     <!-- Lock Screen -->
     <string name="lock_title">App Locked</string>
@@ -45,9 +55,15 @@
     <!-- Import & Export Section -->
     <string name="import_export_section">Import &amp; Export</string>
     <string name="import_action">Import networks</string>
-    <string name="import_description">Import WiFi networks from JSON file(s)</string>
+    <string name="import_description">Import WiFi networks from JSON or GZip file(s)</string>
     <string name="export_action">Export networks</string>
-    <string name="export_description">Export WiFi networks to a JSON file</string>
+    <string name="export_description">Export WiFi networks to a file</string>
+    <string name="export_format">Format</string>
+    <string name="encrypt_export">Encrypt export</string>
+    <string name="password">Password</string>
+    <string name="password_required">Password is required to encrypt and decrypt the file</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
 
     <!-- Security Section -->
     <string name="security_section">Security</string>
@@ -63,10 +79,12 @@
 
     <!-- Advanced Section -->
     <string name="advanced_section">Advanced</string>
-    <string name="forget_all_action">Forget all networks</string>
+    <string name="forget_all_title">Forget all networks</string>
     <string name="forget_all_description">Remove all saved WiFi networks from this device</string>
-    <string name="auto_persist_ephemeral_networks_action">Auto persist ephemeral networks</string>
+    <string name="auto_persist_ephemeral_networks_title">Auto persist ephemeral networks</string>
     <string name="auto_persist_ephemeral_networks_description">Automatically save temporary networks that would otherwise be forgotten after disconnecting (may cause disconnects)</string>
+    <string name="allow_cache_mode_title">Allow cache mode</string>
+    <string name="allow_cache_mode_description">Allow the app to run without Shizuku or root. Privileged functionalities will be disabled and WiFi data will be read from cache.</string>
 
     <!-- About Section -->
     <string name="about_section">About</string>
@@ -118,6 +136,10 @@
     <string name="forget_all_confirmation_title">Forget all networks?</string>
     <string name="forget_all_confirmation_message">This will permanently remove all saved WiFi networks from this device. This action cannot be undone.</string>
 
+    <!-- Import Password Dialog -->
+    <string name="import_password_title">Enter Password</string>
+    <string name="import_password_description">This file is encrypted. Enter the password to decrypt it.</string>
+
     <!-- Messages -->
     <string name="loading">Loading…</string>
     <string name="refresh_success">Refreshed successfully</string>
@@ -131,6 +153,7 @@
     <string name="no_network_to_forget">No networks found to forget</string>
     <string name="no_network_to_export">No networks available to export</string>
     <string name="invalid_json">Unable to use the selected JSON file</string>
+    <string name="wrong_password">Decryption failed. Wrong password?</string>
     <string name="app_lock_required">Enter your screen lock to access</string>
     <string name="app_lock_too_many_attempts">Too many attempts. Try again later.</string>
     <string name="app_lock_permanently_locked">Biometric locked. Use device credentials.</string>

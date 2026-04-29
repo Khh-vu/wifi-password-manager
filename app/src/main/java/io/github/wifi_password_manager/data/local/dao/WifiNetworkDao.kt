@@ -14,7 +14,7 @@ interface WifiNetworkDao {
     @Query(
         """
             SELECT wifi_networks.* FROM wifi_networks
-            JOIN wifi_networks_fts ON wifi_networks.rowid = wifi_networks_fts.rowid
+            JOIN wifi_networks_fts ON wifi_networks.ssid = wifi_networks_fts.ssid
             WHERE wifi_networks_fts MATCH :query
         """
     )

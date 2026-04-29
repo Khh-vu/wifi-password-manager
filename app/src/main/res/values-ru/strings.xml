@@ -6,16 +6,26 @@
     <string name="ok">ОК</string>
     <string name="clear">Очистить</string>
     <string name="back">Назад</string>
-    <string name="save">Сохранить</string>
     <string name="on">Вкл.</string>
     <string name="off">Выкл.</string>
-    <string name="delete">Удалить</string>
     <string name="warning">Внимание</string>
 
     <!-- Theme Mode -->
     <string name="theme_mode_light">Светлая</string>
     <string name="theme_mode_dark">Тёмная</string>
     <string name="theme_mode_system">Системная</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">Обычный (JSON)</string>
+    <string name="export_option_plain_description">Форматированный JSON. Легко читать и редактировать</string>
+    <string name="export_option_compressed">Сжатый (GZip)</string>
+    <string name="export_option_compressed_description">JSON сжатый GZip. Меньший размер файла</string>
+
+    <!-- No Access Screen -->
+    <string name="no_access_title">Требуется привилегированный доступ</string>
+    <string name="no_access_description">Этому приложению требуется Shizuku или root-доступ для чтения паролей WiFi. Пожалуйста, предоставьте привилегированный доступ для продолжения.</string>
+    <string name="continue_in_cache_mode">Продолжить в режиме кэширования</string>
+    <string name="grant_access">Предоставить доступ</string>
 
     <!-- Lock Screen -->
     <string name="lock_title">Приложение заблокировано</string>
@@ -45,9 +55,15 @@
     <!-- Import & Export Section -->
     <string name="import_export_section">Импорт и экспорт</string>
     <string name="import_action">Импортировать сети</string>
-    <string name="import_description">Импорт сетей WiFi из файлов JSON</string>
+    <string name="import_description">Импорт сетей WiFi из файлов JSON или GZip</string>
     <string name="export_action">Экспортировать сети</string>
-    <string name="export_description">Экспорт сетей WiFi в файл JSON</string>
+    <string name="export_description">Экспорт сетей WiFi в файл</string>
+    <string name="export_format">Формат</string>
+    <string name="encrypt_export">Зашифровать экспорт</string>
+    <string name="password">Пароль</string>
+    <string name="password_required">Пароль требуется для шифрования и расшифровки файла</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="hide_password">Скрыть пароль</string>
 
     <!-- Security Section -->
     <string name="security_section">Безопасность</string>
@@ -63,11 +79,13 @@
 
     <!-- Advanced Section -->
     <string name="advanced_section">Дополнительно</string>
-    <string name="forget_all_action">Забыть все сети</string>
+    <string name="forget_all_title">Забыть все сети</string>
     <string name="forget_all_description">Удалить все сохранённые сети WiFi с этого устройства</string>
-    <string name="auto_persist_ephemeral_networks_action">Автосохранение временных сетей</string>
+    <string name="auto_persist_ephemeral_networks_title">Автосохранение временных сетей</string>
     <string name="auto_persist_ephemeral_networks_description">Автоматически сохранять временные сети, которые иначе были бы забыты после отключения (может вызвать разрывы соединения)</string>
-    
+    <string name="allow_cache_mode_title">Разрешить режим кэширования</string>
+    <string name="allow_cache_mode_description">Разрешите приложению работать без Shizuku или root-прав. Привилегированные функции будут отключены, а данные WiFi будут считываться из кэша.</string>
+
     <!-- About Section -->
     <string name="about_section">О приложении</string>
     <string name="license_title">Лицензия</string>
@@ -100,7 +118,7 @@
     <string name="empty_note_discarded">Пустая заметка отклонена</string>
     <string name="note_saved">Заметка сохранена</string>
     <string name="note_save_failed">Не удалось сохранить заметку</string>
-    
+
     <!-- Security Types -->
     <string name="security_open">Открытая</string>
     <string name="security_owe">Enhanced Open</string>
@@ -117,7 +135,11 @@
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Забыть все сети?</string>
     <string name="forget_all_confirmation_message">Это безвозвратно удалит все сохранённые сети WiFi с этого устройства. Это действие нельзя отменить.</string>
-    
+
+    <!-- Import Password Dialog -->
+    <string name="import_password_title">Введите пароль</string>
+    <string name="import_password_description">Этот файл зашифрован. Введите пароль для расшифровки.</string>
+
     <!-- Messages -->
     <string name="loading">Загрузка…</string>
     <string name="refresh_success">Обновлено успешно</string>
@@ -131,6 +153,7 @@
     <string name="no_network_to_forget">Сети для удаления не найдены</string>
     <string name="no_network_to_export">Нет доступных сетей для экспорта</string>
     <string name="invalid_json">Невозможно использовать выбранный файл JSON</string>
+    <string name="wrong_password">Расшифровка не удалась. Неправильный пароль?</string>
     <string name="app_lock_required">Для доступа используйте блокировку экрана</string>
     <string name="app_lock_too_many_attempts">Слишком много попыток. Попробуйте позже.</string>
     <string name="app_lock_permanently_locked">Биометрия заблокирована. Используйте пароль устройства.</string>

@@ -13,14 +13,12 @@ import androidx.work.WorkerParameters
 import com.topjohnwu.superuser.Shell
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.hasShizukuPermission
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.concurrent.TimeUnit
 
-class PersistEphemeralNetworksWorker(
-    appContext: Context,
-    params: WorkerParameters,
-    private val wifiRepository: WifiRepository,
-) : CoroutineWorker(appContext, params) {
-
+class PersistEphemeralNetworksWorker(appContext: Context, params: WorkerParameters) :
+    CoroutineWorker(appContext, params), KoinComponent {
     companion object {
         private const val TAG = "PersistEphemeralWorker"
         private const val WORK_NAME = "persist_ephemeral_networks"
@@ -52,6 +50,8 @@ class PersistEphemeralNetworksWorker(
             Log.d(TAG, "Cancelled periodic work to persist ephemeral networks")
         }
     }
+
+    private val wifiRepository by inject<WifiRepository>()
 
     override suspend fun doWork(): Result {
         if (!applicationContext.hasShizukuPermission && Shell.isAppGrantedRoot() != true) {

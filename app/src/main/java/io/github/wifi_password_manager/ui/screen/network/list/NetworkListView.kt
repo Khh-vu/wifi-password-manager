@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
@@ -30,6 +26,7 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -70,14 +67,14 @@ fun NetworkListView(
                         actions = {
                             TooltipIconButton(
                                 onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
-                                imageVector = Icons.Filled.Search,
+                                painter = painterResource(R.drawable.ic_search),
                                 tooltip = stringResource(R.string.search_tooltip),
                                 positioning = TooltipAnchorPosition.Below,
                             )
 
                             TooltipIconButton(
                                 onClick = { navBackStack.add(Route.SettingScreen) },
-                                imageVector = Icons.Outlined.Settings,
+                                painter = painterResource(R.drawable.ic_settings),
                                 tooltip = stringResource(R.string.settings_tooltip),
                                 positioning = TooltipAnchorPosition.Below,
                             )
@@ -87,24 +84,26 @@ fun NetworkListView(
             }
         },
         floatingActionButton = {
-            TooltipBox(
-                positionProvider =
-                    TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Above
-                    ),
-                tooltip = {
-                    PlainTooltip { Text(text = stringResource(R.string.refresh_description)) }
-                },
-                state = rememberTooltipState(),
-            ) {
-                FloatingActionButton(
-                    modifier = Modifier.navigationBarsPadding().imePadding(),
-                    onClick = { onAction(NetworkListViewModel.Action.Refresh) },
+            if (!state.isCacheMode) {
+                TooltipBox(
+                    positionProvider =
+                        TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Above
+                        ),
+                    tooltip = {
+                        PlainTooltip { Text(text = stringResource(R.string.refresh_description)) }
+                    },
+                    state = rememberTooltipState(),
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Refresh,
-                        contentDescription = stringResource(R.string.refresh_description),
-                    )
+                    FloatingActionButton(
+                        modifier = Modifier.navigationBarsPadding().imePadding(),
+                        onClick = { onAction(NetworkListViewModel.Action.Refresh) },
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_refresh),
+                            contentDescription = stringResource(R.string.refresh_description),
+                        )
+                    }
                 }
             }
         },
