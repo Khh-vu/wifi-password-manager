@@ -60,10 +60,10 @@
     <string name="export_description">WiFi ağlarını bir dosyaya dışa aktarın</string>
     <string name="export_format">Biçim</string>
     <string name="encrypt_export">Dışa aktarmayı şifrele</string>
-    <string name="password">Şifre</string>
+    <string name="password">Parola</string>
     <string name="password_required">Dosyayı şifrelemek ve şifresini çözmek için parola gereklidir</string>
-    <string name="show_password">Şifreyi göster</string>
-    <string name="hide_password">Şifreyi gizle</string>
+    <string name="show_password">Parolayı göster</string>
+    <string name="hide_password">Parolayı gizle</string>
 
     <!-- Security Section -->
     <string name="security_section">Güvenlik</string>
@@ -102,7 +102,7 @@
     <string name="copy_description">WiFi Şifresini kopyala</string>
     <string name="password_label">Şifre</string>
     <string name="password_mask_character">•</string>
-    <string name="no_password">Hiç şifre yok</string>
+    <string name="no_password">Şifre yok</string>
     <string name="show_wifi_qr_code">WiFi QR Kodunu göster</string>
     <string name="wifi_qr_code">WiFi QR Kodu</string>
     <string name="more_options">Daha fazla seçenek</string>
@@ -121,42 +121,42 @@
 
     <!-- Security Types -->
     <string name="security_open">Yok</string>
-    <string name="security_owe">Enhanced Open</string>
+    <string name="security_owe">Gelişmiş Açık</string>
     <string name="security_wpa2">WPA/WPA2</string>
     <string name="security_wpa3">WPA3-Kişisel</string>
     <string name="security_wep">WEP</string>
 
     <!-- Shizuku Permission Dialog -->
-    <string name="shizuku_required_title">Shizuku Required</string>
-    <string name="shizuku_required_message">Shizuku is required to use this app. If you have Shizuku installed, please start it. Otherwise, please install Shizuku.</string>
-    <string name="open_shizuku">Open Shizuku</string>
-    <string name="install_shizuku">Install Shizuku</string>
+    <string name="shizuku_required_title">Shizuku Gerekli</string>
+    <string name="shizuku_required_message">Bu uygulamayı kullanmak için Shizuku gereklidir. Eğer Shizuku yüklüyse, lütfen başlatın. Yüklü değilse, lütfen Shizuku'yu yükleyin.</string>
+    <string name="open_shizuku">Shizuku'yu aç</string>
+    <string name="install_shizuku">Shizuku'yu yükle</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
-    <string name="forget_all_confirmation_title">Forget all networks?</string>
-    <string name="forget_all_confirmation_message">This will permanently remove all saved WiFi networks from this device. This action cannot be undone.</string>
+    <string name="forget_all_confirmation_title">Tüm ağlar unutulsun mu?</string>
+    <string name="forget_all_confirmation_message">Bu, cihazdaki tüm kayıtlı WiFi ağlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
 
     <!-- Import Password Dialog -->
-    <string name="import_password_title">Enter Password</string>
-    <string name="import_password_description">This file is encrypted. Enter the password to decrypt it.</string>
+    <string name="import_password_title">Parolayı girin</string>
+    <string name="import_password_description">Bu dosya şifrelenmiştir. Şifreyi çözmek için parolayı girin.</string>
 
     <!-- Messages -->
-    <string name="loading">Loading…</string>
-    <string name="refresh_success">Refreshed successfully</string>
-    <string name="no_network_to_import">No networks found to import</string>
-    <string name="import_networks_success">Imported networks successfully</string>
-    <string name="import_networks_failed">Failed to import networks</string>
-    <string name="export_networks_success">Exported networks successfully</string>
-    <string name="export_networks_failed">Failed to export networks</string>
-    <string name="forget_success">Forgot all networks successfully</string>
-    <string name="forget_failed">Failed to forget all networks</string>
-    <string name="no_network_to_forget">No networks found to forget</string>
-    <string name="no_network_to_export">No networks available to export</string>
-    <string name="invalid_json">Unable to use the selected JSON file</string>
-    <string name="wrong_password">Decryption failed. Wrong password?</string>
-    <string name="app_lock_required">Enter your screen lock to access</string>
-    <string name="app_lock_too_many_attempts">Too many attempts. Try again later.</string>
-    <string name="app_lock_permanently_locked">Biometric locked. Use device credentials.</string>
-    <string name="app_lock_authentication_failed">Authentication failed.</string>
-    <string name="app_lock_disabled">Screen lock was removed. App Lock has been disabled.</string>
+    <string name="loading">Yükleniyor…</string>
+    <string name="refresh_success">Yenileme başarılı</string>
+    <string name="no_network_to_import">İçe aktarılacak ağ bulunamadı</string>
+    <string name="import_networks_success">Ağlar başarıyla içe aktarıldı</string>
+    <string name="import_networks_failed">Ağların içe aktarılması başarısız</string>
+    <string name="export_networks_success">Ağlar başarıyla dışa aktarıldı</string>
+    <string name="export_networks_failed">Ağları dışa aktarma başarısız</string>
+    <string name="forget_success">Tüm ağlar başarıyla unutuldu</string>
+    <string name="forget_failed">Tüm ağları unutma başarısız</string>
+    <string name="no_network_to_forget">Unutulacak ağ bulunamadı</string>
+    <string name="no_network_to_export">Dışa aktarılabilecek ağ yok</string>
+    <string name="invalid_json">Seçilen JSON dosyası kullanılamıyor</string>
+    <string name="wrong_password">Şifre çözme başarısız oldu. Yanlış parola mı girdiniz?</string>
+    <string name="app_lock_required">Erişim sağlamak için ekran kilidinizi girin</string>
+    <string name="app_lock_too_many_attempts">Çok fazla deneme yapıldı. Daha sonra tekrar deneyin.</string>
+    <string name="app_lock_permanently_locked">Biyometrik kilit aktif. Cihaz kimlik bilgilerini kullanın.</string>
+    <string name="app_lock_authentication_failed">Kimlik doğrulama başarısız.</string>
+    <string name="app_lock_disabled">Ekran kilidi kaldırıldı. Uygulama kilidi devre dışı bırakıldı.</string>
 </resources>
