@@ -34,7 +34,7 @@
 
     <!-- Network List Screen -->
     <string name="network_list_title">Kaydedilmiş WiFi Bağlantıları</string>
-    <string name="search_hint">SSID veya Not'a Göre Ara</string>
+    <string name="search_hint">SSID veya Not\'a Göre Ara</string>
     <string name="search_tooltip">Ara</string>
     <string name="refresh_description">Yenile</string>
     <string name="no_networks_found">Hiçbir WiFi ağı bulunamadı</string>
@@ -74,8 +74,8 @@
     <string name="secure_screen_title">Güvenli Ekran</string>
     <string name="secure_screen_description">Ekran görüntüsü alımını engelleyin ve güvenli olmayan ekranlarda görüntülenmesini önleyin</string>
     <string name="lock_screen_required_title">Kilit Ekranı Gerekli</string>
-    <string name="lock_screen_required_message">Uygulama Kilidi'ni kullanmak için öncelikle cihazınızda bir ekran kilidi ayarlamanız gerekir.</string>
-    <string name="open_settings">Ayarlar'ı Aç</string>
+    <string name="lock_screen_required_message">Uygulama Kilidi\'ni kullanmak için öncelikle cihazınızda bir ekran kilidi ayarlamanız gerekir.</string>
+    <string name="open_settings">Ayarlar\'ı Aç</string>
 
     <!-- Advanced Section -->
     <string name="advanced_section">Gelişmiş</string>
@@ -128,9 +128,9 @@
 
     <!-- Shizuku Permission Dialog -->
     <string name="shizuku_required_title">Shizuku Gerekli</string>
-    <string name="shizuku_required_message">Bu uygulamayı kullanmak için Shizuku gereklidir. Eğer Shizuku yüklüyse, lütfen başlatın. Yüklü değilse, lütfen Shizuku'yu yükleyin.</string>
-    <string name="open_shizuku">Shizuku'yu aç</string>
-    <string name="install_shizuku">Shizuku'yu yükle</string>
+    <string name="shizuku_required_message">Bu uygulamayı kullanmak için Shizuku gereklidir. Eğer Shizuku yüklüyse, lütfen başlatın. Yüklü değilse, lütfen Shizuku\'yu yükleyin.</string>
+    <string name="open_shizuku">Shizuku\'yu aç</string>
+    <string name="install_shizuku">Shizuku\'yu yükle</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Tüm ağlar unutulsun mu?</string>
