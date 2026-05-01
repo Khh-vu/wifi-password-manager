@@ -52,7 +52,7 @@ private const val REQUEST_CODE = 10001
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NoAccessView(allowSkip: Boolean, onAccessGranted: () -> Unit, onSkip: () -> Unit) {
+fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
     val privilegedManager = koinInject<PrivilegedManager>()
 
     val scope = rememberCoroutineScope()
@@ -65,12 +65,7 @@ fun NoAccessView(allowSkip: Boolean, onAccessGranted: () -> Unit, onSkip: () -> 
                 showErrorDialog = true
                 return@rememberLauncherForActivityResult
             }
-            scope.launch {
-                privilegedManager.refresh()
-                if (privilegedManager.currentMode.hasPrivilegedAccess) {
-                    onAccessGranted()
-                }
-            }
+            privilegedManager.refresh()
         }
 
     val shizukuPermissionListener =
@@ -80,12 +75,7 @@ fun NoAccessView(allowSkip: Boolean, onAccessGranted: () -> Unit, onSkip: () -> 
 
                 Shizuku.removeRequestPermissionResultListener(this)
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    scope.launch {
-                        privilegedManager.refresh()
-                        if (privilegedManager.currentMode.hasPrivilegedAccess) {
-                            onAccessGranted()
-                        }
-                    }
+                    privilegedManager.refresh()
                 } else {
                     showErrorDialog = true
                 }
@@ -104,7 +94,6 @@ fun NoAccessView(allowSkip: Boolean, onAccessGranted: () -> Unit, onSkip: () -> 
 
             if (isRoot) {
                 privilegedManager.refresh()
-                onAccessGranted()
                 return@launch
             }
 
@@ -179,11 +168,11 @@ fun NoAccessView(allowSkip: Boolean, onAccessGranted: () -> Unit, onSkip: () -> 
 @PreviewLightDark
 @Composable
 private fun NoAccessViewPreview() {
-    WiFiPasswordManagerTheme { NoAccessView(allowSkip = false, onAccessGranted = {}, onSkip = {}) }
+    WiFiPasswordManagerTheme { NoAccessView(allowSkip = false, onSkip = {}) }
 }
 
 @PreviewScreenSizes
 @Composable
 private fun AdaptiveNoAccessViewPreview() {
-    WiFiPasswordManagerTheme { NoAccessView(allowSkip = false, onAccessGranted = {}, onSkip = {}) }
+    WiFiPasswordManagerTheme { NoAccessView(allowSkip = false, onSkip = {}) }
 }

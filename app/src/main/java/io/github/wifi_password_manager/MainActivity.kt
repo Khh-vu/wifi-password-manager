@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
+import rikka.shizuku.Shizuku
 import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : AppCompatActivity() {
@@ -38,8 +39,15 @@ class MainActivity : AppCompatActivity() {
     private val settingRepository by inject<SettingRepository>()
 
     private var isAuthenticated by mutableStateOf(false)
-    private var privilegedMode by mutableStateOf<PrivilegedMode?>(null)
     private var skipPrivilegedCheck by mutableStateOf(false)
+
+    private val shizukuBinderReceivedListener = Shizuku.OnBinderReceivedListener {
+        privilegedManager.refresh()
+    }
+
+    private val shizukuBinderDeadListener = Shizuku.OnBinderDeadListener {
+        privilegedManager.refresh()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +59,12 @@ class MainActivity : AppCompatActivity() {
         setupSecureScreen()
         setupLanguage()
 
+        Shizuku.addBinderReceivedListenerSticky(shizukuBinderReceivedListener)
+        Shizuku.addBinderDeadListener(shizukuBinderDeadListener)
+
         setContent {
             val settings by settingRepository.settings.collectAsStateWithLifecycle()
+            val privilegedMode by privilegedManager.mode.collectAsStateWithLifecycle()
 
             WiFiPasswordManagerTheme(
                 darkTheme = settings.themeMode.isDark,
@@ -62,14 +74,13 @@ class MainActivity : AppCompatActivity() {
                     settings.appLockEnabled && !isAuthenticated -> {
                         LockView { isAuthenticated = true }
                     }
-                    privilegedMode?.hasPrivilegedAccess == true ||
+                    privilegedMode.hasPrivilegedAccess ||
                         (privilegedMode == PrivilegedMode.NONE && skipPrivilegedCheck) -> {
                         NavigationRoot()
                     }
                     else -> {
                         NoAccessView(
                             allowSkip = settings.allowCacheMode,
-                            onAccessGranted = { privilegedMode = privilegedManager.currentMode },
                             onSkip = { skipPrivilegedCheck = true },
                         )
                     }
@@ -78,12 +89,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Shizuku.removeBinderReceivedListener(shizukuBinderReceivedListener)
+        Shizuku.removeBinderDeadListener(shizukuBinderDeadListener)
+    }
+
     private fun setupSplashScreen() {
         var keepSplashScreenOn = true
         installSplashScreen().apply { setKeepOnScreenCondition { keepSplashScreenOn } }
 
         lifecycleScope.launch {
-            privilegedManager.refresh()
             val settings = settingRepository.settings.value
 
             if (settings.appLockEnabled && !isBiometricAuthenticationSupported()) {
@@ -92,7 +108,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             isAuthenticated = !settingRepository.settings.value.appLockEnabled
-            privilegedMode = privilegedManager.currentMode
 
             delay(500.milliseconds)
             keepSplashScreenOn = false
