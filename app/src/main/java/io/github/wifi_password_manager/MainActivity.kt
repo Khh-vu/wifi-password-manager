@@ -7,8 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -19,35 +17,25 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.repository.SettingRepository
-import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.navigation.NavigationRoot
 import io.github.wifi_password_manager.ui.screen.lock.LockView
 import io.github.wifi_password_manager.ui.screen.noaccess.NoAccessView
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.isBiometricAuthenticationSupported
 import io.github.wifi_password_manager.utils.toast
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
-import rikka.shizuku.Shizuku
-import kotlin.time.Duration.Companion.milliseconds
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity() {
-    private val privilegedManager by inject<PrivilegedManager>()
     private val settingRepository by inject<SettingRepository>()
 
-    private var isAuthenticated by mutableStateOf(false)
-    private var skipPrivilegedCheck by mutableStateOf(false)
-
-    private val shizukuBinderReceivedListener = Shizuku.OnBinderReceivedListener {
-        privilegedManager.refresh()
-    }
-
-    private val shizukuBinderDeadListener = Shizuku.OnBinderDeadListener {
-        privilegedManager.refresh()
-    }
+    private val viewModel by
+        viewModel<MainViewModel> { parametersOf(isBiometricAuthenticationSupported()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,13 +46,13 @@ class MainActivity : AppCompatActivity() {
         setupSplashScreen()
         setupSecureScreen()
         setupLanguage()
-
-        Shizuku.addBinderReceivedListenerSticky(shizukuBinderReceivedListener)
-        Shizuku.addBinderDeadListener(shizukuBinderDeadListener)
+        observeEvents()
 
         setContent {
             val settings by settingRepository.settings.collectAsStateWithLifecycle()
-            val privilegedMode by privilegedManager.mode.collectAsStateWithLifecycle()
+            val privilegedMode by viewModel.privilegedMode.collectAsStateWithLifecycle()
+            val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
+            val skipPrivilegedCheck by viewModel.skipPrivilegedCheck.collectAsStateWithLifecycle()
 
             WiFiPasswordManagerTheme(
                 darkTheme = settings.themeMode.isDark,
@@ -72,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             ) {
                 when {
                     settings.appLockEnabled && !isAuthenticated -> {
-                        LockView { isAuthenticated = true }
+                        LockView(viewModel::onAuthenticated)
                     }
                     privilegedMode.hasPrivilegedAccess ||
                         (privilegedMode == PrivilegedMode.NONE && skipPrivilegedCheck) -> {
@@ -81,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     else -> {
                         NoAccessView(
                             allowSkip = settings.allowCacheMode,
-                            onSkip = { skipPrivilegedCheck = true },
+                            onSkip = viewModel::onSkipPrivilegedCheck,
                         )
                     }
                 }
@@ -89,28 +77,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Shizuku.removeBinderReceivedListener(shizukuBinderReceivedListener)
-        Shizuku.removeBinderDeadListener(shizukuBinderDeadListener)
-    }
-
     private fun setupSplashScreen() {
         var keepSplashScreenOn = true
         installSplashScreen().apply { setKeepOnScreenCondition { keepSplashScreenOn } }
 
         lifecycleScope.launch {
-            val settings = settingRepository.settings.value
-
-            if (settings.appLockEnabled && !isBiometricAuthenticationSupported()) {
-                settingRepository.updateSettings { it.copy(appLockEnabled = false) }
-                toast(R.string.app_lock_disabled)
+            viewModel.isAuthenticated.collect {
+                keepSplashScreenOn = false
+                cancel()
             }
-
-            isAuthenticated = !settingRepository.settings.value.appLockEnabled
-
-            delay(500.milliseconds)
-            keepSplashScreenOn = false
         }
     }
 
@@ -144,6 +119,20 @@ class MainActivity : AppCompatActivity() {
                         val localeList = LocaleListCompat.forLanguageTags(language.code)
                         AppCompatDelegate.setApplicationLocales(localeList)
                     }
+            }
+        }
+    }
+
+    private fun observeEvents() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.event.collect { event ->
+                    when (event) {
+                        is MainViewModel.Event.ShowMessage -> {
+                            toast(event.message.asString(resources))
+                        }
+                    }
+                }
             }
         }
     }

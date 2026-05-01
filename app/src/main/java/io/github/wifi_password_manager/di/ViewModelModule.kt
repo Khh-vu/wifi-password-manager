@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.di
 
+import io.github.wifi_password_manager.MainViewModel
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.SettingRepository
@@ -16,6 +17,13 @@ import org.koin.core.annotation.Module
 @Module
 @Configuration
 class ViewModelModule {
+    @KoinViewModel
+    fun mainViewModel(
+        settingRepository: SettingRepository,
+        privilegedManager: PrivilegedManager,
+        @InjectedParam isBiometricSupported: Boolean,
+    ) = MainViewModel(settingRepository, privilegedManager, isBiometricSupported)
+
     @KoinViewModel
     fun networkListViewModel(wifiRepository: WifiRepository, privilegedManager: PrivilegedManager) =
         NetworkListViewModel(wifiRepository, privilegedManager)
