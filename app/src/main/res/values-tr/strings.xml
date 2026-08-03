@@ -51,15 +51,15 @@
     <string name="app_theme_title">Uygulama Teması</string>
     <string name="app_theme_description">Uygulama görünümünü değiştir</string>
     <string name="material_you_title">Material You</string>
-    <string name="pure_black_theme_title">Safah teması</string>
-    <string name="pure_black_theme_description">Koyu temada safah arka plan kullan</string>
+    <string name="pure_black_theme_title">Saf siyah tema</string>
+    <string name="pure_black_theme_description">Koyu temada saf siyah arka plan kullan</string>
 
     <!-- Import & Export Section -->
     <string name="import_export_section">İçe &amp; Dışa aktar</string>
     <string name="import_action">Ağları içe aktar</string>
-    <string name="import_description">JSON veya GZip dosyalarından WiFi ağlarını içe aktarın</string>
+    <string name="import_description">JSON veya GZip dosyasından WiFi ağlarını içe aktarın</string>
     <string name="export_action">Ağları dışa aktar</string>
-    <string name="export_description">WiFi ağlarını bir dosyaya dışa aktarın</string>
+    <string name="export_description">WiFi ağlarını bir dosyaya aktarın</string>
     <string name="export_format">Biçim</string>
     <string name="encrypt_export">Dışa aktarmayı şifrele</string>
     <string name="password">Parola</string>
@@ -70,8 +70,8 @@
     <!-- External App Integration Section -->
     <string name="external_integration_section">Harici Uygulama Entegrasyonu</string>
     <string name="allow_insecure_receiver_title">Güvensiz Alıcıya İzin Ver</string>
-    <string name="allow_insecure_receiver_description">Harici uygulamaların bu uygulamaya intent göndermesine izin verir</string>
-    <string name="export_wifi_action">WiFi Dışa Aktar</string>
+    <string name="allow_insecure_receiver_description">Harici uygulamaların bu uygulamaya istek göndermesine izin verir</string>
+    <string name="export_wifi_action">WiFi\'ı Dışa Aktar</string>
 
     <!-- Security Section -->
     <string name="security_section">Güvenlik</string>
@@ -97,7 +97,7 @@
     <string name="allow_cache_mode_description">Uygulamanın Shizuku veya root erişimi olmadan çalışmasına izin verir. Ayrıcalıklı işlevler devre dışı bırakılacak ve WiFi verileri önbellekten okunacaktır.</string>
 
     <!-- Debugging Section -->
-    <string name="debugging">Debuggen</string>
+    <string name="debugging">Hata Ayıklama</string>
 
     <!-- About Section -->
     <string name="about_section">Hakkında</string>
@@ -106,7 +106,7 @@
     <string name="source_code_title">Kaynak Kodu</string>
     <string name="version_title">Sürüm</string>
     <string name="build_type_title">Yapı Türü</string>
-    <string name="about_device">Over apparaat</string>
+    <string name="about_device">Cihaz hakkında</string>
 
     <!-- Quick Settings Tiles -->
     <string name="auto_persist">Otomatik hatırla</string>
@@ -197,7 +197,7 @@
     <string name="require_secure_screen">Güvenli Ekran Gereklidir</string>
 
     <!-- Connected WiFi Info -->
-    <string name="show_connected_wifi">Bağlı WiFi\'yi Göster</string>
+    <string name="show_connected_wifi">Bağlı WiFi\'ı Göster</string>
     <string name="connected_wifi_active">Aktif</string>
     <string name="connected_wifi_active_with_access">Aktif (%1$s erişimi kullanılıyor)</string>
     <string name="location_permission_required">Konum izni gerekli</string>
