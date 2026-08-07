@@ -1,0 +1,213 @@
+<resources>
+    <string name="app_name">مدير كلمات مرور WiFi</string>
+
+    <!-- Common -->
+    <string name="cancel">إلغاء</string>
+    <string name="ok">موافق</string>
+    <string name="clear">مسح</string>
+    <string name="back">رجوع</string>
+    <string name="on">تشغيل</string>
+    <string name="off">إيقاف</string>
+    <string name="warning">تحذير</string>
+
+    <!-- Theme Mode -->
+    <string name="theme_mode_light">فاتح</string>
+    <string name="theme_mode_dark">داكن</string>
+    <string name="theme_mode_system">النظام</string>
+
+    <!-- Export Options -->
+    <string name="export_option_plain">عادي (JSON)</string>
+    <string name="export_option_plain_description">تنسيق JSON مرتب. سهل القراءة والتعديل</string>
+    <string name="export_option_compressed">مضغوط (GZip)</string>
+    <string name="export_option_compressed_description">ملف JSON مضغوط بصيغة GZip. حجم ملف أصغر</string>
+
+    <!-- No Access Screen -->
+    <string name="no_access_title">مطلوب صلاحيات متقدمة</string>
+    <string name="no_access_description">يتطلب هذا التطبيق صلاحيات Shizuku أو Root لقراءة كلمات مرور WiFi. يرجى منح صلاحيات الوصول المتقدمة للمتابعة.</string>
+    <string name="continue_in_cache_mode">المتابعة في وضع التخزين المؤقت</string>
+    <string name="grant_access">منح الصلاحية</string>
+
+    <!-- Lock Screen -->
+    <string name="lock_title">التطبيق مقفل</string>
+    <string name="lock_description">التطبيق مقفل</string>
+    <string name="unlock">إلغاء القفل</string>
+
+    <!-- Network List Screen -->
+    <string name="network_list_title">شبكات WiFi المحفوظة</string>
+    <string name="search_hint">البحث بواسطة SSID أو ملاحظة</string>
+    <string name="search_tooltip">بحث</string>
+    <string name="refresh_description">تحديث</string>
+    <string name="no_networks_found">لم يتم العثور على شبكات WiFi</string>
+    <string name="no_networks_available">لا توجد شبكات WiFi محفوظة متاحة على هذا الجهاز</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_tooltip">الإعدادات</string>
+
+    <!-- Language Section -->
+    <string name="language_title">اللغة</string>
+    <string name="language_description">تغيير لغة التطبيق</string>
+    <string name="language_system_default">النظام الافتراضي</string>
+
+    <!-- Appearance Section -->
+    <string name="appearance_section">المظهر</string>
+    <string name="app_theme_title">سمة التطبيق</string>
+    <string name="app_theme_description">تغيير مظهر التطبيق</string>
+    <string name="material_you_title">Material You</string>
+    <string name="pure_black_theme_title">سمة سوداء خالصة</string>
+    <string name="pure_black_theme_description">استخدام خلفية سوداء خالصة للسمة الداكنة</string>
+
+    <!-- Import & Export Section -->
+    <string name="import_export_section">استيراد وتصدير</string>
+    <string name="import_action">استيراد الشبكات</string>
+    <string name="import_description">استيراد شبكات WiFi من ملف(ملفات) JSON أو GZip</string>
+    <string name="export_action">تصدير الشبكات</string>
+    <string name="export_description">تصدير شبكات WiFi إلى ملف</string>
+    <string name="export_format">التنسيق</string>
+    <string name="encrypt_export">تشفير التصدير</string>
+    <string name="password">كلمة المرور</string>
+    <string name="password_required">كلمة المرور مطلوبة لتشفير وفك تشفير الملف</string>
+    <string name="show_password">إظهار كلمة المرور</string>
+    <string name="hide_password">إخفاء كلمة المرور</string>
+
+    <!-- External App Integration Section -->
+    <string name="external_integration_section">تكامل التطبيقات الخارجية</string>
+    <string name="allow_insecure_receiver_title">السماح بالمستقبِل غير الآمن</string>
+    <string name="allow_insecure_receiver_description">يسمح للتطبيقات الخارجية بإرسال نوايا (Intents) إلى هذا التطبيق</string>
+    <string name="export_wifi_action">تصدير WiFi</string>
+
+    <!-- Security Section -->
+    <string name="security_section">الأمان</string>
+    <string name="app_lock_title">قفل التطبيق</string>
+    <string name="app_lock_description">طلب قفل الشاشة لفتح التطبيق</string>
+    <string name="app_lock_disable_title">قم بالمصادقة لتعطيل قفل التطبيق</string>
+    <string name="app_lock_enable_title">قم بالمصادقة لتمكين قفل التطبيق</string>
+    <string name="secure_screen_title">شاشة آمنة</string>
+    <string name="secure_screen_description">حظر لقطات الشاشة ومنع العرض على الشاشات غير الآمنة</string>
+    <string name="lock_screen_required_title">مطلوب قفل الشاشة</string>
+    <string name="lock_screen_required_message">لاستخدام قفل التطبيق، يجب عليك إعداد قفل شاشة على جهازك أولاً.</string>
+    <string name="open_settings">فتح الإعدادات</string>
+
+    <!-- Advanced Section -->
+    <string name="advanced_section">متقدم</string>
+    <string name="forget_all_title">نسيان جميع الشبكات</string>
+    <string name="forget_all_description">إزالة جميع شبكات WiFi المحفوظة من هذا الجهاز</string>
+    <string name="plaintext_passwords_title">إظهار كلمات المرور كنص عادي</string>
+    <string name="plaintext_passwords_description">عرض كلمات مرور WiFi كنص عادي</string>
+    <string name="auto_persist_ephemeral_networks_title">حفظ الشبكات المؤقتة تلقائياً</string>
+    <string name="auto_persist_ephemeral_networks_description">حفظ الشبكات المؤقتة تلقائياً والتي سيتم نسيانها خلاف ذلك بعد قطع الاتصال (قد يتسبب ذلك في انقطاع الاتصال)</string>
+    <string name="allow_cache_mode_title">السماح بوضع التخزين المؤقت</string>
+    <string name="allow_cache_mode_description">السماح للتطبيق بالعمل بدون Shizuku أو Root. سيتم تعطيل الوظائف التي تتطلب صلاحيات متقدمة وستتم قراءة بيانات WiFi من ذاكرة التخزين المؤقت.</string>
+
+    <!-- Debugging Section -->
+    <string name="debugging">تصحيح الأخطاء</string>
+
+    <!-- About Section -->
+    <string name="about_section">حول</string>
+    <string name="license_title">الترخيص</string>
+    <string name="license_description">عرض تراخيص المصادر المفتوحة</string>
+    <string name="source_code_title">كود المصدر</string>
+    <string name="version_title">الإصدار</string>
+    <string name="build_type_title">نوع البناء</string>
+    <string name="about_device">حول الجهاز</string>
+
+    <!-- Quick Settings Tiles -->
+    <string name="auto_persist">حفظ تلقائي</string>
+
+    <!-- WiFi Card -->
+    <string name="copy_action">نسخ</string>
+    <string name="copy_description">نسخ كلمة مرور WiFi</string>
+    <string name="password_label">كلمة المرور</string>
+    <string name="password_mask_character">•</string>
+    <string name="no_password">لا توجد كلمة مرور</string>
+    <string name="show_wifi_qr_code">إظهار رمز QR لشبكة WiFi</string>
+    <string name="wifi_qr_code">رمز QR لشبكة WiFi</string>
+    <string name="more_options">خيارات إضافية</string>
+    <string name="note_label">ملاحظة</string>
+    <string name="add_note">إضافة ملاحظة</string>
+    <string name="edit_note">تعديل الملاحظة</string>
+    <string name="delete_note">حذف الملاحظة</string>
+    <string name="note_deleted">تم حذف الملاحظة</string>
+
+    <!-- Note Screen -->
+    <string name="note_hint">أدخل ملاحظتك هنا…</string>
+    <string name="note_title">ملاحظة لـ %1$s</string>
+    <string name="empty_note_discarded">تم تجاهل الملاحظة الفارغة</string>
+    <string name="note_saved">تم حفظ الملاحظة</string>
+    <string name="note_save_failed">فشل حفظ الملاحظة</string>
+
+    <!-- Export WiFi Setup Screen -->
+    <string name="export_wifi_setup_title">معلومات الإعداد</string>
+    <string name="export_wifi_extra_format_hint">تنسيق التصدير: \'plain\' (JSON) أو \'compressed\' (GZip). الافتراضي هو \'plain\'.</string>
+    <string name="export_wifi_extra_password_hint">كلمة مرور اختيارية لتشفير الملف المُصَدَّر. إذا تم توفيرها، سينتهي الامتداد بـ \'.bin\'.</string>
+    <string name="export_wifi_extra_filename_hint">اسم ملف اختياري (بدون امتداد). الافتراضي هو الطابع الزمني.</string>
+
+    <!-- Method Inspector Screen -->
+    <string name="method_inspector_search_hint">البحث في الدوال…</string>
+    <plurals name="method_inspector_title">
+        <item quantity="zero">لم يتم عرض أي دالة</item>
+        <item quantity="one">عرض دالة واحدة</item>
+        <item quantity="two">عرض دالتين</item>
+        <item quantity="few">عرض %d دوال</item>
+        <item quantity="many">عرض %d دالة</item>
+        <item quantity="other">عرض %d دالة</item>
+    </plurals>
+    <string name="export_methods_action">تصدير</string>
+    <string name="export_methods_success">تم تصدير الدوال بنجاح</string>
+    <string name="export_methods_failed">فشل تصدير الدوال</string>
+
+    <!-- Security Types -->
+    <string name="security_open">لا يوجد</string>
+    <string name="security_owe">فتح محسن (Enhanced Open)</string>
+    <string name="security_wpa2">WPA/WPA2</string>
+    <string name="security_wpa3">WPA3-Personal</string>
+    <string name="security_wep">WEP</string>
+
+    <!-- Shizuku Permission Dialog -->
+    <string name="shizuku_required_title">مطلوب Shizuku</string>
+    <string name="shizuku_required_message">تطبيق Shizuku مطلوب لاستخدام هذا التطبيق. إذا كان Shizuku مثبتاً لديك، يرجى تشغيله. خلاف ذلك، يرجى تثبيت Shizuku.</string>
+    <string name="open_shizuku">فتح Shizuku</string>
+    <string name="install_shizuku">تثبيت Shizuku</string>
+
+    <!-- Method Inspector Error Dialog -->
+    <string name="method_inspector_error_title">خطأ في توقيع الدالة</string>
+    <string name="method_inspector_error_message">لا تتطابق خدمة نظام WiFi في هذا الجهاز مع أي توقيع دالة (Method Signature) معروف. يرجى فتح فاحص الدوال (Method Inspector)، وتصدير الدوال وإرسالها ليتم إصلاح ذلك في تحديث مستقبلي.</string>
+    <string name="open_method_inspector">فتح فاحص الدوال</string>
+
+    <!-- Forget All Networks Confirmation Dialog -->
+    <string name="forget_all_confirmation_title">نسيان جميع الشبكات؟</string>
+    <string name="forget_all_confirmation_message">سيؤدي هذا إلى إزالة جميع شبكات WiFi المحفوظة بشكل دائم من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</string>
+
+    <!-- Import Password Dialog -->
+    <string name="import_password_title">إدخال كلمة المرور</string>
+    <string name="import_password_description">هذا الملف مشفر. أدخل كلمة المرور لفك تشفيره.</string>
+
+    <!-- Messages -->
+    <string name="loading">جارِ التحميل…</string>
+    <string name="refresh_success">تم التحديث بنجاح</string>
+    <string name="no_network_to_import">لم يتم العثور على شبكات لاستيرادها</string>
+    <string name="import_networks_success">تم استيراد الشبكات بنجاح</string>
+    <string name="import_networks_failed">فشل استيراد الشبكات</string>
+    <string name="export_networks_success">تم تصدير الشبكات بنجاح</string>
+    <string name="export_networks_failed">فشل تصدير الشبكات</string>
+    <string name="forget_success">تم نسيان جميع الشبكات بنجاح</string>
+    <string name="forget_failed">فشل نسيان جميع الشبكات</string>
+    <string name="no_network_to_forget">لم يتم العثور على شبكات لنسيانها</string>
+    <string name="no_network_to_export">لا توجد شبكات متاحة لتصديرها</string>
+    <string name="invalid_json">تعذر استخدام ملف JSON المحدد</string>
+    <string name="wrong_password">فشل فك التشفير. هل كلمة المرور خاطئة؟</string>
+    <string name="app_lock_required">أدخل قفل الشاشة للوصول</string>
+    <string name="app_lock_too_many_attempts">محاولات كثيرة جداً. حاول مرة أخرى لاحقاً.</string>
+    <string name="app_lock_permanently_locked">تم قفل المصادقة البيومترية. استخدم بيانات اعتماد الجهاز.</string>
+    <string name="app_lock_authentication_failed">فشلت المصادقة.</string>
+    <string name="app_lock_disabled">تمت إزالة قفل الشاشة. تم تعطيل قفل التطبيق.</string>
+    <string name="require_secure_screen">مطلوب شاشة آمنة</string>
+
+    <!-- Connected WiFi Info -->
+    <string name="show_connected_wifi">إظهار شبكة WiFi المتصلة</string>
+    <string name="connected_wifi_active">نشط</string>
+    <string name="connected_wifi_active_with_access">نشط (باستخدام صلاحية %1$s)</string>
+    <string name="location_permission_required">إذن الموقع مطلوب</string>
+    <string name="location_services_disabled">خدمات الموقع معطلة</string>
+    <string name="grant">منح</string>
+</resources>

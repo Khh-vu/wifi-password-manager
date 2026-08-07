@@ -45,7 +45,7 @@ data class Settings(
 
     @Serializable
     enum class Language {
-        SYSTEM, ENGLISH, RUSSIAN, CHINESE_SIMPLIFIED, JAPANESE, TURKISH;
+        SYSTEM, ENGLISH, RUSSIAN, CHINESE_SIMPLIFIED, JAPANESE, TURKISH, ARABIC;
 
         val code: String
             get() = when (this) {
@@ -55,6 +55,7 @@ data class Settings(
                 CHINESE_SIMPLIFIED -> "zh-CN"
                 JAPANESE -> "ja"
                 TURKISH -> "tr"
+                ARABIC -> "ar"
             }
 
         val displayName: String
@@ -65,6 +66,7 @@ data class Settings(
                 CHINESE_SIMPLIFIED -> "中文 (简体)"
                 JAPANESE -> "日本語"
                 TURKISH -> "Türkçe"
+                ARABIC -> "العربية"
             }
     }
 }
