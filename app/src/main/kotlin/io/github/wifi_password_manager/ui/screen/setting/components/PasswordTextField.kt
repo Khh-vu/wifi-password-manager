@@ -59,7 +59,7 @@ fun PasswordTextField(
                 positioning = TooltipAnchorPosition.Above,
             )
         },
-        textObfuscationMode = if (isObfuscated) TextObfuscationMode.Visible else TextObfuscationMode.RevealLastTyped,
+        textObfuscationMode = if (isObfuscated) TextObfuscationMode.Visible else TextObfuscationMode.System,
     )
 }
 

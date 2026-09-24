@@ -29,6 +29,7 @@ local.properties
 .idea/deploymentTargetSelector.xml
 .idea/appInsightsSettings.xml
 .idea/studiobot.xml
+.idea/deviceManager.xml
 
 # Keystore files
 key.properties
