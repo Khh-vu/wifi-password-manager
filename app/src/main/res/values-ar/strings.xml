@@ -37,7 +37,14 @@
     <string name="unlock">إلغاء القفل</string>
 
     <!-- Network List Screen -->
-    <string name="network_list_title">شبكات WiFi المحفوظة</string>
+    <plurals name="network_list_title">
+        <item quantity="zero">لم يتم حفظ أي شبكة WiFi</item>
+        <item quantity="one">تم حفظ شبكة WiFi واحدة</item>
+        <item quantity="two">تم حفظ شبكتي WiFi</item>
+        <item quantity="few">تم حفظ %d شبكات WiFi</item>
+        <item quantity="many">تم حفظ %d شبكة WiFi</item>
+        <item quantity="other">تم حفظ %d شبكة WiFi</item>
+    </plurals>
     <string name="search_hint">البحث بواسطة SSID أو ملاحظة</string>
     <string name="search_tooltip">بحث</string>
     <string name="refresh_description">تحديث</string>

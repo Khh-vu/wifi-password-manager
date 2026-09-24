@@ -37,7 +37,10 @@
     <string name="unlock">Unlock</string>
 
     <!-- Network List Screen -->
-    <string name="network_list_title">Saved WiFi Networks</string>
+    <plurals name="network_list_title">
+        <item quantity="one">Saved %d WiFi Network</item>
+        <item quantity="other">Saved %d WiFi Networks</item>
+    </plurals>
     <string name="search_hint">Search by SSID or Note</string>
     <string name="search_tooltip">Search</string>
     <string name="refresh_description">Refresh</string>

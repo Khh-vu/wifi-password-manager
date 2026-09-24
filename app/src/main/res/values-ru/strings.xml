@@ -37,7 +37,12 @@
     <string name="unlock">Разблокировать</string>
 
     <!-- Network List Screen -->
-    <string name="network_list_title">Сохранённые сети WiFi</string>
+    <plurals name="network_list_title">
+        <item quantity="one">Сохранена %d сеть WiFi</item>
+        <item quantity="few">Сохранено %d сети WiFi</item>
+        <item quantity="many">Сохранено %d сетей WiFi</item>
+        <item quantity="other">Сохранено %d сети WiFi</item>
+    </plurals>
     <string name="search_hint">Поиск по SSID или заметке</string>
     <string name="search_tooltip">Поиск</string>
     <string name="refresh_description">Обновить</string>

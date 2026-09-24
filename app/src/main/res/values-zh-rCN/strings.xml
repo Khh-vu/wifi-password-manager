@@ -37,7 +37,9 @@
     <string name="unlock">解锁</string>
 
     <!-- 网络列表界面 -->
-    <string name="network_list_title">已保存的 WiFi 网络</string>
+    <plurals name="network_list_title">
+        <item quantity="other">已保存 %d 个 WiFi 网络</item>
+    </plurals>
     <string name="search_hint">按 SSID 或备注搜索</string>
     <string name="search_tooltip">搜索</string>
     <string name="refresh_description">刷新</string>

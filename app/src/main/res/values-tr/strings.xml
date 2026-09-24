@@ -37,7 +37,10 @@
     <string name="unlock">Kilidi Aç</string>
 
     <!-- Network List Screen -->
-    <string name="network_list_title">Kaydedilmiş WiFi Bağlantıları</string>
+    <plurals name="network_list_title">
+        <item quantity="one">%d WiFi Bağlantısı Kaydedildi</item>
+        <item quantity="other">%d WiFi Bağlantısı Kaydedildi</item>
+    </plurals>
     <string name="search_hint">SSID veya Not\'a Göre Ara</string>
     <string name="search_tooltip">Ara</string>
     <string name="refresh_description">Yenile</string>

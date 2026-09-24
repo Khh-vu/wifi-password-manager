@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -75,7 +76,17 @@ fun NetworkListView(
                     )
                 } else {
                     TopAppBar(
-                        title = { Text(text = stringResource(R.string.network_list_title)) },
+                        title = {
+                            if (state.savedNetworks.isNotEmpty()) {
+                                Text(
+                                    text = pluralStringResource(
+                                        R.plurals.network_list_title,
+                                        state.savedNetworks.size,
+                                        state.savedNetworks.size,
+                                    )
+                                )
+                            }
+                        },
                         actions = {
                             TooltipIconButton(
                                 onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },

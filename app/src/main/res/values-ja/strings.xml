@@ -37,7 +37,9 @@
     <string name="unlock">ロック解除</string>
 
     <!-- Network List Screen -->
-    <string name="network_list_title">保存済みWiFiネットワーク</string>
+    <plurals name="network_list_title">
+        <item quantity="other">%d件のWiFiネットワークを保存済み</item>
+    </plurals>
     <string name="search_hint">SSIDまたはメモで検索</string>
     <string name="search_tooltip">検索</string>
     <string name="refresh_description">更新</string>
