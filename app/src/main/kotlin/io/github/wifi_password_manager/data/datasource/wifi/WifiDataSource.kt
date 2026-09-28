@@ -9,7 +9,7 @@ interface WifiDataSource {
 
     suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean
 
-    suspend fun removeNetwork(netId: Int): Boolean
+    suspend fun forget(netId: Int): Boolean
 
     suspend fun getConnectionInfo(): WifiInfo?
 

@@ -21,7 +21,7 @@ interface WifiRepository {
 
     suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean
 
-    suspend fun removeNetwork(netId: Int): Boolean
+    suspend fun forget(netId: Int): Boolean
 
     suspend fun persistEphemeralNetworks()
 

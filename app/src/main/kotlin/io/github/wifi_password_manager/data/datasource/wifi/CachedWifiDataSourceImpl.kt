@@ -17,7 +17,7 @@ class CachedWifiDataSourceImpl(private val wifiNetworkDao: WifiNetworkDao) : Wif
         return false
     }
 
-    override suspend fun removeNetwork(netId: Int): Boolean {
+    override suspend fun forget(netId: Int): Boolean {
         return false
     }
 

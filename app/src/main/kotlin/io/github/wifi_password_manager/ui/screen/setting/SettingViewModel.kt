@@ -390,7 +390,7 @@ class SettingViewModel(
                 }
 
                 Dispatchers.IO {
-                    validNetworks.map { async { wifiRepository.removeNetwork(it.networkId) } }
+                    validNetworks.map { async { wifiRepository.forget(it.networkId) } }
                         .awaitAll()
                 }
             }.fold(

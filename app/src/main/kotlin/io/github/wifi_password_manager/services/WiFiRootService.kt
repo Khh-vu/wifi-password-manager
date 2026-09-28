@@ -86,8 +86,12 @@ class WiFiRootService : RootService() {
             return addOrUpdateNetwork(config.toWifiConfiguration())
         }
 
-        override fun removeNetwork(netId: Int): Boolean {
-            return wifiManager.removeNetwork(netId, USER)
+        override fun forget(netId: Int, listener: IActionListener) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                wifiManager.forget(netId, listener)
+            } else {
+                wifiManager.forget(netId, Binder(), listener, listener.hashCode())
+            }
         }
 
         override fun getConnectionInfo(): WifiInfoParcel? {

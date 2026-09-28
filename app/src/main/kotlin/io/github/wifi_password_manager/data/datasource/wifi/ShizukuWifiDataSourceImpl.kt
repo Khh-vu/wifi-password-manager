@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.util.Log
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.utils.WifiManagerHelper
+import io.github.wifi_password_manager.utils.awaitAction
 import io.github.wifi_password_manager.utils.hasShizukuPermission
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuBinderWrapper
@@ -85,13 +86,19 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         }
     }
 
-    override suspend fun removeNetwork(netId: Int): Boolean {
+    override suspend fun forget(netId: Int): Boolean {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot remove network")
+            Log.w(TAG, "Shizuku permission not available, cannot forget network")
             return false
         }
 
-        return wifiManager.removeNetwork(netId, user)
+        return awaitAction { listener ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                wifiManager.forget(netId, listener)
+            } else {
+                wifiManager.forget(netId, Binder(), listener, listener.hashCode())
+            }
+        }
     }
 
     override suspend fun getConnectionInfo(): WifiInfo? {

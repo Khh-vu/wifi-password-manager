@@ -14,6 +14,7 @@ import com.topjohnwu.superuser.ipc.RootService
 import io.github.wifi_password_manager.IWifiRootService
 import io.github.wifi_password_manager.ipc.WifiNetworkParcel
 import io.github.wifi_password_manager.services.WiFiRootService
+import io.github.wifi_password_manager.utils.awaitAction
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -92,13 +93,13 @@ class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
         return service.addOrUpdateNetworkPrivileged(parcel)
     }
 
-    override suspend fun removeNetwork(netId: Int): Boolean {
+    override suspend fun forget(netId: Int): Boolean {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Root service not available, cannot remove network")
+            Log.w(TAG, "Root service not available, cannot forget network")
             return false
         }
-        return service.removeNetwork(netId)
+        return awaitAction { listener -> service.forget(netId, listener) }
     }
 
     override suspend fun getConnectionInfo(): WifiInfo? {

@@ -46,4 +46,22 @@ public interface IWifiManager extends IInterface {
 
     //Android 11
     void connect(WifiConfiguration config, int netId, IBinder binder, IActionListener listener, int callbackIdentifier);
+
+    //Android 13+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    void save(WifiConfiguration config, IActionListener listener, String packageName);
+
+    //Android 12
+    @RequiresApi(Build.VERSION_CODES.S)
+    void save(WifiConfiguration config, IActionListener listener);
+
+    //Android 11
+    void save(WifiConfiguration config, IBinder binder, IActionListener listener, int callbackIdentifier);
+
+    //Android 12+
+    @RequiresApi(Build.VERSION_CODES.S)
+    void forget(int netId, IActionListener listener);
+
+    //Android 11
+    void forget(int netId, IBinder binder, IActionListener listener, int callbackIdentifier);
 }

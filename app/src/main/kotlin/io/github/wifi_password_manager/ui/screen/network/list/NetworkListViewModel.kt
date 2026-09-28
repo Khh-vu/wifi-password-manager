@@ -219,8 +219,9 @@ class NetworkListViewModel(
     private fun onForget(network: WifiNetwork) {
         viewModelScope.launch {
             network.toWifiConfigurations().map { it.networkId }.toSet().forEach {
-                wifiRepository.removeNetwork(it)
+                wifiRepository.forget(it)
             }
+            refresh()
             _event.send(
                 Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),
             )

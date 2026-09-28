@@ -9,7 +9,7 @@ interface IWifiRootService {
 
     boolean addOrUpdateNetworkPrivileged(in WifiNetworkParcel config);
 
-    boolean removeNetwork(int netId);
+    oneway void forget(int netId, in IActionListener listener);
 
     WifiInfoParcel getConnectionInfo();
 
