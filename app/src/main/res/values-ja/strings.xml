@@ -25,6 +25,11 @@
     <string name="export_option_compressed">圧縮（GZip）</string>
     <string name="export_option_compressed_description">GZip圧縮されたJSON。ファイルサイズが小さい</string>
 
+    <!-- Network Filter -->
+    <string name="filter_all">すべて</string>
+    <string name="filter_on_device">端末内</string>
+    <string name="filter_app_only">アプリ内のみ</string>
+
     <!-- No Access Screen -->
     <string name="no_access_title">特権アクセスが必要</string>
     <string name="no_access_description">このアプリはWiFiパスワードを読み取るためにShizukuまたはrootアクセスが必要です。続行するには特権アクセスを許可してください。</string>

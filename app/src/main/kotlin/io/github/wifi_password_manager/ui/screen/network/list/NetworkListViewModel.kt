@@ -1,6 +1,7 @@
 package io.github.wifi_password_manager.ui.screen.network.list
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -43,6 +44,17 @@ class NetworkListViewModel(
         private const val TAG = "NetworkListViewModel"
     }
 
+    enum class Filter {
+        ALL, ON_DEVICE, APP_ONLY;
+
+        val labelResId: Int
+            @StringRes get() = when (this) {
+                ALL -> R.string.filter_all
+                ON_DEVICE -> R.string.filter_on_device
+                APP_ONLY -> R.string.filter_app_only
+            }
+    }
+
     @Immutable
     data class State(
         val savedNetworks: List<WifiNetwork> = emptyList(),
@@ -51,12 +63,15 @@ class NetworkListViewModel(
         val searchText: String = "",
         val isCacheMode: Boolean = false,
         val showMethodSignatureError: Boolean = false,
+        val filter: Filter = Filter.ALL,
     )
 
     sealed interface Action {
         data object Refresh : Action
 
         data object ToggleSearch : Action
+
+        data class FilterChanged(val filter: Filter) : Action
 
         data class SearchTextChanged(val text: String) : Action
 
@@ -79,6 +94,7 @@ class NetworkListViewModel(
     private val _showingSearch = MutableStateFlow(false)
     private val _searchText = MutableStateFlow("")
     private val _showMethodSignatureError = MutableStateFlow(false)
+    private val _filter = MutableStateFlow(Filter.ALL)
     private val _networks =
         _searchText.debounce(200.milliseconds).distinctUntilChanged().flatMapLatest { searchText ->
             val query = searchText.replace("[^a-zA-Z0-9\\\\s]".toRegex(), "").trim()
@@ -97,6 +113,7 @@ class NetworkListViewModel(
         wifiRepository.getConnectedWifiSsidFlow(),
         _showMethodSignatureError,
         _pendingNetwork,
+        _filter,
     ) { args ->
         @Suppress("UNCHECKED_CAST") val networks = args[0] as List<WifiNetwork>
         val connectedSsid = args[4] as String
@@ -108,9 +125,17 @@ class NetworkListViewModel(
             }
         }
         val pendingNetwork = args[6] as WifiNetwork?
+        val filter = args[7] as Filter
 
         State(
-            savedNetworks = sortedNetworks,
+            savedNetworks = sortedNetworks.filter {
+                when (filter) {
+                    Filter.ALL -> true
+                    Filter.ON_DEVICE -> it.existInSystem
+                    Filter.APP_ONLY -> !it.existInSystem
+                }
+            },
+            filter = filter,
             searchText = args[1] as String,
             showingSearch = args[2] as Boolean,
             isCacheMode = args[3] as Boolean,
@@ -137,6 +162,7 @@ class NetworkListViewModel(
         when (action) {
             is Action.Refresh -> onRefresh()
             is Action.ToggleSearch -> onToggleSearch()
+            is Action.FilterChanged -> _filter.update { action.filter }
             is Action.SearchTextChanged -> _searchText.update { action.text }
             is Action.DeleteNote -> onDeleteNote(action.ssid)
             is Action.DismissMethodInspectorError -> _showMethodSignatureError.update { false }
@@ -218,9 +244,9 @@ class NetworkListViewModel(
 
     private fun onForget(network: WifiNetwork) {
         viewModelScope.launch {
-            network.toWifiConfigurations().map { it.networkId }.toSet().forEach {
-                wifiRepository.forget(it)
-            }
+            network.toWifiConfigurations().map { it.networkId }.filter { it != -1 }.toSet()
+                .forEach { wifiRepository.forget(it) }
+            wifiRepository.delete(network.ssid)
             refresh()
             _event.send(
                 Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),

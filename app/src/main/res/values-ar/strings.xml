@@ -25,6 +25,11 @@
     <string name="export_option_compressed">مضغوط (GZip)</string>
     <string name="export_option_compressed_description">ملف JSON مضغوط بصيغة GZip. حجم ملف أصغر</string>
 
+    <!-- Network Filter -->
+    <string name="filter_all">الكل</string>
+    <string name="filter_on_device">على الجهاز</string>
+    <string name="filter_app_only">في التطبيق فقط</string>
+
     <!-- No Access Screen -->
     <string name="no_access_title">مطلوب صلاحيات متقدمة</string>
     <string name="no_access_description">يتطلب هذا التطبيق صلاحيات Shizuku أو Root لقراءة كلمات مرور WiFi. يرجى منح صلاحيات الوصول المتقدمة للمتابعة.</string>

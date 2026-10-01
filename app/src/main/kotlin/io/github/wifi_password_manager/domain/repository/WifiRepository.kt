@@ -23,6 +23,8 @@ interface WifiRepository {
 
     suspend fun forget(netId: Int): Boolean
 
+    suspend fun delete(ssid: String)
+
     suspend fun persistEphemeralNetworks()
 
     suspend fun updateNote(ssid: String, note: String?)

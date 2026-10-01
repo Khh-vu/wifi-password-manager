@@ -43,20 +43,23 @@ val WifiNetwork.Companion.MOCK
             hidden = Random.nextBoolean(),
             autojoin = Random.nextBoolean(),
             private = Random.nextBoolean(),
-            note = if (Random.nextBoolean()) "Note $it" else null,
+            note = "Note $it".takeIf { Random.nextBoolean() },
+            existInSystem = it % 3 != 0,
         )
     }
 
 fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
     groupBy { it.ssid }.values.map { duplicateNetworks ->
-        duplicateNetworks.first()
-            .copy(securityType = duplicateNetworks.flatMap { it.securityType }.toSet())
+        duplicateNetworks.first().copy(
+            securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
+            existInSystem = duplicateNetworks.any { it.existInSystem },
+        )
     }.sortedBy { it.ssid.lowercase() }
 
 fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
     return securityType.map { type ->
         val config = WifiConfigurationHidden().apply {
-            networkId = this@toWifiConfigurations.networkId
+            networkId = if (existInSystem) this@toWifiConfigurations.networkId else -1
             SSID = "\"$ssid\""
             when (type) {
                 SecurityType.OPEN -> {

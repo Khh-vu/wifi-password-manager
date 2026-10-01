@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.data.local.entity
 
+import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 
@@ -13,6 +14,7 @@ data class WifiNetworkEntity(
     val autojoin: Boolean,
     val private: Boolean,
     val note: String?,
+    @ColumnInfo(defaultValue = "1") val existInSystem: Boolean = true,
 )
 
 fun WifiNetwork.toEntity(): WifiNetworkEntity {
@@ -25,6 +27,7 @@ fun WifiNetwork.toEntity(): WifiNetworkEntity {
         autojoin = autojoin,
         private = private,
         note = note,
+        existInSystem = existInSystem,
     )
 }
 
@@ -38,5 +41,6 @@ fun WifiNetworkEntity.toDomain(): WifiNetwork {
         autojoin = autojoin,
         private = private,
         note = note,
+        existInSystem = existInSystem,
     )
 }

@@ -25,6 +25,11 @@
     <string name="export_option_compressed">压缩 (GZip)</string>
     <string name="export_option_compressed_description">GZip 压缩的 JSON，文件体积更小</string>
 
+    <!-- Network Filter -->
+    <string name="filter_all">全部</string>
+    <string name="filter_on_device">设备上</string>
+    <string name="filter_app_only">仅应用内</string>
+
     <!-- 无权限访问界面 -->
     <string name="no_access_title">需要特权访问</string>
     <string name="no_access_description">此应用需要 Shizuku 或 root 权限才能读取 WiFi 密码。请授予特权访问以继续使用。</string>

@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.data.local
 
+import androidx.room3.AutoMigration
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.migration.Migration
@@ -8,7 +9,11 @@ import io.github.wifi_password_manager.data.local.dao.WifiNetworkDao
 import io.github.wifi_password_manager.data.local.entity.WifiNetworkEntity
 import io.github.wifi_password_manager.data.local.entity.WifiNetworkFtsEntity
 
-@Database(entities = [WifiNetworkEntity::class, WifiNetworkFtsEntity::class], version = 2)
+@Database(
+    entities = [WifiNetworkEntity::class, WifiNetworkFtsEntity::class],
+    version = 3,
+    autoMigrations = [AutoMigration(2, 3)]
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun wifiNetworkDao(): WifiNetworkDao
 

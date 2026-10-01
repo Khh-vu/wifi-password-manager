@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -39,6 +40,7 @@ import io.github.wifi_password_manager.navigation.Route
 import io.github.wifi_password_manager.ui.icons.Refresh
 import io.github.wifi_password_manager.ui.icons.Search
 import io.github.wifi_password_manager.ui.icons.Settings
+import io.github.wifi_password_manager.ui.screen.network.list.components.FilterRow
 import io.github.wifi_password_manager.ui.screen.network.list.components.MethodSignatureErrorDialog
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
 import io.github.wifi_password_manager.ui.shared.SearchBar
@@ -60,51 +62,56 @@ fun NetworkListView(
 
     Scaffold(
         topBar = {
-            AnimatedContent(
-                targetState = state.showingSearch,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-            ) { showingSearch ->
-                if (showingSearch) {
-                    SearchBar(
-                        showingSearch = state.showingSearch,
-                        searchText = state.searchText,
-                        onSearchTextChanged = {
-                            onAction(NetworkListViewModel.Action.SearchTextChanged(it))
-                        },
-                        onBack = { onAction(NetworkListViewModel.Action.ToggleSearch) },
-                        placeholder = stringResource(R.string.search_hint),
-                    )
-                } else {
-                    TopAppBar(
-                        title = {
-                            if (state.savedNetworks.isNotEmpty()) {
+            Column {
+                AnimatedContent(
+                    targetState = state.showingSearch,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                ) { showingSearch ->
+                    if (showingSearch) {
+                        SearchBar(
+                            showingSearch = state.showingSearch,
+                            searchText = state.searchText,
+                            onSearchTextChanged = {
+                                onAction(NetworkListViewModel.Action.SearchTextChanged(it))
+                            },
+                            onBack = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                            placeholder = stringResource(R.string.search_hint),
+                        )
+                    } else {
+                        TopAppBar(
+                            title = {
                                 Text(
-                                    text = pluralStringResource(
-                                        R.plurals.network_list_title,
-                                        state.savedNetworks.size,
-                                        state.savedNetworks.size,
-                                    )
+                                    text = if (state.savedNetworks.isNotEmpty()) {
+                                        pluralStringResource(
+                                            R.plurals.network_list_title,
+                                            state.savedNetworks.size,
+                                            state.savedNetworks.size,
+                                        )
+                                    } else {
+                                        stringResource(R.string.app_name)
+                                    }
                                 )
-                            }
-                        },
-                        actions = {
-                            TooltipIconButton(
-                                onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
-                                imageVector = Search,
-                                tooltip = stringResource(R.string.search_tooltip),
-                                positioning = TooltipAnchorPosition.Below,
-                            )
+                            },
+                            actions = {
+                                TooltipIconButton(
+                                    onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                                    imageVector = Search,
+                                    tooltip = stringResource(R.string.search_tooltip),
+                                    positioning = TooltipAnchorPosition.Below,
+                                )
 
-                            TooltipIconButton(
-                                onClick = { navBackStack.add(Route.SettingScreen) },
-                                imageVector = Settings,
-                                tooltip = stringResource(R.string.settings_tooltip),
-                                positioning = TooltipAnchorPosition.Below,
-                            )
-                        },
-                        scrollBehavior = scrollBehavior,
-                    )
+                                TooltipIconButton(
+                                    onClick = { navBackStack.add(Route.SettingScreen) },
+                                    imageVector = Settings,
+                                    tooltip = stringResource(R.string.settings_tooltip),
+                                    positioning = TooltipAnchorPosition.Below,
+                                )
+                            },
+                            scrollBehavior = scrollBehavior,
+                        )
+                    }
                 }
+                FilterRow(filter = state.filter, onAction = onAction)
             }
         },
         floatingActionButton = {

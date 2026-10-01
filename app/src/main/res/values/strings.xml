@@ -25,6 +25,11 @@
     <string name="export_option_compressed">Compressed (GZip)</string>
     <string name="export_option_compressed_description">GZip compressed JSON. Smaller file size</string>
 
+    <!-- Network Filter -->
+    <string name="filter_all">All</string>
+    <string name="filter_on_device">On device</string>
+    <string name="filter_app_only">In app only</string>
+
     <!-- No Access Screen -->
     <string name="no_access_title">Privileged Access Required</string>
     <string name="no_access_description">This app requires Shizuku or root access to read WiFi passwords. Please grant privileged access to continue.</string>

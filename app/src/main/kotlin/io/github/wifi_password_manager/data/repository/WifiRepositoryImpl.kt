@@ -80,7 +80,7 @@ class WifiRepositoryImpl(
 
     private suspend fun syncNetworksToDatabase(networks: List<WifiNetwork>) = dispatcher {
         if (networks.isEmpty()) {
-            wifiNetworkDao.deleteNetworks()
+            wifiNetworkDao.markAllNotExistInSystem()
             return@dispatcher
         }
 
@@ -92,7 +92,7 @@ class WifiRepositoryImpl(
         wifiNetworkDao.upsertNetworks(networksWithNotes)
 
         val systemSsids = networks.map { it.ssid }
-        wifiNetworkDao.deleteNetworks(systemSsids)
+        wifiNetworkDao.markNotExistInSystem(systemSsids)
     }
 
     private suspend fun connectInternal(config: WifiConfiguration): Boolean {
@@ -105,6 +105,7 @@ class WifiRepositoryImpl(
                 val ssid = wifiInfo?.ssid?.takeIf { it != WifiManager.UNKNOWN_SSID }
                     ?.removeSurrounding("\"").orEmpty()
                 send(ssid)
+                refresh()
             }
 
             val callback = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -171,6 +172,7 @@ class WifiRepositoryImpl(
     }
 
     override suspend fun refresh() {
+        if (privilegedManager.currentMode == PrivilegedMode.NONE) return
         val configs = getPrivilegedConfiguredNetworks()
         val networks = configs.map(WifiNetwork::fromWifiConfiguration)
         syncNetworksToDatabase(networks)
@@ -186,6 +188,10 @@ class WifiRepositoryImpl(
 
     override suspend fun forget(netId: Int): Boolean {
         return dataSource.forget(netId)
+    }
+
+    override suspend fun delete(ssid: String) {
+        wifiNetworkDao.deleteNetwork(ssid)
     }
 
     override suspend fun persistEphemeralNetworks() {

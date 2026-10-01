@@ -28,11 +28,14 @@ interface WifiNetworkDao {
     @Upsert
     suspend fun upsertNetworks(networks: List<WifiNetworkEntity>)
 
-    @Query("DELETE FROM wifi_networks WHERE ssid NOT IN (:excludingSsids)")
-    suspend fun deleteNetworks(excludingSsids: List<String>)
+    @Query("UPDATE wifi_networks SET existInSystem = 0 WHERE ssid NOT IN (:systemSsids)")
+    suspend fun markNotExistInSystem(systemSsids: List<String>)
 
-    @Query("DELETE FROM wifi_networks")
-    suspend fun deleteNetworks()
+    @Query("UPDATE wifi_networks SET existInSystem = 0")
+    suspend fun markAllNotExistInSystem()
+
+    @Query("DELETE FROM wifi_networks WHERE ssid = :ssid")
+    suspend fun deleteNetwork(ssid: String)
 
     @Query("SELECT COUNT(*) FROM wifi_networks")
     suspend fun getNetworkCount(): Int

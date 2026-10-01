@@ -25,6 +25,11 @@
     <string name="export_option_compressed">Sıkıştırılmış (GZip)</string>
     <string name="export_option_compressed_description">GZip sıkıştırılmış JSON. Daha küçük dosya boyutu</string>
 
+    <!-- Network Filter -->
+    <string name="filter_all">Tümü</string>
+    <string name="filter_on_device">Cihazda</string>
+    <string name="filter_app_only">Yalnızca uygulamada</string>
+
     <!-- No Access Screen -->
     <string name="no_access_title">Ayrıcalıklı Erişim Gereklidir</string>
     <string name="no_access_description">Bu uygulama, WiFi şifrelerini okuyabilmek için Shizuku veya root erişimi gerektirir. Devam etmek için lütfen ayrıcalıklı erişim izni verin.</string>
