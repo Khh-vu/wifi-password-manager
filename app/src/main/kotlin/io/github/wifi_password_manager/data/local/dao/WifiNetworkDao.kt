@@ -37,6 +37,9 @@ interface WifiNetworkDao {
     @Query("DELETE FROM wifi_networks WHERE ssid = :ssid")
     suspend fun deleteNetwork(ssid: String)
 
+    @Query("DELETE FROM wifi_networks")
+    suspend fun clearNetworks()
+
     @Query("SELECT COUNT(*) FROM wifi_networks")
     suspend fun getNetworkCount(): Int
 

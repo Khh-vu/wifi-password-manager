@@ -204,6 +204,7 @@
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">نسيان جميع الشبكات؟</string>
     <string name="forget_all_confirmation_message">سيؤدي هذا إلى إزالة جميع شبكات WiFi المحفوظة بشكل دائم من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.</string>
+    <string name="forget_all_clear_cache">إزالة الشبكات من ذاكرة التخزين المؤقت أيضًا</string>
 
     <!-- Forget Network Confirmation Dialog -->
     <string name="forget_confirmation_title">نسيان هذه الشبكة؟</string>

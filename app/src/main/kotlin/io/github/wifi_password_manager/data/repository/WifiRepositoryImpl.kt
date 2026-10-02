@@ -194,6 +194,10 @@ class WifiRepositoryImpl(
         wifiNetworkDao.deleteNetwork(ssid)
     }
 
+    override suspend fun clearCache() {
+        wifiNetworkDao.clearNetworks()
+    }
+
     override suspend fun persistEphemeralNetworks() {
         dataSource.persistEphemeralNetworks()
     }

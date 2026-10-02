@@ -104,7 +104,7 @@ class SettingViewModel(
 
         data object HideForgetAllDialog : Action
 
-        data object ConfirmForgetAllNetworks : Action
+        data class ConfirmForgetAllNetworks(val clearCache: Boolean) : Action
     }
 
     sealed interface Event {
@@ -169,7 +169,7 @@ class SettingViewModel(
             is Action.ConfirmExport -> onExportNetworks(action.option, action.password)
             is Action.ShowForgetAllDialog -> onShowForgetAllDialog()
             is Action.HideForgetAllDialog -> _showForgetAllDialog.update { false }
-            is Action.ConfirmForgetAllNetworks -> onForgetAllNetworks()
+            is Action.ConfirmForgetAllNetworks -> onForgetAllNetworks(action.clearCache)
         }
     }
 
@@ -374,7 +374,7 @@ class SettingViewModel(
         }
     }
 
-    private fun onForgetAllNetworks() {
+    private fun onForgetAllNetworks(clearCache: Boolean) {
         viewModelScope.launch {
             _isLoading.update { true }
             _showForgetAllDialog.update { false }
@@ -383,15 +383,15 @@ class SettingViewModel(
                 val networks = wifiRepository.getPrivilegedConfiguredNetworks()
                 val validNetworks = networks.filter { it.networkId != -1 }
 
-                if (validNetworks.isEmpty()) {
+                if (validNetworks.isEmpty() && !clearCache) {
                     Log.d(TAG, "No valid networks to remove")
                     _isLoading.update { false }
                     return@launch
                 }
 
                 Dispatchers.IO {
-                    validNetworks.map { async { wifiRepository.forget(it.networkId) } }
-                        .awaitAll()
+                    validNetworks.map { async { wifiRepository.forget(it.networkId) } }.awaitAll()
+                    if (clearCache) wifiRepository.clearCache()
                 }
             }.fold(
                 onSuccess = {

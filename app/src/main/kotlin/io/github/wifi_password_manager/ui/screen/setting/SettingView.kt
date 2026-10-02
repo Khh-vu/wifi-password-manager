@@ -44,6 +44,7 @@ import io.github.wifi_password_manager.ui.icons.Tune
 import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ConnectedWifiInfoItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ExportDialog
+import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.ImportPasswordDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.PlaintextPasswordsItem
@@ -51,7 +52,6 @@ import io.github.wifi_password_manager.ui.screen.setting.components.SettingSecti
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.BackButton
 import io.github.wifi_password_manager.ui.shared.LoadingDialog
-import io.github.wifi_password_manager.ui.shared.WarningConfirmDialog
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import io.github.wifi_password_manager.utils.plus
 
@@ -416,11 +416,9 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
         }
 
         state.showForgetAllDialog -> {
-            WarningConfirmDialog(
-                title = stringResource(R.string.forget_all_confirmation_title),
-                message = stringResource(R.string.forget_all_confirmation_message),
+            ForgetAllDialog(
                 onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
-                onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks) },
+                onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks(it)) },
             )
         }
 

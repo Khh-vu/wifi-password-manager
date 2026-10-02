@@ -194,6 +194,7 @@
     <!-- 忘记所有网络确认对话框 -->
     <string name="forget_all_confirmation_title">忘记所有网络？</string>
     <string name="forget_all_confirmation_message">此操作将从本设备永久移除所有已保存的 WiFi 网络。此操作不可撤销。</string>
+    <string name="forget_all_clear_cache">同时从缓存中移除网络</string>
 
     <!-- Forget Network Confirmation Dialog -->
     <string name="forget_confirmation_title">忘记此网络？</string>

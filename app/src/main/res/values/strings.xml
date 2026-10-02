@@ -196,6 +196,7 @@
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Forget all networks?</string>
     <string name="forget_all_confirmation_message">This will permanently remove all saved WiFi networks from this device. This action cannot be undone.</string>
+    <string name="forget_all_clear_cache">Also remove networks from the cache</string>
 
     <!-- Forget Network Confirmation Dialog -->
     <string name="forget_confirmation_title">Forget this network?</string>

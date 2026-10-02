@@ -200,6 +200,7 @@
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Забыть все сети?</string>
     <string name="forget_all_confirmation_message">Это безвозвратно удалит все сохранённые сети WiFi с этого устройства. Это действие нельзя отменить.</string>
+    <string name="forget_all_clear_cache">Также удалить сети из кэша</string>
 
     <!-- Forget Network Confirmation Dialog -->
     <string name="forget_confirmation_title">Забыть эту сеть?</string>

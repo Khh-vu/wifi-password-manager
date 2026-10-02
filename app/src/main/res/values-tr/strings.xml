@@ -196,6 +196,7 @@
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Tüm ağlar unutulsun mu?</string>
     <string name="forget_all_confirmation_message">Bu, cihazdaki tüm kayıtlı WiFi ağlarını kalıcı olarak silecektir. Bu işlem geri alınamaz.</string>
+    <string name="forget_all_clear_cache">Ağları önbellekten de kaldır</string>
 
     <!-- Forget Network Confirmation Dialog -->
     <string name="forget_confirmation_title">Bu ağ unutulsun mu?</string>
