@@ -13,7 +13,7 @@ interface WifiNetworkDao {
 
     @Query(
         """
-            SELECT * FROM wifi_networks WHERE ssid LIKE '%' || :query || '%'
+            SELECT * FROM wifi_networks WHERE ssid LIKE '%' || :query || '%' OR note LIKE '%' || :query || '%'
             UNION
             SELECT wifi_networks.* FROM wifi_networks
             JOIN wifi_networks_fts ON wifi_networks.ssid = wifi_networks_fts.ssid

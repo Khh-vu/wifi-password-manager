@@ -97,7 +97,7 @@ class NetworkListViewModel(
     private val _filter = MutableStateFlow(Filter.ALL)
     private val _networks =
         _searchText.debounce(200.milliseconds).distinctUntilChanged().flatMapLatest { searchText ->
-            val query = searchText.replace("[^a-zA-Z0-9\\\\s]".toRegex(), "").trim()
+            val query = searchText.replace("[^\\p{L}\\p{N}\\s]".toRegex(), "").trim()
             if (query.isBlank()) {
                 wifiRepository.getAllNetworks()
             } else {

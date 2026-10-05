@@ -11,8 +11,8 @@ import io.github.wifi_password_manager.data.local.entity.WifiNetworkFtsEntity
 
 @Database(
     entities = [WifiNetworkEntity::class, WifiNetworkFtsEntity::class],
-    version = 3,
-    autoMigrations = [AutoMigration(2, 3)]
+    version = 4,
+    autoMigrations = [AutoMigration(2, 3), AutoMigration(3, 4)]
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun wifiNetworkDao(): WifiNetworkDao
