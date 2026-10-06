@@ -1,0 +1,4 @@
+- Keep removed networks in the app, so you can store more than the system allows
+- Added filter for all, on-device and app-only networks
+- Added network count to the title bar
+- Search now supports non-English SSIDs and notes
