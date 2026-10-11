@@ -12,6 +12,7 @@ import android.net.wifi.WifiManager
 import android.os.Binder
 import android.os.Build
 import android.os.Bundle
+import android.os.Process
 import android.util.Log
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.utils.WifiManagerHelper
@@ -24,7 +25,6 @@ import rikka.shizuku.SystemServiceHelper
 class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
     companion object {
         private const val TAG = "ShizukuWifiDataSource"
-        private const val SHELL_PACKAGE = "com.android.shell"
     }
 
     private val wifiManager: IWifiManager by lazy {
@@ -34,21 +34,28 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     private val user: String
         get() = when (val uid = Shizuku.getUid()) {
-            0 -> "root"
-            1000 -> "system"
-            2000 -> "shell"
+            Process.ROOT_UID -> "root"
+            Process.SYSTEM_UID -> "android"
+            Process.SHELL_UID -> "shell"
             else -> throw IllegalArgumentException("Unknown Shizuku user $uid")
         }
 
-    private val attributionSource: AttributionSource? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    private val callingPackage: String get() = if (Shizuku.getUid() == Process.SYSTEM_UID) "android" else "com.android.shell"
+
+    private val attributionSource: AttributionSource?
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             Refine.unsafeCast(
-                AttributionSourceHidden(Shizuku.getUid(), SHELL_PACKAGE, SHELL_PACKAGE, null, null)
+                AttributionSourceHidden(
+                    Shizuku.getUid(),
+                    callingPackage,
+                    callingPackage,
+                    null,
+                    null,
+                )
             )
         } else {
             null
         }
-    }
 
     override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
         if (!context.hasShizukuPermission) {
@@ -67,7 +74,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         return WifiManagerHelper.getWifiConfigurations(
             wifiManager = wifiManager,
             packageName = user,
-            featureId = SHELL_PACKAGE,
+            featureId = callingPackage,
             extras = extras,
         )
     }
@@ -107,7 +114,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
             return null
         }
         if (wifiManager.wifiEnabledState != WifiManager.WIFI_STATE_ENABLED) return null
-        return wifiManager.getConnectionInfo(SHELL_PACKAGE, null)
+        return wifiManager.getConnectionInfo(callingPackage, null)
     }
 
     override suspend fun persistEphemeralNetworks() {
@@ -131,7 +138,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
             Log.w(TAG, "Shizuku permission not available, cannot disconnect")
             return false
         }
-        return wifiManager.disconnect(SHELL_PACKAGE)
+        return wifiManager.disconnect(callingPackage)
     }
 
     override suspend fun connect(config: WifiConfiguration, listener: IActionListener) {
@@ -145,11 +152,13 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
                 config,
                 -1,
                 listener,
-                SHELL_PACKAGE,
-                Bundle(),
+                callingPackage,
+                Bundle().apply {
+                    putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+                },
             )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            wifiManager.connect(config, -1, listener, SHELL_PACKAGE)
+            wifiManager.connect(config, -1, listener, callingPackage)
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             wifiManager.connect(config, -1, listener)
         } else {

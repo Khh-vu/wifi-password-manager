@@ -13,6 +13,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Process
 import android.provider.Settings
 import com.topjohnwu.superuser.ipc.RootService
 import dev.rikka.tools.refine.Refine
@@ -44,13 +45,20 @@ class WiFiRootService : RootService() {
             SystemServiceHelper.getSystemService(WIFI_SERVICE).let(IWifiManager.Stub::asInterface)
         }
 
-        private val attributionSource: AttributionSource? by lazy {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Refine.unsafeCast(AttributionSourceHidden(0, packageName, packageName, null, null))
+        private val attributionSource: AttributionSource?
+            get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Refine.unsafeCast(
+                    AttributionSourceHidden(
+                        Process.ROOT_UID,
+                        packageName,
+                        packageName,
+                        null,
+                        null,
+                    )
+                )
             } else {
                 null
             }
-        }
 
         private fun getConfiguredNetworks(): List<WifiConfiguration> {
             val extras = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -124,7 +132,9 @@ class WiFiRootService : RootService() {
                     -1,
                     listener,
                     packageName,
-                    Bundle(),
+                    Bundle().apply {
+                        putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+                    },
                 )
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 wifiManager.connect(config.toWifiConfiguration(), -1, listener, packageName)
