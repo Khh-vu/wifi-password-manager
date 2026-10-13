@@ -93,69 +93,47 @@ class NetworkListViewModel(
         data class ShowMessage(val message: UiText) : Event
     }
 
+    private val _uiState = MutableStateFlow(State())
     private val _pendingNetwork = MutableStateFlow<WifiNetwork?>(null)
-    private val _showingSearch = MutableStateFlow(false)
-    private val _searchText = MutableStateFlow("")
-    private val _showMethodSignatureError = MutableStateFlow(false)
-    private val _filter = MutableStateFlow(Filter.ALL)
-    private val _sortAscending = MutableStateFlow(true)
     private val _networks =
-        _searchText.debounce(200.milliseconds).distinctUntilChanged().flatMapLatest { searchText ->
-            val query = searchText.replace("[^\\p{L}\\p{N}\\s]".toRegex(), "").trim()
-            if (query.isBlank()) {
-                wifiRepository.getAllNetworks()
-            } else {
-                wifiRepository.getAllNetworks(query.lowercase())
+        _uiState.map { it.searchText }.debounce(200.milliseconds).distinctUntilChanged()
+            .flatMapLatest { searchText ->
+                val query = searchText.replace("[^\\p{L}\\p{N}\\s]".toRegex(), "").trim()
+                if (query.isBlank()) {
+                    wifiRepository.getAllNetworks()
+                } else {
+                    wifiRepository.getAllNetworks(query.lowercase())
+                }
             }
-        }
 
     val state = combine(
+        _uiState,
         _networks,
-        _searchText,
-        _showingSearch,
-        privilegedManager.mode.map { it == PrivilegedMode.NONE },
+        privilegedManager.mode,
         wifiRepository.getConnectedWifiSsidFlow(),
-        _showMethodSignatureError,
         _pendingNetwork,
-        _filter,
-        _sortAscending,
-    ) { args ->
-        @Suppress("UNCHECKED_CAST") val networks = args[0] as List<WifiNetwork>
-        val connectedSsid = args[4] as String
-        val sortAscending = args[8] as Boolean
-        val sortedNetworks = networks.groupAndSortedBySsid().let {
-            if (sortAscending) it else it.reversed()
-        }.let { grouped ->
-            if (connectedSsid.isNotBlank()) {
-                grouped.sortedByDescending { it.ssid == connectedSsid }
-            } else {
-                grouped
-            }
-        }
-        val pendingNetwork = args[6] as WifiNetwork?
-        val filter = args[7] as Filter
-
-        State(
-            savedNetworks = sortedNetworks.filter {
-                when (filter) {
-                    Filter.ALL -> true
-                    Filter.ON_DEVICE -> it.existInSystem
-                    Filter.APP_ONLY -> !it.existInSystem
-                }
+    ) { ui, networks, mode, connectedSsid, pendingNetwork ->
+        ui.copy(
+            savedNetworks = networks.groupAndSortedBySsid()
+                .let { if (ui.sortAscending) it else it.reversed() }.let { grouped ->
+                    if (connectedSsid.isNotBlank()) {
+                        grouped.sortedByDescending { it.ssid == connectedSsid }
+                    } else {
+                        grouped
+                    }
+                }.filter {
+                    when (ui.filter) {
+                        Filter.ALL -> true
+                        Filter.ON_DEVICE -> it.existInSystem
+                        Filter.APP_ONLY -> !it.existInSystem
+                    }
+                },
+            isCacheMode = mode == PrivilegedMode.NONE,
+            connectionStatus = when {
+                connectedSsid.isNotBlank() -> WifiConnectionStatus.Connected(connectedSsid)
+                pendingNetwork != null -> WifiConnectionStatus.Connecting(pendingNetwork.ssid)
+                else -> WifiConnectionStatus.Disconnected
             },
-            filter = filter,
-            sortAscending = sortAscending,
-            searchText = args[1] as String,
-            showingSearch = args[2] as Boolean,
-            isCacheMode = args[3] as Boolean,
-            connectionStatus = if (connectedSsid.isNotBlank()) {
-                WifiConnectionStatus.Connected(connectedSsid)
-            } else if (pendingNetwork != null) {
-                WifiConnectionStatus.Connecting(pendingNetwork.ssid)
-            } else {
-                WifiConnectionStatus.Disconnected
-            },
-            showMethodSignatureError = args[5] as Boolean,
         )
     }.onStart { refresh() }.stateIn(
         scope = viewModelScope,
@@ -170,12 +148,18 @@ class NetworkListViewModel(
         Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.Refresh -> onRefresh()
-            is Action.ToggleSearch -> onToggleSearch()
-            is Action.FilterChanged -> _filter.update { action.filter }
-            is Action.ToggleSort -> _sortAscending.update { !it }
-            is Action.SearchTextChanged -> _searchText.update { action.text }
+            is Action.ToggleSearch -> _uiState.update {
+                it.copy(showingSearch = !it.showingSearch, searchText = "")
+            }
+
+            is Action.FilterChanged -> _uiState.update { it.copy(filter = action.filter) }
+            is Action.ToggleSort -> _uiState.update { it.copy(sortAscending = !it.sortAscending) }
+            is Action.SearchTextChanged -> _uiState.update { it.copy(searchText = action.text) }
             is Action.DeleteNote -> onDeleteNote(action.ssid)
-            is Action.DismissMethodInspectorError -> _showMethodSignatureError.update { false }
+            is Action.DismissMethodInspectorError -> _uiState.update {
+                it.copy(showMethodSignatureError = false)
+            }
+
             is Action.Disconnect -> onDisconnect()
             is Action.Connect -> onConnect(action.network)
             is Action.Forget -> onForget(action.network)
@@ -195,14 +179,9 @@ class NetworkListViewModel(
             true
         } catch (e: NoSuchMethodException) {
             Log.e(TAG, "Method signature not found", e)
-            _showMethodSignatureError.update { true }
+            _uiState.update { it.copy(showMethodSignatureError = true) }
             false
         }
-    }
-
-    private fun onToggleSearch() {
-        _showingSearch.update { !it }
-        _searchText.update { "" }
     }
 
     private fun onDeleteNote(ssid: String) {
