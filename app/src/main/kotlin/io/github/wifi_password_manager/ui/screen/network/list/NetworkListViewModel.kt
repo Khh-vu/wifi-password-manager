@@ -64,6 +64,7 @@ class NetworkListViewModel(
         val isCacheMode: Boolean = false,
         val showMethodSignatureError: Boolean = false,
         val filter: Filter = Filter.ALL,
+        val sortAscending: Boolean = true,
     )
 
     sealed interface Action {
@@ -72,6 +73,8 @@ class NetworkListViewModel(
         data object ToggleSearch : Action
 
         data class FilterChanged(val filter: Filter) : Action
+
+        data object ToggleSort : Action
 
         data class SearchTextChanged(val text: String) : Action
 
@@ -95,6 +98,7 @@ class NetworkListViewModel(
     private val _searchText = MutableStateFlow("")
     private val _showMethodSignatureError = MutableStateFlow(false)
     private val _filter = MutableStateFlow(Filter.ALL)
+    private val _sortAscending = MutableStateFlow(true)
     private val _networks =
         _searchText.debounce(200.milliseconds).distinctUntilChanged().flatMapLatest { searchText ->
             val query = searchText.replace("[^\\p{L}\\p{N}\\s]".toRegex(), "").trim()
@@ -114,10 +118,14 @@ class NetworkListViewModel(
         _showMethodSignatureError,
         _pendingNetwork,
         _filter,
+        _sortAscending,
     ) { args ->
         @Suppress("UNCHECKED_CAST") val networks = args[0] as List<WifiNetwork>
         val connectedSsid = args[4] as String
-        val sortedNetworks = networks.groupAndSortedBySsid().let { grouped ->
+        val sortAscending = args[8] as Boolean
+        val sortedNetworks = networks.groupAndSortedBySsid().let {
+            if (sortAscending) it else it.reversed()
+        }.let { grouped ->
             if (connectedSsid.isNotBlank()) {
                 grouped.sortedByDescending { it.ssid == connectedSsid }
             } else {
@@ -136,6 +144,7 @@ class NetworkListViewModel(
                 }
             },
             filter = filter,
+            sortAscending = sortAscending,
             searchText = args[1] as String,
             showingSearch = args[2] as Boolean,
             isCacheMode = args[3] as Boolean,
@@ -163,6 +172,7 @@ class NetworkListViewModel(
             is Action.Refresh -> onRefresh()
             is Action.ToggleSearch -> onToggleSearch()
             is Action.FilterChanged -> _filter.update { action.filter }
+            is Action.ToggleSort -> _sortAscending.update { !it }
             is Action.SearchTextChanged -> _searchText.update { action.text }
             is Action.DeleteNote -> onDeleteNote(action.ssid)
             is Action.DismissMethodInspectorError -> _showMethodSignatureError.update { false }

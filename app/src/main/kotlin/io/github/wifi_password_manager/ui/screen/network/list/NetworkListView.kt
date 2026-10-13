@@ -40,7 +40,7 @@ import io.github.wifi_password_manager.navigation.Route
 import io.github.wifi_password_manager.ui.icons.Refresh
 import io.github.wifi_password_manager.ui.icons.Search
 import io.github.wifi_password_manager.ui.icons.Settings
-import io.github.wifi_password_manager.ui.screen.network.list.components.FilterRow
+import io.github.wifi_password_manager.ui.screen.network.list.components.FilterSortBar
 import io.github.wifi_password_manager.ui.screen.network.list.components.MethodSignatureErrorDialog
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
 import io.github.wifi_password_manager.ui.shared.SearchBar
@@ -111,7 +111,7 @@ fun NetworkListView(
                         )
                     }
                 }
-                FilterRow(filter = state.filter, onAction = onAction)
+                FilterSortBar(filter = state.filter, sortAscending = state.sortAscending, onAction = onAction)
             }
         },
         floatingActionButton = {

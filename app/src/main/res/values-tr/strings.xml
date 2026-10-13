@@ -30,6 +30,11 @@
     <string name="filter_on_device">Cihazda</string>
     <string name="filter_app_only">Yalnızca uygulamada</string>
 
+    <!-- Network Sort -->
+    <string name="sort_by">Sırala</string>
+    <string name="sort_asc">Artan</string>
+    <string name="sort_desc">Azalan</string>
+
     <!-- No Access Screen -->
     <string name="no_access_title">Ayrıcalıklı Erişim Gereklidir</string>
     <string name="no_access_description">Bu uygulama, WiFi şifrelerini okuyabilmek için Shizuku veya root erişimi gerektirir. Devam etmek için lütfen ayrıcalıklı erişim izni verin.</string>

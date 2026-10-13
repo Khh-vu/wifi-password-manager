@@ -30,6 +30,11 @@
     <string name="filter_on_device">端末内</string>
     <string name="filter_app_only">アプリ内のみ</string>
 
+    <!-- Network Sort -->
+    <string name="sort_by">並べ替え</string>
+    <string name="sort_asc">昇順</string>
+    <string name="sort_desc">降順</string>
+
     <!-- No Access Screen -->
     <string name="no_access_title">特権アクセスが必要</string>
     <string name="no_access_description">このアプリはWiFiパスワードを読み取るためにShizukuまたはrootアクセスが必要です。続行するには特権アクセスを許可してください。</string>

@@ -13,6 +13,7 @@
     <string name="collapse_description">Collapse</string>
     <string name="state_expanded">Expanded</string>
     <string name="state_collapsed">Collapsed</string>
+    <string name="ssid" translatable="false">SSID</string>
 
     <!-- Theme Mode -->
     <string name="theme_mode_light">Light</string>
@@ -29,6 +30,11 @@
     <string name="filter_all">All</string>
     <string name="filter_on_device">On device</string>
     <string name="filter_app_only">In app only</string>
+
+    <!-- Network Sort -->
+    <string name="sort_by">Sort by</string>
+    <string name="sort_asc">Ascending</string>
+    <string name="sort_desc">Descending</string>
 
     <!-- No Access Screen -->
     <string name="no_access_title">Privileged Access Required</string>
