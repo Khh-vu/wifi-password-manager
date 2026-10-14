@@ -1,0 +1,2 @@
+- Added support for UID 1000
+- Added sorting networks by SSID in ascending/descending order
