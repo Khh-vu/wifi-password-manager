@@ -54,7 +54,7 @@ fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
             securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
             existInSystem = duplicateNetworks.any { it.existInSystem },
         )
-    }.sortedBy { it.ssid.lowercase() }
+    }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid))
 
 fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
     return securityType.map { type ->
