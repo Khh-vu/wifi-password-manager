@@ -1,11 +1,13 @@
 package io.github.wifi_password_manager.ui.shared
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,8 +39,7 @@ import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 fun SearchBar(
     modifier: Modifier = Modifier,
     showingSearch: Boolean,
-    searchText: String,
-    onSearchTextChanged: (String) -> Unit,
+    state: TextFieldState,
     onBack: () -> Unit,
     placeholder: String,
 ) {
@@ -61,24 +62,21 @@ fun SearchBar(
                 .statusBarsPadding()
                 .height(TopAppBarDefaults.TopAppBarExpandedHeight)
                 .focusRequester(focusRequester),
-            value = searchText,
-            onValueChange = onSearchTextChanged,
-            singleLine = true,
+            state = state,
+            lineLimits = TextFieldLineLimits.SingleLine,
             placeholder = { Text(text = placeholder) },
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Search, keyboardType = KeyboardType.Text
             ),
-            keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
+            onKeyboardAction = { keyboardController?.hide() },
             leadingIcon = { BackButton(onClick = onBack) },
             trailingIcon = {
-                Row {
-                    TooltipIconButton(
-                        onClick = { onSearchTextChanged("") },
-                        imageVector = ClearAll,
-                        tooltip = stringResource(R.string.clear),
-                        positioning = TooltipAnchorPosition.Below,
-                    )
-                }
+                TooltipIconButton(
+                    onClick = { state.clearText() },
+                    imageVector = ClearAll,
+                    tooltip = stringResource(R.string.clear),
+                    positioning = TooltipAnchorPosition.Below,
+                )
             },
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -98,8 +96,7 @@ fun SearchBar(
 private fun SearchBarPreview() {
     SearchBar(
         showingSearch = true,
-        searchText = "",
-        onSearchTextChanged = {},
+        state = rememberTextFieldState(),
         onBack = {},
         placeholder = LoremIpsum(2).values.joinToString(" "),
     )
@@ -111,8 +108,7 @@ private fun SearchBarPreview() {
 private fun SearchBarWithTextPreview() {
     SearchBar(
         showingSearch = true,
-        searchText = LoremIpsum(7).values.joinToString(" "),
-        onSearchTextChanged = {},
+        state = rememberTextFieldState(LoremIpsum(7).values.joinToString(" ")),
         onBack = {},
         placeholder = LoremIpsum(2).values.joinToString(" "),
     )

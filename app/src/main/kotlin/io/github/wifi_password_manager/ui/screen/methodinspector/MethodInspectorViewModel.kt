@@ -1,7 +1,10 @@
 package io.github.wifi_password_manager.ui.screen.methodinspector
 
 import android.util.Log
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.vinceglb.filekit.FileKit
@@ -14,6 +17,7 @@ import io.github.wifi_password_manager.domain.model.MethodInspectorExport
 import io.github.wifi_password_manager.utils.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,51 +49,49 @@ class MethodInspectorViewModel<T : Any>(
 
     @Immutable
     data class State(
-        val methods: Map<String, String> = emptyMap(),
+        val methods: List<Pair<String, String>> = emptyList(),
         val isExporting: Boolean = false,
         val showingSearch: Boolean = false,
-        val searchText: String = "",
     )
 
     sealed interface Action {
         data object ExportMethods : Action
 
         data object ToggleSearch : Action
-
-        data class SearchTextChanged(val text: String) : Action
     }
 
     sealed interface Event {
         data class ShowMessage(val message: UiText) : Event
     }
 
-    private val methods = HiddenApiBypass.getDeclaredMethods(forClass.java).associate {
-        it.name to it.toGenericString()
+    private val methods = viewModelScope.async(Dispatchers.Default) {
+        HiddenApiBypass.getDeclaredMethods(forClass.java)
+            .associate { it.name to it.toGenericString() }
     }
 
     private val _isExporting = MutableStateFlow(false)
     private val _showingSearch = MutableStateFlow(false)
-    private val _searchText = MutableStateFlow("")
     private val _methods =
-        _searchText.debounce(200.milliseconds).distinctUntilChanged().map { searchText ->
-            val query = searchText.trim()
-            if (query.isBlank()) {
-                methods
-            } else {
-                methods.filter { (_, signature) -> signature.contains(query, ignoreCase = true) }
+        snapshotFlow { searchState.text }.debounce(200.milliseconds).distinctUntilChanged()
+            .map { searchText ->
+                val query = searchText.trim()
+                methods.await().let {
+                    if (query.isBlank()) {
+                        it
+                    } else {
+                        it.filter { (_, signature) -> signature.contains(query, ignoreCase = true) }
+                    }
+                }.toList()
             }
-        }
 
     val state: StateFlow<State> = combine(
         _methods,
         _isExporting,
         _showingSearch,
-        _searchText,
-    ) { methods, isExporting, showingSearch, searchText ->
+    ) { methods, isExporting, showingSearch ->
         State(
             methods = methods,
             isExporting = isExporting,
-            searchText = searchText,
             showingSearch = showingSearch,
         )
     }.stateIn(
@@ -97,6 +99,7 @@ class MethodInspectorViewModel<T : Any>(
         started = SharingStarted.WhileSubscribed(5.seconds),
         initialValue = State(),
     )
+    val searchState = TextFieldState()
 
     private val _event = Channel<Event>()
     val event = _event.receiveAsFlow()
@@ -106,13 +109,12 @@ class MethodInspectorViewModel<T : Any>(
         when (action) {
             is Action.ExportMethods -> onExportMethods()
             is Action.ToggleSearch -> onToggleSearch()
-            is Action.SearchTextChanged -> _searchText.update { action.text }
         }
     }
 
     private fun onToggleSearch() {
         _showingSearch.update { !it }
-        _searchText.update { "" }
+        searchState.clearText()
     }
 
     private fun onExportMethods() {
@@ -126,7 +128,7 @@ class MethodInspectorViewModel<T : Any>(
 
             val result = runCatching {
                 Dispatchers.IO {
-                    val data = MethodInspectorExport(methods = methods.values.toList())
+                    val data = MethodInspectorExport(methods = methods.await().values.toList())
                     val jsonString = json.encodeToString(data)
                     file.writeString(jsonString)
                 }

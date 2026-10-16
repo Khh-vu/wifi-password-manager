@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -52,6 +54,7 @@ import io.github.wifi_password_manager.utils.MOCK
 @Composable
 fun NetworkListView(
     state: NetworkListViewModel.State,
+    searchState: TextFieldState,
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
     val navBackStack = LocalNavBackStack.current
@@ -70,10 +73,7 @@ fun NetworkListView(
                     if (showingSearch) {
                         SearchBar(
                             showingSearch = state.showingSearch,
-                            searchText = state.searchText,
-                            onSearchTextChanged = {
-                                onAction(NetworkListViewModel.Action.SearchTextChanged(it))
-                            },
+                            state = searchState,
                             onBack = { onAction(NetworkListViewModel.Action.ToggleSearch) },
                             placeholder = stringResource(R.string.search_hint),
                         )
@@ -184,6 +184,7 @@ fun NetworkListView(
 private fun NetworkListViewPreview() {
     NetworkListView(
         state = NetworkListViewModel.State(savedNetworks = WifiNetwork.MOCK),
+        searchState = rememberTextFieldState(),
         onAction = {},
     )
 }
@@ -192,7 +193,7 @@ private fun NetworkListViewPreview() {
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun EmptyNetworkListViewPreview() {
-    NetworkListView(state = NetworkListViewModel.State(), onAction = {})
+    NetworkListView(state = NetworkListViewModel.State(), searchState = rememberTextFieldState(), onAction = {})
 }
 
 @PreviewLightDark
@@ -203,6 +204,7 @@ private fun SearchNetworkListViewPreview() {
         state = NetworkListViewModel.State(
             showingSearch = true, savedNetworks = WifiNetwork.MOCK
         ),
+        searchState = rememberTextFieldState(),
         onAction = {},
     )
 }
@@ -211,5 +213,9 @@ private fun SearchNetworkListViewPreview() {
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun EmptySearchNetworkListViewPreview() {
-    NetworkListView(state = NetworkListViewModel.State(showingSearch = true), onAction = {})
+    NetworkListView(
+        state = NetworkListViewModel.State(showingSearch = true),
+        searchState = rememberTextFieldState(),
+        onAction = {},
+    )
 }

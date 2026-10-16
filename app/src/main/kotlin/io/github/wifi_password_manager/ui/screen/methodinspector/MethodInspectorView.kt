@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
@@ -45,6 +47,7 @@ import io.github.wifi_password_manager.utils.plus
 @Composable
 fun MethodInspectorView(
     state: MethodInspectorViewModel.State,
+    searchState: TextFieldState,
     onAction: (MethodInspectorViewModel.Action) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -60,10 +63,7 @@ fun MethodInspectorView(
                 if (showingSearch) {
                     SearchBar(
                         showingSearch = state.showingSearch,
-                        searchText = state.searchText,
-                        onSearchTextChanged = {
-                            onAction(MethodInspectorViewModel.Action.SearchTextChanged(it))
-                        },
+                        state = searchState,
                         onBack = { onAction(MethodInspectorViewModel.Action.ToggleSearch) },
                         placeholder = stringResource(R.string.method_inspector_search_hint),
                     )
@@ -111,7 +111,7 @@ fun MethodInspectorView(
             contentPadding = innerPadding + PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(items = state.methods.toList()) { (name, signature) ->
+            items(items = state.methods, key = { (name, _) -> name }) { (name, signature) ->
                 Card {
                     ExpansionItem(
                         content = {
@@ -138,7 +138,17 @@ fun MethodInspectorView(
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun MethodInspectorViewPreview() {
-    MethodInspectorView(state = MethodInspectorViewModel.State(), onAction = {})
+    MethodInspectorView(
+        state = MethodInspectorViewModel.State(
+            methods = listOf(
+                "method1" to "signature1",
+                "method2" to "signature2",
+                "method3" to "signature3",
+            ),
+        ),
+        searchState = rememberTextFieldState(),
+        onAction = {},
+    )
 }
 
 @PreviewLightDark
@@ -147,6 +157,7 @@ private fun MethodInspectorViewPreview() {
 private fun SearchMethodInspectorViewPreview() {
     MethodInspectorView(
         state = MethodInspectorViewModel.State(showingSearch = true),
+        searchState = rememberTextFieldState(),
         onAction = {},
     )
 }

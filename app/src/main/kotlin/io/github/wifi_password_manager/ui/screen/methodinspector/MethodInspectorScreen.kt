@@ -27,5 +27,5 @@ fun <T : Any> MethodInspectorScreen(forClass: KClass<T>) {
         }
     }
 
-    MethodInspectorView(state = state, onAction = viewModel::onAction)
+    MethodInspectorView(state = state, searchState = viewModel.searchState, onAction = viewModel::onAction)
 }

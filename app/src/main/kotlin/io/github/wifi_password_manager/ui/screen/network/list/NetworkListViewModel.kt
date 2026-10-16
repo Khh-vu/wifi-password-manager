@@ -2,7 +2,10 @@ package io.github.wifi_password_manager.ui.screen.network.list
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.wifi_password_manager.R
@@ -14,6 +17,7 @@ import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
 import io.github.wifi_password_manager.utils.toWifiConfigurations
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
@@ -25,8 +29,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -42,6 +46,7 @@ class NetworkListViewModel(
 ) : ViewModel() {
     companion object {
         private const val TAG = "NetworkListViewModel"
+        private val searchQueryRegex = "[^\\p{L}\\p{N}\\s]".toRegex()
     }
 
     enum class Filter {
@@ -60,7 +65,6 @@ class NetworkListViewModel(
         val savedNetworks: List<WifiNetwork> = emptyList(),
         val showingSearch: Boolean = false,
         val connectionStatus: WifiConnectionStatus = WifiConnectionStatus.Disconnected,
-        val searchText: String = "",
         val isCacheMode: Boolean = false,
         val showMethodSignatureError: Boolean = false,
         val filter: Filter = Filter.ALL,
@@ -75,8 +79,6 @@ class NetworkListViewModel(
         data class FilterChanged(val filter: Filter) : Action
 
         data object ToggleSort : Action
-
-        data class SearchTextChanged(val text: String) : Action
 
         data class DeleteNote(val ssid: String) : Action
 
@@ -95,39 +97,37 @@ class NetworkListViewModel(
 
     private val _uiState = MutableStateFlow(State())
     private val _pendingNetwork = MutableStateFlow<WifiNetwork?>(null)
-    private val _networks =
-        _uiState.map { it.searchText }.debounce(200.milliseconds).distinctUntilChanged()
-            .flatMapLatest { searchText ->
-                val query = searchText.replace("[^\\p{L}\\p{N}\\s]".toRegex(), "").trim()
-                if (query.isBlank()) {
-                    wifiRepository.getAllNetworks()
-                } else {
-                    wifiRepository.getAllNetworks(query.lowercase())
-                }
+    private val _networks = snapshotFlow { searchState.text }.debounce(200.milliseconds)
+        .distinctUntilChanged().flatMapLatest { searchText ->
+            val query = searchText.replace(searchQueryRegex, "").trim()
+            if (query.isBlank()) {
+                wifiRepository.getAllNetworks()
+            } else {
+                wifiRepository.getAllNetworks(query.lowercase())
             }
+        }
 
     val state = combine(
         _uiState,
         _networks,
         privilegedManager.mode,
-        wifiRepository.getConnectedWifiSsidFlow(),
+        wifiRepository.getConnectedWifiSsidFlow().onEach { refresh() },
         _pendingNetwork,
     ) { ui, networks, mode, connectedSsid, pendingNetwork ->
+        val sorted = networks.groupAndSortedBySsid().filter {
+            when (ui.filter) {
+                Filter.ALL -> true
+                Filter.ON_DEVICE -> it.existInSystem
+                Filter.APP_ONLY -> !it.existInSystem
+            }
+        }.let { if (ui.sortAscending) it else it.asReversed() }
         ui.copy(
-            savedNetworks = networks.groupAndSortedBySsid()
-                .let { if (ui.sortAscending) it else it.reversed() }.let { grouped ->
-                    if (connectedSsid.isNotBlank()) {
-                        grouped.sortedByDescending { it.ssid == connectedSsid }
-                    } else {
-                        grouped
-                    }
-                }.filter {
-                    when (ui.filter) {
-                        Filter.ALL -> true
-                        Filter.ON_DEVICE -> it.existInSystem
-                        Filter.APP_ONLY -> !it.existInSystem
-                    }
-                },
+            savedNetworks = if (connectedSsid.isNotBlank()) {
+                val (connected, others) = sorted.partition { it.ssid == connectedSsid }
+                connected + others
+            } else {
+                sorted
+            },
             isCacheMode = mode == PrivilegedMode.NONE,
             connectionStatus = when {
                 connectedSsid.isNotBlank() -> WifiConnectionStatus.Connected(connectedSsid)
@@ -135,11 +135,12 @@ class NetworkListViewModel(
                 else -> WifiConnectionStatus.Disconnected
             },
         )
-    }.onStart { refresh() }.stateIn(
+    }.flowOn(Dispatchers.Default).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5.seconds),
         initialValue = State(),
     )
+    val searchState = TextFieldState()
 
     private val _event = Channel<Event>()
     val event = _event.receiveAsFlow()
@@ -148,13 +149,13 @@ class NetworkListViewModel(
         Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.Refresh -> onRefresh()
-            is Action.ToggleSearch -> _uiState.update {
-                it.copy(showingSearch = !it.showingSearch, searchText = "")
+            is Action.ToggleSearch -> {
+                searchState.clearText()
+                _uiState.update { it.copy(showingSearch = !it.showingSearch) }
             }
 
             is Action.FilterChanged -> _uiState.update { it.copy(filter = action.filter) }
             is Action.ToggleSort -> _uiState.update { it.copy(sortAscending = !it.sortAscending) }
-            is Action.SearchTextChanged -> _uiState.update { it.copy(searchText = action.text) }
             is Action.DeleteNote -> onDeleteNote(action.ssid)
             is Action.DismissMethodInspectorError -> _uiState.update {
                 it.copy(showMethodSignatureError = false)
