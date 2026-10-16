@@ -2,6 +2,7 @@ package io.github.wifi_password_manager.data.local.dao
 
 import androidx.room3.Dao
 import androidx.room3.Query
+import androidx.room3.Transaction
 import androidx.room3.Upsert
 import io.github.wifi_password_manager.data.local.entity.WifiNetworkEntity
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,13 @@ interface WifiNetworkDao {
 
     @Query("UPDATE wifi_networks SET existInSystem = 0 WHERE ssid NOT IN (:systemSsids)")
     suspend fun markNotExistInSystem(systemSsids: List<String>)
+
+    @Transaction
+    suspend fun syncNetworks(networks: List<WifiNetworkEntity>) {
+        val notes = getAllNetworksList().filter { it.note != null }.associate { it.ssid to it.note }
+        upsertNetworks(networks.map { it.copy(note = notes[it.ssid] ?: it.note) })
+        markNotExistInSystem(networks.map { it.ssid })
+    }
 
     @Query("UPDATE wifi_networks SET existInSystem = 0")
     suspend fun markAllNotExistInSystem()

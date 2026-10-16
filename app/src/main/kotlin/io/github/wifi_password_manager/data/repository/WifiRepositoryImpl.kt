@@ -30,6 +30,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ class WifiRepositoryImpl(
     private var cachedDataSource: WifiDataSource? = null
 
     private val dataSource: WifiDataSource
-        get() {
+        @Synchronized get() {
             val mode = privilegedManager.currentMode
             if (mode != cachedPrivilegedMode) {
                 cachedPrivilegedMode = mode
@@ -78,34 +79,12 @@ class WifiRepositoryImpl(
         }
     }
 
-    private suspend fun syncNetworksToDatabase(networks: List<WifiNetwork>) = dispatcher {
-        if (networks.isEmpty()) {
-            wifiNetworkDao.markAllNotExistInSystem()
-            return@dispatcher
-        }
-
-        val existingNetworks = wifiNetworkDao.getAllNetworksList()
-        val networksWithNotes = networks.map { network ->
-            val existingNote = existingNetworks.firstOrNull { it.ssid == network.ssid }?.note
-            network.copy(note = existingNote ?: network.note).toEntity()
-        }
-        wifiNetworkDao.upsertNetworks(networksWithNotes)
-
-        val systemSsids = networks.map { it.ssid }
-        wifiNetworkDao.markNotExistInSystem(systemSsids)
-    }
-
-    private suspend fun connectInternal(config: WifiConfiguration): Boolean {
-        return awaitAction { listener -> dataSource.connect(config, listener) }
-    }
-
     override fun getConnectedWifiSsidFlow(): Flow<String> {
         return callbackFlow {
             suspend fun sendInfo(wifiInfo: WifiInfo?) {
                 val ssid = wifiInfo?.ssid?.takeIf { it != WifiManager.UNKNOWN_SSID }
                     ?.removeSurrounding("\"").orEmpty()
                 send(ssid)
-                refresh()
             }
 
             val callback = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -154,14 +133,16 @@ class WifiRepositoryImpl(
 
             connectivityManager?.registerNetworkCallback(request, callback)
             awaitClose { connectivityManager?.unregisterNetworkCallback(callback) }
-        }.distinctUntilChanged()
+        }.flowOn(dispatcher).distinctUntilChanged()
     }
 
     override fun getAllNetworks(): Flow<List<WifiNetwork>> =
         wifiNetworkDao.getAllNetworks().map { entities -> entities.map { it.toDomain() } }
+            .distinctUntilChanged()
 
     override fun getAllNetworks(query: String): Flow<List<WifiNetwork>> =
         wifiNetworkDao.getAllNetworks(query).map { entities -> entities.map { it.toDomain() } }
+            .distinctUntilChanged()
 
     override suspend fun getAllNetworksList(): List<WifiNetwork> {
         return wifiNetworkDao.getAllNetworksList().map { it.toDomain() }
@@ -173,22 +154,24 @@ class WifiRepositoryImpl(
 
     override suspend fun refresh() {
         if (privilegedManager.currentMode == PrivilegedMode.NONE) return
-        val configs = getPrivilegedConfiguredNetworks()
-        val networks = configs.map(WifiNetwork::fromWifiConfiguration)
-        syncNetworksToDatabase(networks)
+        dispatcher {
+            val networks = getPrivilegedConfiguredNetworks().map(WifiNetwork::fromWifiConfiguration)
+            if (networks.isEmpty()) {
+                wifiNetworkDao.markAllNotExistInSystem()
+                return@dispatcher
+            }
+            wifiNetworkDao.syncNetworks(networks.map { it.toEntity() })
+        }
     }
 
-    override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
-        return dataSource.getPrivilegedConfiguredNetworks()
+    override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> = dispatcher {
+        dataSource.getPrivilegedConfiguredNetworks()
     }
 
-    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
-        return dataSource.addOrUpdateNetworkPrivileged(config)
-    }
+    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean =
+        dispatcher { dataSource.addOrUpdateNetworkPrivileged(config) }
 
-    override suspend fun forget(netId: Int): Boolean {
-        return dataSource.forget(netId)
-    }
+    override suspend fun forget(netId: Int): Boolean = dispatcher { dataSource.forget(netId) }
 
     override suspend fun delete(ssid: String) {
         wifiNetworkDao.deleteNetwork(ssid)
@@ -198,7 +181,7 @@ class WifiRepositoryImpl(
         wifiNetworkDao.clearNetworks()
     }
 
-    override suspend fun persistEphemeralNetworks() {
+    override suspend fun persistEphemeralNetworks() = dispatcher {
         dataSource.persistEphemeralNetworks()
     }
 
@@ -206,13 +189,12 @@ class WifiRepositoryImpl(
         wifiNetworkDao.updateNote(ssid, note)
     }
 
-    override suspend fun disconnect(): Boolean {
-        return dataSource.disconnect()
-    }
+    override suspend fun disconnect(): Boolean = dispatcher { dataSource.disconnect() }
 
-    override suspend fun connect(network: WifiNetwork) {
+    override suspend fun connect(network: WifiNetwork) = dispatcher {
         for (config in network.toWifiConfigurations()) {
-            if (connectInternal(config)) return
+            val result = awaitAction { listener -> dataSource.connect(config, listener) }
+            if (result) return@dispatcher
         }
     }
 }
