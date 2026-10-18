@@ -130,14 +130,21 @@ class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     }
 
 
-    override suspend fun connect(config: WifiConfiguration, listener: IActionListener) {
+    override suspend fun connect(
+        config: WifiConfiguration?,
+        netId: Int,
+        listener: IActionListener,
+    ) {
         val service = getService()
         if (service == null) {
             Log.w(TAG, "Root service not available, cannot connect to network")
             listener.onFailure(0)
             return
         }
-        val parcel = WifiNetworkParcel.fromWifiConfiguration(config)
-        return service.connect(parcel, listener)
+        return service.connect(
+            config?.let(WifiNetworkParcel::fromWifiConfiguration),
+            netId,
+            listener,
+        )
     }
 }

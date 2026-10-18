@@ -31,7 +31,11 @@ class CachedWifiDataSourceImpl(private val wifiNetworkDao: WifiNetworkDao) : Wif
         return false
     }
 
-    override suspend fun connect(config: WifiConfiguration, listener: IActionListener) {
+    override suspend fun connect(
+        config: WifiConfiguration?,
+        netId: Int,
+        listener: IActionListener,
+    ) {
         listener.onFailure(0)
     }
 }

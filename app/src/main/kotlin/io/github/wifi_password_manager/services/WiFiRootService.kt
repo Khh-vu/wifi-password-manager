@@ -125,11 +125,11 @@ class WiFiRootService : RootService() {
             return wifiManager.disconnect(packageName)
         }
 
-        override fun connect(config: WifiNetworkParcel, listener: IActionListener) {
+        override fun connect(config: WifiNetworkParcel?, netId: Int, listener: IActionListener) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 wifiManager.connect(
-                    config.toWifiConfiguration(),
-                    -1,
+                    config?.toWifiConfiguration(),
+                    netId,
                     listener,
                     packageName,
                     Bundle().apply {
@@ -137,13 +137,13 @@ class WiFiRootService : RootService() {
                     },
                 )
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                wifiManager.connect(config.toWifiConfiguration(), -1, listener, packageName)
+                wifiManager.connect(config?.toWifiConfiguration(), netId, listener, packageName)
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                wifiManager.connect(config.toWifiConfiguration(), -1, listener)
+                wifiManager.connect(config?.toWifiConfiguration(), netId, listener)
             } else {
                 wifiManager.connect(
-                    config.toWifiConfiguration(),
-                    -1,
+                    config?.toWifiConfiguration(),
+                    netId,
                     Binder(),
                     listener,
                     listener.hashCode(),

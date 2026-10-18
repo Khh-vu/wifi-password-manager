@@ -17,5 +17,9 @@ interface WifiDataSource {
 
     suspend fun disconnect(): Boolean
 
-    suspend fun connect(config: WifiConfiguration, listener: IActionListener)
+    suspend fun connect(
+        config: WifiConfiguration? = null,
+        netId: Int = -1,
+        listener: IActionListener,
+    )
 }

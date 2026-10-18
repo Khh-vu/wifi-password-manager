@@ -192,8 +192,22 @@ class WifiRepositoryImpl(
     override suspend fun disconnect(): Boolean = dispatcher { dataSource.disconnect() }
 
     override suspend fun connect(network: WifiNetwork) = dispatcher {
-        for (config in network.toWifiConfigurations()) {
-            val result = awaitAction { listener -> dataSource.connect(config, listener) }
+        val networks = getPrivilegedConfiguredNetworks().map(WifiNetwork::fromWifiConfiguration)
+        val netIds = networks.filter { it.ssid == network.ssid }.map { it.networkId }
+
+        if (netIds.isNotEmpty()) {
+            for (netId in netIds) {
+                val result = awaitAction { listener ->
+                    dataSource.connect(netId = netId, listener = listener)
+                }
+                if (result) return@dispatcher
+            }
+        }
+
+        for (config in network.copy(existInSystem = false).toWifiConfigurations()) {
+            val result = awaitAction { listener ->
+                dataSource.connect(config = config, listener = listener)
+            }
             if (result) return@dispatcher
         }
     }

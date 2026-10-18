@@ -17,6 +17,6 @@ interface IWifiRootService {
 
     boolean disconnect();
 
-    oneway void connect(in WifiNetworkParcel config, in IActionListener listener);
+    oneway void connect(in WifiNetworkParcel config, int netId, in IActionListener listener);
 }
 

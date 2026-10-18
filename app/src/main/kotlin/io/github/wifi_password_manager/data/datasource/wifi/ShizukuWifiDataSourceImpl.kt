@@ -141,7 +141,11 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         return wifiManager.disconnect(callingPackage)
     }
 
-    override suspend fun connect(config: WifiConfiguration, listener: IActionListener) {
+    override suspend fun connect(
+        config: WifiConfiguration?,
+        netId: Int,
+        listener: IActionListener,
+    ) {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, cannot connect to network")
             listener.onFailure(0)
@@ -150,7 +154,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             wifiManager.connect(
                 config,
-                -1,
+                netId,
                 listener,
                 callingPackage,
                 Bundle().apply {
@@ -158,13 +162,13 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
                 },
             )
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            wifiManager.connect(config, -1, listener, callingPackage)
+            wifiManager.connect(config, netId, listener, callingPackage)
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            wifiManager.connect(config, -1, listener)
+            wifiManager.connect(config, netId, listener)
         } else {
             wifiManager.connect(
                 config,
-                -1,
+                netId,
                 Binder(),
                 listener,
                 listener.hashCode(),
