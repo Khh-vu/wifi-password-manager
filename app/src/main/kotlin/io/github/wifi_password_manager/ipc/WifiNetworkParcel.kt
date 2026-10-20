@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.ipc
 
+import android.net.MacAddress
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiConfigurationHidden
 import android.os.Parcelable
@@ -16,6 +17,9 @@ data class WifiNetworkParcel(
     val hidden: Boolean,
     val autojoin: Boolean,
     val shared: Boolean,
+    val meteredOverride: Int,
+    val macRandomizationSetting: Int,
+    val randomizedMacAddress: MacAddress,
 ) : Parcelable {
     fun toWifiConfiguration(): WifiConfiguration {
         val config = WifiConfigurationHidden().apply {
@@ -24,6 +28,8 @@ data class WifiNetworkParcel(
             hiddenSSID = hidden
             allowAutojoin = autojoin
             shared = this@WifiNetworkParcel.shared
+            meteredOverride = this@WifiNetworkParcel.meteredOverride
+            macRandomizationSetting = this@WifiNetworkParcel.macRandomizationSetting
 
             when (this@WifiNetworkParcel.securityType) {
                 WifiConfiguration.SECURITY_TYPE_OPEN -> {
@@ -70,6 +76,9 @@ data class WifiNetworkParcel(
                 hidden = hidden.hiddenSSID,
                 autojoin = hidden.allowAutojoin,
                 shared = hidden.shared,
+                meteredOverride = hidden.meteredOverride,
+                macRandomizationSetting = hidden.macRandomizationSetting,
+                randomizedMacAddress = hidden.randomizedMacAddress,
             )
         }
 

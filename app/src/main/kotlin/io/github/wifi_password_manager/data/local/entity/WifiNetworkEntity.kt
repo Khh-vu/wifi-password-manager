@@ -15,6 +15,9 @@ data class WifiNetworkEntity(
     val private: Boolean,
     val note: String?,
     @ColumnInfo(defaultValue = "1") val existInSystem: Boolean = true,
+    @ColumnInfo(defaultValue = "NONE") val meteredOverride: String = "NONE",
+    @ColumnInfo(defaultValue = "AUTO") val macRandomizationSetting: String = "AUTO",
+    val randomizedMacAddress: String? = null,
 )
 
 fun WifiNetwork.toEntity(): WifiNetworkEntity {
@@ -28,6 +31,9 @@ fun WifiNetwork.toEntity(): WifiNetworkEntity {
         private = private,
         note = note,
         existInSystem = existInSystem,
+        meteredOverride = meteredOverride.name,
+        macRandomizationSetting = macRandomizationSetting.name,
+        randomizedMacAddress = randomizedMacAddress,
     )
 }
 
@@ -42,5 +48,8 @@ fun WifiNetworkEntity.toDomain(): WifiNetwork {
         private = private,
         note = note,
         existInSystem = existInSystem,
+        meteredOverride = WifiNetwork.MeteredOverride.valueOf(meteredOverride),
+        macRandomizationSetting = WifiNetwork.Randomization.valueOf(macRandomizationSetting),
+        randomizedMacAddress = randomizedMacAddress,
     )
 }

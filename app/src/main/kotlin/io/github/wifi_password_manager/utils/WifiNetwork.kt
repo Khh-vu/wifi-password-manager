@@ -25,6 +25,11 @@ fun WifiNetwork.Companion.fromWifiConfiguration(config: WifiConfiguration): Wifi
         hidden = network.hiddenSSID,
         autojoin = network.allowAutojoin,
         private = !network.shared,
+        meteredOverride = WifiNetwork.MeteredOverride.entries[network.meteredOverride],
+        macRandomizationSetting = WifiNetwork.Randomization.entries[network.macRandomizationSetting],
+        randomizedMacAddress = network.randomizedMacAddress.toString().takeIf {
+            it != "02:00:00:00:00:00"
+        },
     )
 }
 
@@ -94,6 +99,15 @@ fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
             allowAutojoin = autojoin
             hiddenSSID = hidden
             shared = !private
+            meteredOverride = this@toWifiConfigurations.meteredOverride.ordinal
+            macRandomizationSetting =
+                this@toWifiConfigurations.macRandomizationSetting.ordinal.let {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        it
+                    } else {
+                        it.coerceAtMost(1)
+                    }
+                }
         }
         Refine.unsafeCast(config)
     }
