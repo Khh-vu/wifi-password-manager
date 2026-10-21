@@ -15,6 +15,9 @@ import io.github.vinceglb.filekit.writeString
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.MethodInspectorExport
 import io.github.wifi_password_manager.utils.UiText
+import kotlin.reflect.KClass
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
@@ -34,9 +37,6 @@ import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.lsposed.hiddenapibypass.HiddenApiBypass
-import kotlin.reflect.KClass
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(FlowPreview::class)
 class MethodInspectorViewModel<T : Any>(
@@ -64,41 +64,51 @@ class MethodInspectorViewModel<T : Any>(
         data class ShowMessage(val message: UiText) : Event
     }
 
-    private val methods = viewModelScope.async(Dispatchers.Default) {
-        HiddenApiBypass.getDeclaredMethods(forClass.java)
-            .associate { it.name to it.toGenericString() }
-    }
+    private val methods =
+        viewModelScope.async(Dispatchers.Default) {
+            HiddenApiBypass.getDeclaredMethods(forClass.java).associate {
+                it.name to it.toGenericString()
+            }
+        }
 
     private val _isExporting = MutableStateFlow(false)
     private val _showingSearch = MutableStateFlow(false)
-    private val _methods =
-        snapshotFlow { searchState.text }.debounce(200.milliseconds).distinctUntilChanged()
-            .map { searchText ->
-                val query = searchText.trim()
-                methods.await().let {
+    private val _methods = snapshotFlow {
+        searchState.text
+    }
+        .debounce(200.milliseconds)
+        .distinctUntilChanged()
+        .map { searchText ->
+            val query = searchText.trim()
+            methods
+                .await()
+                .let {
                     if (query.isBlank()) {
                         it
                     } else {
                         it.filter { (_, signature) -> signature.contains(query, ignoreCase = true) }
                     }
-                }.toList()
-            }
+                }
+                .toList()
+        }
 
-    val state: StateFlow<State> = combine(
-        _methods,
-        _isExporting,
-        _showingSearch,
-    ) { methods, isExporting, showingSearch ->
-        State(
-            methods = methods,
-            isExporting = isExporting,
-            showingSearch = showingSearch,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5.seconds),
-        initialValue = State(),
-    )
+    val state: StateFlow<State> =
+        combine(
+                _methods,
+                _isExporting,
+                _showingSearch,
+            ) { methods, isExporting, showingSearch ->
+                State(
+                    methods = methods,
+                    isExporting = isExporting,
+                    showingSearch = showingSearch,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5.seconds),
+                initialValue = State(),
+            )
     val searchState = TextFieldState()
 
     private val _event = Channel<Event>()
@@ -119,10 +129,11 @@ class MethodInspectorViewModel<T : Any>(
 
     private fun onExportMethods() {
         viewModelScope.launch {
-            val file = FileKit.openFileSaver(
-                suggestedName = "${forClass.simpleName}_methods",
-                defaultExtension = "json",
-            ) ?: return@launch
+            val file =
+                FileKit.openFileSaver(
+                    suggestedName = "${forClass.simpleName}_methods",
+                    defaultExtension = "json",
+                ) ?: return@launch
 
             _isExporting.update { true }
 
@@ -136,11 +147,15 @@ class MethodInspectorViewModel<T : Any>(
 
             result.fold(
                 onSuccess = {
-                    _event.send(Event.ShowMessage(UiText.StringResource(R.string.export_methods_success)))
+                    _event.send(
+                        Event.ShowMessage(UiText.StringResource(R.string.export_methods_success))
+                    )
                 },
                 onFailure = {
                     Log.e(TAG, "Error exporting methods", it)
-                    _event.send(Event.ShowMessage(UiText.StringResource(R.string.export_methods_failed)))
+                    _event.send(
+                        Event.ShowMessage(UiText.StringResource(R.string.export_methods_failed))
+                    )
                     if (file.exists()) file.delete()
                 },
             )

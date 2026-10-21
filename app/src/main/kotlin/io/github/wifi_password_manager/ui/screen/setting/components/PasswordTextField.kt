@@ -40,9 +40,7 @@ fun PasswordTextField(
 
     OutlinedSecureTextField(
         state = state,
-        modifier = modifier
-            .fillMaxWidth()
-            .semantics { contentType = ContentType.Password },
+        modifier = modifier.fillMaxWidth().semantics { contentType = ContentType.Password },
         label = { Text(text = stringResource(R.string.password)) },
         supportingText = errorText.takeIf { isError },
         onKeyboardAction = onKeyboardAction,
@@ -51,15 +49,17 @@ fun PasswordTextField(
             TooltipIconButton(
                 onClick = { isObfuscated = !isObfuscated },
                 imageVector = if (isObfuscated) VisibilityOff else Visibility,
-                tooltip = if (isObfuscated) {
-                    stringResource(R.string.hide_password)
-                } else {
-                    stringResource(R.string.show_password)
-                },
+                tooltip =
+                    if (isObfuscated) {
+                        stringResource(R.string.hide_password)
+                    } else {
+                        stringResource(R.string.show_password)
+                    },
                 positioning = TooltipAnchorPosition.Above,
             )
         },
-        textObfuscationMode = if (isObfuscated) TextObfuscationMode.Visible else TextObfuscationMode.System,
+        textObfuscationMode =
+            if (isObfuscated) TextObfuscationMode.Visible else TextObfuscationMode.System,
     )
 }
 

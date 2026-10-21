@@ -51,10 +51,11 @@ fun FilterSortBar(
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
     var expanded by retain { mutableStateOf(false) }
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (expanded) 180f else 0f,
-        animationSpec = tween(durationMillis = 300),
-    )
+    val rotationAngle by
+        animateFloatAsState(
+            targetValue = if (expanded) 180f else 0f,
+            animationSpec = tween(durationMillis = 300),
+        )
 
     Surface(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -76,14 +77,16 @@ fun FilterSortBar(
                     trailingIcon = {
                         Icon(
                             imageVector = KeyboardArrowDown,
-                            contentDescription = if (expanded) {
-                                stringResource(R.string.collapse_description)
-                            } else {
-                                stringResource(R.string.expand_description)
-                            },
-                            modifier = Modifier
-                                .size(FilterChipDefaults.IconSize)
-                                .graphicsLayer { rotationZ = rotationAngle },
+                            contentDescription =
+                                if (expanded) {
+                                    stringResource(R.string.collapse_description)
+                                } else {
+                                    stringResource(R.string.expand_description)
+                                },
+                            modifier =
+                                Modifier.size(FilterChipDefaults.IconSize).graphicsLayer {
+                                    rotationZ = rotationAngle
+                                },
                         )
                     },
                 )
@@ -101,15 +104,24 @@ fun FilterSortBar(
                                 selectedLeadingIcon = {
                                     Icon(imageVector = Check, contentDescription = null)
                                 },
-                                shapes = MenuDefaults.itemShape(
-                                    index = index,
-                                    count = NetworkListViewModel.Filter.entries.size,
-                                ),
-                                colors = MenuDefaults.selectableItemColors(
-                                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                    selectedTextColor = contentColorFor(MaterialTheme.colorScheme.primaryContainer),
-                                    selectedLeadingIconColor = contentColorFor(MaterialTheme.colorScheme.primaryContainer),
-                                ),
+                                shapes =
+                                    MenuDefaults.itemShape(
+                                        index = index,
+                                        count = NetworkListViewModel.Filter.entries.size,
+                                    ),
+                                colors =
+                                    MenuDefaults.selectableItemColors(
+                                        selectedContainerColor =
+                                            MaterialTheme.colorScheme.primaryContainer,
+                                        selectedTextColor =
+                                            contentColorFor(
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            ),
+                                        selectedLeadingIconColor =
+                                            contentColorFor(
+                                                MaterialTheme.colorScheme.primaryContainer
+                                            ),
+                                    ),
                             )
                         }
                     }
@@ -129,9 +141,10 @@ fun FilterSortBar(
                 trailingIcon = {
                     Icon(
                         imageVector = if (sortAscending) ArrowUpward else ArrowDownward,
-                        contentDescription = stringResource(
-                            if (sortAscending) R.string.sort_asc else R.string.sort_desc
-                        ),
+                        contentDescription =
+                            stringResource(
+                                if (sortAscending) R.string.sort_asc else R.string.sort_desc
+                            ),
                         modifier = Modifier.size(AssistChipDefaults.IconSize),
                     )
                 },

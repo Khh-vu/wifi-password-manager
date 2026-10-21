@@ -28,34 +28,38 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
     }
 
     private val wifiManager: IWifiManager by lazy {
-        SystemServiceHelper.getSystemService(Context.WIFI_SERVICE).let(::ShizukuBinderWrapper)
+        SystemServiceHelper.getSystemService(Context.WIFI_SERVICE)
+            .let(::ShizukuBinderWrapper)
             .let(IWifiManager.Stub::asInterface)
     }
 
     private val user: String
-        get() = when (val uid = Shizuku.getUid()) {
-            Process.ROOT_UID -> "root"
-            Process.SYSTEM_UID -> "android"
-            Process.SHELL_UID -> "shell"
-            else -> throw IllegalArgumentException("Unknown Shizuku user $uid")
-        }
+        get() =
+            when (val uid = Shizuku.getUid()) {
+                Process.ROOT_UID -> "root"
+                Process.SYSTEM_UID -> "android"
+                Process.SHELL_UID -> "shell"
+                else -> throw IllegalArgumentException("Unknown Shizuku user $uid")
+            }
 
-    private val callingPackage: String get() = if (Shizuku.getUid() == Process.SYSTEM_UID) "android" else "com.android.shell"
+    private val callingPackage: String
+        get() = if (Shizuku.getUid() == Process.SYSTEM_UID) "android" else "com.android.shell"
 
     private val attributionSource: AttributionSource?
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Refine.unsafeCast(
-                AttributionSourceHidden(
-                    Shizuku.getUid(),
-                    callingPackage,
-                    callingPackage,
-                    null,
-                    null,
+        get() =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Refine.unsafeCast(
+                    AttributionSourceHidden(
+                        Shizuku.getUid(),
+                        callingPackage,
+                        callingPackage,
+                        null,
+                        null,
+                    )
                 )
-            )
-        } else {
-            null
-        }
+            } else {
+                null
+            }
 
     override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
         if (!context.hasShizukuPermission) {
@@ -63,13 +67,14 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
             return emptyList()
         }
 
-        val extras = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Bundle().apply {
-                putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+        val extras =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Bundle().apply {
+                    putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+                }
+            } else {
+                null
             }
-        } else {
-            null
-        }
 
         return WifiManagerHelper.getWifiConfigurations(
             wifiManager = wifiManager,
@@ -124,10 +129,11 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         }
 
         for (config in ephemeralConfigs) {
-            val hiddenConfig = Refine.unsafeCast<WifiConfigurationHidden>(config).apply {
-                ephemeral = false
-                fromWifiNetworkSuggestion = false
-            }
+            val hiddenConfig =
+                Refine.unsafeCast<WifiConfigurationHidden>(config).apply {
+                    ephemeral = false
+                    fromWifiNetworkSuggestion = false
+                }
             val wifiConfig = Refine.unsafeCast<WifiConfiguration>(hiddenConfig)
             addOrUpdateNetworkPrivileged(wifiConfig)
         }

@@ -22,8 +22,10 @@ class MainViewModel(
         data class ShowMessage(val message: UiText) : Event
     }
 
-    val isAuthenticated: StateFlow<Boolean> field = MutableStateFlow(false)
-    val skipPrivilegedCheck: StateFlow<Boolean> field = MutableStateFlow(false)
+    val isAuthenticated: StateFlow<Boolean>
+        field = MutableStateFlow(false)
+    val skipPrivilegedCheck: StateFlow<Boolean>
+        field = MutableStateFlow(false)
     val privilegedMode = privilegedManager.mode
 
     private val _event = Channel<Event>()

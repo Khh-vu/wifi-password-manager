@@ -57,6 +57,7 @@ import kotlinx.coroutines.launch
 
 private sealed interface OptionState {
     data object WifiQR : OptionState
+
     data object ForgetConfirm : OptionState
 }
 
@@ -76,11 +77,12 @@ fun WifiCard(
 
     Card(
         modifier = modifier,
-        colors = if (connected) {
-            CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
-        } else {
-            CardDefaults.cardColors()
-        },
+        colors =
+            if (connected) {
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
+            } else {
+                CardDefaults.cardColors()
+            },
     ) {
         SSIDItem(
             network = network,
@@ -98,7 +100,8 @@ fun WifiCard(
         if (network.note != null) {
             Separator(connected = connected)
             NoteItem(
-                modifier = Modifier.clickable { navBackStack.add(Route.NoteScreen(network = network)) },
+                modifier =
+                    Modifier.clickable { navBackStack.add(Route.NoteScreen(network = network)) },
                 network = network,
             )
         }
@@ -129,7 +132,9 @@ fun WifiCard(
 private fun Separator(modifier: Modifier = Modifier, connected: Boolean = false) {
     HorizontalDivider(
         modifier = modifier.padding(horizontal = 16.dp),
-        color = if (connected) MaterialTheme.colorScheme.onPrimaryContainer else ListItemDefaults.colors().supportingContentColor,
+        color =
+            if (connected) MaterialTheme.colorScheme.onPrimaryContainer
+            else ListItemDefaults.colors().supportingContentColor,
     )
 }
 
@@ -151,13 +156,16 @@ private fun SSIDItem(
         modifier = modifier,
         supportingContent = {
             Text(
-                text = when (connectionStatus) {
-                    is WifiConnectionStatus.Connecting if connectionStatus.ssid == network.ssid -> {
-                        stringResource(R.string.connecting_status)
-                    }
+                text =
+                    when (connectionStatus) {
+                        is WifiConnectionStatus.Connecting if
+                            connectionStatus.ssid == network.ssid
+                         -> {
+                            stringResource(R.string.connecting_status)
+                        }
 
-                    else -> network.getSecurity(context)
-                },
+                        else -> network.getSecurity(context)
+                    }
             )
         },
         trailingContent = {
@@ -195,36 +203,40 @@ private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
     val plaintextPasswords = LocalSettings.current.plaintextPasswords
     var obscured by retain { mutableStateOf(!plaintextPasswords) }
 
-    val trailingContent = @Composable {
-        val clipboard = LocalClipboard.current
-        val scope = rememberCoroutineScope()
+    val trailingContent =
+        @Composable {
+            val clipboard = LocalClipboard.current
+            val scope = rememberCoroutineScope()
 
-        Button(
-            onClick = { scope.launch { clipboard.setClipEntry(network.passwordClipEntry(obscured)) } },
-            shapes = ButtonDefaults.shapes(),
-        ) {
-            Icon(
-                imageVector = ContentCopy,
-                contentDescription = stringResource(R.string.copy_description),
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(R.string.copy_action))
+            Button(
+                onClick = {
+                    scope.launch { clipboard.setClipEntry(network.passwordClipEntry(obscured)) }
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
+                Icon(
+                    imageVector = ContentCopy,
+                    contentDescription = stringResource(R.string.copy_description),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = stringResource(R.string.copy_action))
+            }
         }
-    }
 
     ListItem(
         modifier = modifier,
         supportingContent = {
             if (network.password.isNotEmpty()) {
                 Text(
-                    text = if (obscured) {
-                        stringResource(R.string.password_mask_character).repeat(network.password.length)
-                    } else {
-                        network.password
-                    },
-                    modifier = Modifier.clickable(enabled = !plaintextPasswords) {
-                        obscured = !obscured
-                    },
+                    text =
+                        if (obscured) {
+                            stringResource(R.string.password_mask_character)
+                                .repeat(network.password.length)
+                        } else {
+                            network.password
+                        },
+                    modifier =
+                        Modifier.clickable(enabled = !plaintextPasswords) { obscured = !obscured },
                     letterSpacing = if (obscured) 2.sp else TextUnit.Unspecified,
                 )
             } else {
@@ -268,11 +280,12 @@ private fun WifiCardPreview() {
         itemsIndexed(WifiNetwork.MOCK) { index, network ->
             WifiCard(
                 network = network,
-                connectionStatus = if (index == 0) {
-                    WifiConnectionStatus.Connected(network.ssid)
-                } else {
-                    WifiConnectionStatus.Disconnected
-                },
+                connectionStatus =
+                    if (index == 0) {
+                        WifiConnectionStatus.Connected(network.ssid)
+                    } else {
+                        WifiConnectionStatus.Disconnected
+                    },
                 onAction = {},
             )
         }
@@ -290,11 +303,12 @@ private fun ConnectingWifiCardPreview() {
         itemsIndexed(WifiNetwork.MOCK) { index, network ->
             WifiCard(
                 network = network,
-                connectionStatus = if (index == 0) {
-                    WifiConnectionStatus.Connecting(network.ssid)
-                } else {
-                    WifiConnectionStatus.Disconnected
-                },
+                connectionStatus =
+                    if (index == 0) {
+                        WifiConnectionStatus.Connecting(network.ssid)
+                    } else {
+                        WifiConnectionStatus.Disconnected
+                    },
                 onAction = {},
             )
         }
@@ -312,11 +326,12 @@ private fun ExpandedWifiCardPreview() {
         itemsIndexed(WifiNetwork.MOCK) { index, network ->
             WifiCard(
                 network = network,
-                connectionStatus = if (index == 0) {
-                    WifiConnectionStatus.Connected(network.ssid)
-                } else {
-                    WifiConnectionStatus.Disconnected
-                },
+                connectionStatus =
+                    if (index == 0) {
+                        WifiConnectionStatus.Connected(network.ssid)
+                    } else {
+                        WifiConnectionStatus.Disconnected
+                    },
                 expanded = true,
                 onAction = {},
             )

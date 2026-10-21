@@ -15,10 +15,10 @@ import io.github.wifi_password_manager.IWifiRootService
 import io.github.wifi_password_manager.ipc.WifiNetworkParcel
 import io.github.wifi_password_manager.services.WiFiRootService
 import io.github.wifi_password_manager.utils.awaitAction
+import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.coroutines.resume
 
 class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     companion object {
@@ -46,27 +46,28 @@ class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
                     return@getShell
                 }
 
-                val connection = object : ServiceConnection {
-                    override fun onServiceConnected(
-                        name: ComponentName?,
-                        binder: IBinder?,
-                    ) {
-                        if (binder != null) {
-                            val service = IWifiRootService.Stub.asInterface(binder)
-                            Log.d(TAG, "WiFiRootService connected")
-                            cachedService = service
-                            continuation.resume(service)
-                        } else {
-                            Log.e(TAG, "Received null binder")
-                            continuation.resume(null)
+                val connection =
+                    object : ServiceConnection {
+                        override fun onServiceConnected(
+                            name: ComponentName?,
+                            binder: IBinder?,
+                        ) {
+                            if (binder != null) {
+                                val service = IWifiRootService.Stub.asInterface(binder)
+                                Log.d(TAG, "WiFiRootService connected")
+                                cachedService = service
+                                continuation.resume(service)
+                            } else {
+                                Log.e(TAG, "Received null binder")
+                                continuation.resume(null)
+                            }
+                        }
+
+                        override fun onServiceDisconnected(name: ComponentName?) {
+                            Log.d(TAG, "WiFiRootService disconnected")
+                            cachedService = null
                         }
                     }
-
-                    override fun onServiceDisconnected(name: ComponentName?) {
-                        Log.d(TAG, "WiFiRootService disconnected")
-                        cachedService = null
-                    }
-                }
 
                 RootService.bind(rootServiceIntent, connection)
                 continuation.invokeOnCancellation { RootService.unbind(connection) }
@@ -128,7 +129,6 @@ class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
         }
         return service.disconnect()
     }
-
 
     override suspend fun connect(
         config: WifiConfiguration?,

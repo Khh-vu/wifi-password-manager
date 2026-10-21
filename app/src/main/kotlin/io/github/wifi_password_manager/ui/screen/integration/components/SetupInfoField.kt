@@ -50,8 +50,8 @@ fun SetupInfoField(
                 positioning = TooltipAnchorPosition.Above,
             )
         },
-        supportingText = hint.takeUnless { it.isNullOrBlank() }
-            ?.let { @Composable { Text(text = it) } },
+        supportingText =
+            hint.takeUnless { it.isNullOrBlank() }?.let { @Composable { Text(text = it) } },
     )
 }
 

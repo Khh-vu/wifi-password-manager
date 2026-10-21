@@ -41,20 +41,24 @@ fun WifiQRDialog(
     backgroundColor: Color = AlertDialogDefaults.containerColor,
     foregroundColor: Color = AlertDialogDefaults.iconContentColor,
 ) {
-    val wifiData = QrData.wifi(
-        authentication = when {
-            SecurityType.WEP in network.securityType -> "WEP"
-            SecurityType.WPA2 in network.securityType || SecurityType.WPA3 in network.securityType -> "WPA"
-            else -> null
-        },
-        ssid = network.ssid,
-        psk = network.password.takeIf { it.isNotBlank() },
-        hidden = network.hidden,
-    )
-    val wifiCode = rememberQrCodePainter(wifiData) {
-        errorCorrectionLevel = QrErrorCorrectionLevel.Medium
-        colors { dark = QrBrush.solid(foregroundColor) }
-    }
+    val wifiData =
+        QrData.wifi(
+            authentication =
+                when {
+                    SecurityType.WEP in network.securityType -> "WEP"
+                    SecurityType.WPA2 in network.securityType ||
+                        SecurityType.WPA3 in network.securityType -> "WPA"
+                    else -> null
+                },
+            ssid = network.ssid,
+            psk = network.password.takeIf { it.isNotBlank() },
+            hidden = network.hidden,
+        )
+    val wifiCode =
+        rememberQrCodePainter(wifiData) {
+            errorCorrectionLevel = QrErrorCorrectionLevel.Medium
+            colors { dark = QrBrush.solid(foregroundColor) }
+        }
 
     BasicAlertDialog(onDismissRequest = onDismiss) {
         Surface(
@@ -63,16 +67,17 @@ fun WifiQRDialog(
             tonalElevation = AlertDialogDefaults.TonalElevation,
         ) {
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(positioning = TooltipAnchorPosition.Below),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        positioning = TooltipAnchorPosition.Below
+                    ),
                 tooltip = { PlainTooltip { Text(text = wifiData) } },
                 state = rememberTooltipState(),
             ) {
                 Image(
                     painter = wifiCode,
                     contentDescription = stringResource(R.string.wifi_qr_code),
-                    modifier = modifier
-                        .aspectRatio(1f)
-                        .padding(32.dp),
+                    modifier = modifier.aspectRatio(1f).padding(32.dp),
                 )
             }
         }

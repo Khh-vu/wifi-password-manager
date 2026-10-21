@@ -9,18 +9,20 @@ import androidx.compose.ui.graphics.RectangleShape
 
 object UiConfig {
     @Composable
-    fun listItemShapes(): ListItemShapes = ListItemDefaults.shapes(
-        shape = RectangleShape,
-        selectedShape = RectangleShape,
-        pressedShape = RectangleShape,
-        focusedShape = RectangleShape,
-        hoveredShape = RectangleShape,
-        draggedShape = RectangleShape,
-    )
+    fun listItemShapes(): ListItemShapes =
+        ListItemDefaults.shapes(
+            shape = RectangleShape,
+            selectedShape = RectangleShape,
+            pressedShape = RectangleShape,
+            focusedShape = RectangleShape,
+            hoveredShape = RectangleShape,
+            draggedShape = RectangleShape,
+        )
 
     @Composable
-    fun listItemColors(): ListItemColors = ListItemDefaults.colors(
-        containerColor = Color.Transparent,
-        disabledContainerColor = Color.Transparent,
-    )
+    fun listItemColors(): ListItemColors =
+        ListItemDefaults.colors(
+            containerColor = Color.Transparent,
+            disabledContainerColor = Color.Transparent,
+        )
 }

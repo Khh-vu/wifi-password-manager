@@ -6,15 +6,16 @@ import kotlinx.coroutines.CompletableDeferred
 
 suspend fun awaitAction(block: suspend (IActionListener) -> Unit): Boolean {
     val result = CompletableDeferred<Boolean>()
-    val listener = object : IActionListener.Stub() {
-        override fun onSuccess() {
-            result.complete(true)
-        }
+    val listener =
+        object : IActionListener.Stub() {
+            override fun onSuccess() {
+                result.complete(true)
+            }
 
-        override fun onFailure(reason: Int) {
-            result.complete(false)
+            override fun onFailure(reason: Int) {
+                result.complete(false)
+            }
         }
-    }
     return try {
         block(listener)
         result.await()

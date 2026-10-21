@@ -29,6 +29,10 @@ import io.github.wifi_password_manager.utils.Crypto
 import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
 import io.github.wifi_password_manager.utils.toWifiConfigurations
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import javax.crypto.AEADBadTagException
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -43,10 +47,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.serialization.SerializationException
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import javax.crypto.AEADBadTagException
-import kotlin.time.Duration.Companion.seconds
 
 class SettingViewModel(
     private val settingRepository: SettingRepository,
@@ -116,31 +116,32 @@ class SettingViewModel(
     private val _showExportDialog = MutableStateFlow(false)
     private val _showImportPasswordDialog = MutableStateFlow(false)
 
-    val state = combine(
-        _isLoading,
-        _showForgetAllDialog,
-        _showExportDialog,
-        _showImportPasswordDialog,
-        privilegedManager.mode
-    ) { isLoading, showForgetAllDialog, showExportDialog, showImportPasswordDialog, mode ->
-        State(
-            isLoading = isLoading,
-            showForgetAllDialog = showForgetAllDialog,
-            showExportDialog = showExportDialog,
-            showImportPasswordDialog = showImportPasswordDialog,
-            mode = mode,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5.seconds),
-        initialValue = State(),
-    )
+    val state =
+        combine(
+                _isLoading,
+                _showForgetAllDialog,
+                _showExportDialog,
+                _showImportPasswordDialog,
+                privilegedManager.mode,
+            ) { isLoading, showForgetAllDialog, showExportDialog, showImportPasswordDialog, mode ->
+                State(
+                    isLoading = isLoading,
+                    showForgetAllDialog = showForgetAllDialog,
+                    showExportDialog = showExportDialog,
+                    showImportPasswordDialog = showImportPasswordDialog,
+                    mode = mode,
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5.seconds),
+                initialValue = State(),
+            )
 
     private val _event = Channel<Event>()
     val event = _event.receiveAsFlow()
 
-    @Volatile
-    private var pendingImportFiles: List<PlatformFile> = emptyList()
+    @Volatile private var pendingImportFiles: List<PlatformFile> = emptyList()
 
     fun onAction(action: Action) {
         Log.d(TAG, "onAction: $action")
@@ -148,19 +149,23 @@ class SettingViewModel(
             is Action.UpdateLanguage -> updateSettings { it.copy(language = action.language) }
             is Action.UpdateThemeMode -> updateSettings { it.copy(themeMode = action.themeMode) }
             is Action.ToggleMaterialYou -> updateSettings { it.copy(useMaterialYou = action.value) }
-            is Action.TogglePureBlackTheme -> updateSettings { it.copy(pureBlackTheme = action.value) }
+            is Action.TogglePureBlackTheme ->
+                updateSettings { it.copy(pureBlackTheme = action.value) }
             is Action.ToggleAppLock -> updateSettings { it.copy(appLockEnabled = action.value) }
-            is Action.ToggleSecureScreen -> updateSettings {
-                it.copy(secureScreenEnabled = action.value, plaintextPasswords = false)
-            }
+            is Action.ToggleSecureScreen ->
+                updateSettings {
+                    it.copy(secureScreenEnabled = action.value, plaintextPasswords = false)
+                }
 
-            is Action.TogglePlaintextPasswords -> updateSettings { it.copy(plaintextPasswords = action.value) }
-            is Action.ToggleAutoPersistEphemeralNetworks -> updateSettings {
-                it.copy(autoPersistEphemeralNetworks = action.value)
-            }
+            is Action.TogglePlaintextPasswords ->
+                updateSettings { it.copy(plaintextPasswords = action.value) }
+            is Action.ToggleAutoPersistEphemeralNetworks ->
+                updateSettings { it.copy(autoPersistEphemeralNetworks = action.value) }
 
-            is Action.ToggleAllowCacheMode -> updateSettings { it.copy(allowCacheMode = action.value) }
-            is Action.ToggleAllowInsecureReceiver -> updateSettings { it.copy(allowInsecureReceiver = action.value) }
+            is Action.ToggleAllowCacheMode ->
+                updateSettings { it.copy(allowCacheMode = action.value) }
+            is Action.ToggleAllowInsecureReceiver ->
+                updateSettings { it.copy(allowInsecureReceiver = action.value) }
             is Action.ImportNetworks -> onImportNetworks()
             is Action.HideImportPasswordDialog -> onHideImportPasswordDialog()
             is Action.ConfirmImportWithPassword -> onConfirmImportWithPassword(action.password)
@@ -193,38 +198,56 @@ class SettingViewModel(
         viewModelScope.launch {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm:ss")
             val isEncrypted = password.isNotEmpty()
-            val file = FileKit.openFileSaver(
-                suggestedName = "WiFi_${LocalDateTime.now().format(formatter)}",
-                defaultExtension = option.getFileExtension(password),
-            ) ?: return@launch
+            val file =
+                FileKit.openFileSaver(
+                    suggestedName = "WiFi_${LocalDateTime.now().format(formatter)}",
+                    defaultExtension = option.getFileExtension(password),
+                ) ?: return@launch
 
             runCatching {
-                Dispatchers.IO {
-                    val networks = wifiRepository.getAllNetworksList().groupAndSortedBySsid()
-                    val data = when (option) {
-                        ExportOption.PLAIN -> fileRepository.networksToJson(networks).toByteArray()
-                        ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
+                    Dispatchers.IO {
+                        val networks = wifiRepository.getAllNetworksList().groupAndSortedBySsid()
+                        val data =
+                            when (option) {
+                                ExportOption.PLAIN ->
+                                    fileRepository.networksToJson(networks).toByteArray()
+                                ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
+                            }
+                        file.write(
+                            if (isEncrypted) Crypto.encrypt(data, password, option) else data
+                        )
                     }
-                    file.write(if (isEncrypted) Crypto.encrypt(data, password, option) else data)
                 }
-            }.fold(
-                onSuccess = { _event.send(Event.ShowMessage(UiText.StringResource(R.string.export_networks_success))) },
-                onFailure = {
-                    Log.e(TAG, "Error exporting networks", it)
-                    _event.send(Event.ShowMessage(UiText.StringResource(R.string.export_networks_failed)))
-                    if (file.exists()) file.delete()
-                },
-            )
+                .fold(
+                    onSuccess = {
+                        _event.send(
+                            Event.ShowMessage(
+                                UiText.StringResource(R.string.export_networks_success)
+                            )
+                        )
+                    },
+                    onFailure = {
+                        Log.e(TAG, "Error exporting networks", it)
+                        _event.send(
+                            Event.ShowMessage(
+                                UiText.StringResource(R.string.export_networks_failed)
+                            )
+                        )
+                        if (file.exists()) file.delete()
+                    },
+                )
         }
     }
 
     private fun onImportNetworks() {
         if (!state.value.mode.hasPrivilegedAccess) return
         viewModelScope.launch {
-            val files = FileKit.openFilePicker(
-                mode = FileKitMode.Multiple(),
-                type = FileKitType.File("json", "gz", "bin"),
-            )?.takeIf { it.isNotEmpty() } ?: return@launch
+            val files =
+                FileKit.openFilePicker(
+                        mode = FileKitMode.Multiple(),
+                        type = FileKitType.File("json", "gz", "bin"),
+                    )
+                    ?.takeIf { it.isNotEmpty() } ?: return@launch
 
             val hasEncryptedFiles = files.any { it.extension == "bin" }
             if (hasEncryptedFiles) {
@@ -259,7 +282,9 @@ class SettingViewModel(
                 } else {
                     importMultipleFiles(files, password)
                 }
-                _event.send(Event.ShowMessage(UiText.StringResource(R.string.import_networks_success)))
+                _event.send(
+                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_success))
+                )
             } catch (e: SerializationException) {
                 Log.e(TAG, "Error parsing JSON", e)
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.invalid_json)))
@@ -268,7 +293,9 @@ class SettingViewModel(
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.wrong_password)))
             } catch (e: Throwable) {
                 Log.e(TAG, "Error importing networks", e)
-                _event.send(Event.ShowMessage(UiText.StringResource(R.string.import_networks_failed)))
+                _event.send(
+                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_failed))
+                )
             } finally {
                 wifiRepository.refresh()
                 _isLoading.update { false }
@@ -283,52 +310,67 @@ class SettingViewModel(
             return@IO
         }
 
-        networks.flatMap { network ->
-            val configs = network.toWifiConfigurations()
-            configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
-        }.awaitAll()
+        networks
+            .flatMap { network ->
+                val configs = network.toWifiConfigurations()
+                configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
+            }
+            .awaitAll()
 
         wifiRepository.refresh()
 
-        networks.filter { it.note != null }
-            .map { async { wifiRepository.updateNote(it.ssid, it.note) } }.awaitAll()
+        networks
+            .filter { it.note != null }
+            .map { async { wifiRepository.updateNote(it.ssid, it.note) } }
+            .awaitAll()
     }
 
     private suspend fun importMultipleFiles(files: List<PlatformFile>, password: String?) {
         Dispatchers.IO {
             val allNetworks = files.flatMap { file ->
-                runCatching { parseNetworksFromFile(file, password) }.onFailure {
-                    Log.e(TAG, "Error parsing file: ${file.name}", it)
-                }.getOrDefault(emptyList())
+                runCatching { parseNetworksFromFile(file, password) }
+                    .onFailure { Log.e(TAG, "Error parsing file: ${file.name}", it) }
+                    .getOrDefault(emptyList())
             }
 
-            val networks = allNetworks.groupBy { it.ssid }.values.map { duplicateNetworks ->
-                val network = duplicateNetworks.first()
-                val notes =
-                    duplicateNetworks.mapNotNull { it.note?.trim() }.filter { it.isNotBlank() }
-                        .distinct()
-                val mergedNote = when {
-                    notes.isEmpty() -> null
-                    notes.size == 1 -> notes.first()
-                    else -> notes.joinToString("\n")
-                }
-                network.copy(note = mergedNote)
-            }
+            val networks =
+                allNetworks
+                    .groupBy { it.ssid }
+                    .values
+                    .map { duplicateNetworks ->
+                        val network = duplicateNetworks.first()
+                        val notes =
+                            duplicateNetworks
+                                .mapNotNull { it.note?.trim() }
+                                .filter { it.isNotBlank() }
+                                .distinct()
+                        val mergedNote =
+                            when {
+                                notes.isEmpty() -> null
+                                notes.size == 1 -> notes.first()
+                                else -> notes.joinToString("\n")
+                            }
+                        network.copy(note = mergedNote)
+                    }
 
             if (networks.isEmpty()) {
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import)))
                 return@IO
             }
 
-            networks.flatMap { network ->
-                val configs = network.toWifiConfigurations()
-                configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
-            }.awaitAll()
+            networks
+                .flatMap { network ->
+                    val configs = network.toWifiConfigurations()
+                    configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
+                }
+                .awaitAll()
 
             wifiRepository.refresh()
 
-            networks.filter { it.note != null }
-                .map { async { wifiRepository.updateNote(it.ssid, it.note) } }.awaitAll()
+            networks
+                .filter { it.note != null }
+                .map { async { wifiRepository.updateNote(it.ssid, it.note) } }
+                .awaitAll()
         }
     }
 
@@ -337,23 +379,25 @@ class SettingViewModel(
         password: String?,
     ): List<WifiNetwork> {
         val data = file.readBytes()
-        val list = when (file.extension) {
-            "bin" if password != null -> {
-                val (option, decrypted) = Crypto.decrypt(data, password)
-                when (option) {
-                    ExportOption.PLAIN -> fileRepository.networksFromJson(String(decrypted))
-                    ExportOption.COMPRESSED -> fileRepository.networksFromGZip(decrypted)
+        val list =
+            when (file.extension) {
+                "bin" if password != null -> {
+                    val (option, decrypted) = Crypto.decrypt(data, password)
+                    when (option) {
+                        ExportOption.PLAIN -> fileRepository.networksFromJson(String(decrypted))
+                        ExportOption.COMPRESSED -> fileRepository.networksFromGZip(decrypted)
+                    }
                 }
-            }
 
-            "gz" -> fileRepository.networksFromGZip(data)
-            else -> fileRepository.networksFromJson(String(data))
-        }
+                "gz" -> fileRepository.networksFromGZip(data)
+                else -> fileRepository.networksFromJson(String(data))
+            }
         return list.map { network ->
             if (network.password.isNotBlank()) {
-                val securityType = network.securityType.filterNot {
-                    it in setOf(WifiNetwork.SecurityType.OPEN, WifiNetwork.SecurityType.OWE)
-                }
+                val securityType =
+                    network.securityType.filterNot {
+                        it in setOf(WifiNetwork.SecurityType.OPEN, WifiNetwork.SecurityType.OWE)
+                    }
                 network.copy(securityType = securityType.toSet())
             } else {
                 network
@@ -380,29 +424,36 @@ class SettingViewModel(
             _showForgetAllDialog.update { false }
 
             runCatching {
-                val networks = wifiRepository.getPrivilegedConfiguredNetworks()
-                val validNetworks = networks.filter { it.networkId != -1 }
+                    val networks = wifiRepository.getPrivilegedConfiguredNetworks()
+                    val validNetworks = networks.filter { it.networkId != -1 }
 
-                if (validNetworks.isEmpty() && !clearCache) {
-                    Log.d(TAG, "No valid networks to remove")
-                    _isLoading.update { false }
-                    return@launch
-                }
+                    if (validNetworks.isEmpty() && !clearCache) {
+                        Log.d(TAG, "No valid networks to remove")
+                        _isLoading.update { false }
+                        return@launch
+                    }
 
-                Dispatchers.IO {
-                    validNetworks.map { async { wifiRepository.forget(it.networkId) } }.awaitAll()
-                    if (clearCache) wifiRepository.clearCache()
+                    Dispatchers.IO {
+                        validNetworks
+                            .map { async { wifiRepository.forget(it.networkId) } }
+                            .awaitAll()
+                        if (clearCache) wifiRepository.clearCache()
+                    }
                 }
-            }.fold(
-                onSuccess = {
-                    wifiRepository.refresh()
-                    _event.send(Event.ShowMessage(UiText.StringResource(R.string.forget_success)))
-                },
-                onFailure = {
-                    Log.e(TAG, "Failed to remove networks", it)
-                    _event.send(Event.ShowMessage(UiText.StringResource(R.string.forget_failed)))
-                },
-            )
+                .fold(
+                    onSuccess = {
+                        wifiRepository.refresh()
+                        _event.send(
+                            Event.ShowMessage(UiText.StringResource(R.string.forget_success))
+                        )
+                    },
+                    onFailure = {
+                        Log.e(TAG, "Failed to remove networks", it)
+                        _event.send(
+                            Event.ShowMessage(UiText.StringResource(R.string.forget_failed))
+                        )
+                    },
+                )
 
             _isLoading.update { false }
         }

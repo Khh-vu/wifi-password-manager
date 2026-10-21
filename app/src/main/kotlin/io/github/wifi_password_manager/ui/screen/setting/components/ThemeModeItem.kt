@@ -63,10 +63,15 @@ private fun ThemeModeSelectionSheet(
                     onClick = { onThemeModeChange(it) },
                     selected = it == themeMode,
                     leadingContent = { RadioButton(selected = it == themeMode, onClick = null) },
-                    shapes = ListItemDefaults.segmentedShapes(
-                        index = it.ordinal, count = Settings.ThemeMode.entries.size
-                    ),
-                    colors = ListItemDefaults.segmentedColors(containerColor = BottomSheetDefaults.ContainerColor),
+                    shapes =
+                        ListItemDefaults.segmentedShapes(
+                            index = it.ordinal,
+                            count = Settings.ThemeMode.entries.size,
+                        ),
+                    colors =
+                        ListItemDefaults.segmentedColors(
+                            containerColor = BottomSheetDefaults.ContainerColor
+                        ),
                 ) {
                     Text(text = stringResource(it.resId))
                 }

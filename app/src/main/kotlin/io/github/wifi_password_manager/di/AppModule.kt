@@ -20,6 +20,5 @@ class AppModule {
         explicitNulls = false
     }
 
-    @Single
-    fun privilegedManager(context: Context) = PrivilegedManager(context)
+    @Single fun privilegedManager(context: Context) = PrivilegedManager(context)
 }

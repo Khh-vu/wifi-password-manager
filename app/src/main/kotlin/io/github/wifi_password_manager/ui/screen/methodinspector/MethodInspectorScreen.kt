@@ -7,9 +7,9 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.wifi_password_manager.ui.shared.ObserveAsEvent
 import io.github.wifi_password_manager.utils.toast
+import kotlin.reflect.KClass
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.reflect.KClass
 
 @Composable
 fun <T : Any> MethodInspectorScreen(forClass: KClass<T>) {
@@ -27,5 +27,9 @@ fun <T : Any> MethodInspectorScreen(forClass: KClass<T>) {
         }
     }
 
-    MethodInspectorView(state = state, searchState = viewModel.searchState, onAction = viewModel::onAction)
+    MethodInspectorView(
+        state = state,
+        searchState = viewModel.searchState,
+        onAction = viewModel::onAction,
+    )
 }

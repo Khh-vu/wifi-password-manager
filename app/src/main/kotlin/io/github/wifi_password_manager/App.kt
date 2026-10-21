@@ -50,8 +50,10 @@ class App : Application() {
 
     private fun observeAutoPersistEphemeralNetworks() {
         ProcessLifecycleOwner.get().lifecycleScope.launch {
-            settingRepository.settings.map { it.autoPersistEphemeralNetworks }
-                .distinctUntilChanged().collect { enabled ->
+            settingRepository.settings
+                .map { it.autoPersistEphemeralNetworks }
+                .distinctUntilChanged()
+                .collect { enabled ->
                     if (enabled) {
                         PersistEphemeralNetworksWorker.schedule(this@App)
                     } else {

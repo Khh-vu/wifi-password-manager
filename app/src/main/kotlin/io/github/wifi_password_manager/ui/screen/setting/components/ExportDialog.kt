@@ -67,13 +67,17 @@ fun ExportDialog(
                         OutlinedTextField(
                             value = stringResource(selectedOption.titleResId),
                             onValueChange = {},
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                            modifier =
+                                Modifier.fillMaxWidth()
+                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
                             readOnly = true,
                             label = { Text(text = stringResource(R.string.export_format)) },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                            supportingText = { Text(text = stringResource(selectedOption.descriptionResId)) },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            supportingText = {
+                                Text(text = stringResource(selectedOption.descriptionResId))
+                            },
                             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                         )
 
@@ -95,10 +99,15 @@ fun ExportDialog(
                                     },
                                     text = { Text(text = stringResource(option.titleResId)) },
                                     shapes = MenuDefaults.itemShapes(),
-                                    colors = MenuDefaults.selectableItemColors(
-                                        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                                        selectedTextColor = contentColorFor(MaterialTheme.colorScheme.primaryContainer),
-                                    ),
+                                    colors =
+                                        MenuDefaults.selectableItemColors(
+                                            selectedContainerColor =
+                                                MaterialTheme.colorScheme.primaryContainer,
+                                            selectedTextColor =
+                                                contentColorFor(
+                                                    MaterialTheme.colorScheme.primaryContainer
+                                                ),
+                                        ),
                                 )
                             }
                         }

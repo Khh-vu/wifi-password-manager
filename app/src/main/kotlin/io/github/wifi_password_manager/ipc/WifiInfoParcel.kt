@@ -10,10 +10,12 @@ data class WifiInfoParcel(
     val rssi: Int,
 ) : Parcelable {
     fun toWifiInfo(): WifiInfo {
-        return WifiInfo.Builder().apply {
-            setSsid(this@WifiInfoParcel.ssid.removeSurrounding("\"").toByteArray())
-            setRssi(this@WifiInfoParcel.rssi)
-        }.build()
+        return WifiInfo.Builder()
+            .apply {
+                setSsid(this@WifiInfoParcel.ssid.removeSurrounding("\"").toByteArray())
+                setRssi(this@WifiInfoParcel.rssi)
+            }
+            .build()
     }
 
     companion object {

@@ -37,7 +37,9 @@ fun ShizukuErrorDialog(onDismiss: () -> Unit) {
                 onClick = {
                     if (isShizukuInstalled) {
                         context.startActivity(
-                            context.packageManager.getLaunchIntentForPackage(ShizukuProvider.MANAGER_APPLICATION_ID)
+                            context.packageManager.getLaunchIntentForPackage(
+                                ShizukuProvider.MANAGER_APPLICATION_ID
+                            )
                         )
                     } else {
                         context.launchUrl("https://shizuku.rikka.app/download/")
@@ -46,7 +48,13 @@ fun ShizukuErrorDialog(onDismiss: () -> Unit) {
                 },
                 shapes = ButtonDefaults.shapes(),
             ) {
-                Text(text = stringResource(if (isShizukuInstalled) R.string.open_shizuku else R.string.install_shizuku))
+                Text(
+                    text =
+                        stringResource(
+                            if (isShizukuInstalled) R.string.open_shizuku
+                            else R.string.install_shizuku
+                        )
+                )
             }
         },
         dismissButton = {

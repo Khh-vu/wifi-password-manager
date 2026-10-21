@@ -12,10 +12,12 @@ import org.koin.core.annotation.Single
 @Configuration
 class DataModule {
     @Single
-    fun appDatabase(context: Context): AppDatabase = Room.databaseBuilder<AppDatabase>(
-        name = context.getDatabasePath(AppDatabase.DATABASE_NAME).absolutePath
-    ).addMigrations(AppDatabase.MIGRATION_1_2).build()
+    fun appDatabase(context: Context): AppDatabase =
+        Room.databaseBuilder<AppDatabase>(
+                name = context.getDatabasePath(AppDatabase.DATABASE_NAME).absolutePath
+            )
+            .addMigrations(AppDatabase.MIGRATION_1_2)
+            .build()
 
-    @Single
-    fun wifiNetworkDao(database: AppDatabase): WifiNetworkDao = database.wifiNetworkDao()
+    @Single fun wifiNetworkDao(database: AppDatabase): WifiNetworkDao = database.wifiNetworkDao()
 }

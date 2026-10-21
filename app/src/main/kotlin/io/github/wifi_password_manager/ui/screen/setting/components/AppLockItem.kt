@@ -45,9 +45,10 @@ fun AppLockItem(
     val resources = LocalResources.current
     val isInspectMode = LocalInspectionMode.current
 
-    val isAvailable = remember(context) {
-        if (isInspectMode) false else context.isBiometricAuthenticationSupported()
-    }
+    val isAvailable =
+        remember(context) {
+            if (isInspectMode) false else context.isBiometricAuthenticationSupported()
+        }
     var showDialog by retain { mutableStateOf(false) }
 
     val appLockEnabledState by rememberUpdatedState(appLockEnabled)
@@ -55,9 +56,14 @@ fun AppLockItem(
         when (result) {
             is AuthenticationResult.Error -> {
                 when (result.errorCode) {
-                    BiometricPrompt.ERROR_USER_CANCELED, BiometricPrompt.ERROR_NEGATIVE_BUTTON, BiometricPrompt.ERROR_TIMEOUT, BiometricPrompt.ERROR_CANCELED -> Unit
-                    BiometricPrompt.ERROR_LOCKOUT -> context.toast(R.string.app_lock_too_many_attempts)
-                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> context.toast(R.string.app_lock_permanently_locked)
+                    BiometricPrompt.ERROR_USER_CANCELED,
+                    BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                    BiometricPrompt.ERROR_TIMEOUT,
+                    BiometricPrompt.ERROR_CANCELED -> Unit
+                    BiometricPrompt.ERROR_LOCKOUT ->
+                        context.toast(R.string.app_lock_too_many_attempts)
+                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT ->
+                        context.toast(R.string.app_lock_permanently_locked)
                     else -> context.toast(R.string.app_lock_authentication_failed)
                 }
             }
@@ -68,10 +74,15 @@ fun AppLockItem(
     }
 
     val handleToggle by rememberUpdatedState {
-        val request = AuthenticationRequest.biometricRequest(
-            title = resources.getString(if (appLockEnabledState) R.string.app_lock_disable_title else R.string.app_lock_enable_title),
-            AuthenticationRequest.Biometric.Fallback.DeviceCredential,
-        ) {}
+        val request =
+            AuthenticationRequest.biometricRequest(
+                title =
+                    resources.getString(
+                        if (appLockEnabledState) R.string.app_lock_disable_title
+                        else R.string.app_lock_enable_title
+                    ),
+                AuthenticationRequest.Biometric.Fallback.DeviceCredential,
+            ) {}
         launcher.launch(request)
     }
 

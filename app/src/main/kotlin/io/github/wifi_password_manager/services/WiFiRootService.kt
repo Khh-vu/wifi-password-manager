@@ -31,8 +31,11 @@ class WiFiRootService : RootService() {
     override fun onBind(intent: Intent): IBinder {
         val intent = Intent(Settings.ACTION_SETTINGS)
         val settingPackage =
-            packageManager.queryIntentActivities(intent, PackageManager.MATCH_SYSTEM_ONLY)
-                .firstOrNull()?.activityInfo?.packageName
+            packageManager
+                .queryIntentActivities(intent, PackageManager.MATCH_SYSTEM_ONLY)
+                .firstOrNull()
+                ?.activityInfo
+                ?.packageName
         return WiFiRootServiceImpl(settingPackage ?: SHELL_PACKAGE)
     }
 
@@ -46,28 +49,30 @@ class WiFiRootService : RootService() {
         }
 
         private val attributionSource: AttributionSource?
-            get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Refine.unsafeCast(
-                    AttributionSourceHidden(
-                        Process.ROOT_UID,
-                        packageName,
-                        packageName,
-                        null,
-                        null,
+            get() =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Refine.unsafeCast(
+                        AttributionSourceHidden(
+                            Process.ROOT_UID,
+                            packageName,
+                            packageName,
+                            null,
+                            null,
+                        )
                     )
-                )
-            } else {
-                null
-            }
+                } else {
+                    null
+                }
 
         private fun getConfiguredNetworks(): List<WifiConfiguration> {
-            val extras = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Bundle().apply {
-                    putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+            val extras =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    Bundle().apply {
+                        putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
+                    }
+                } else {
+                    null
                 }
-            } else {
-                null
-            }
 
             return WifiManagerHelper.getWifiConfigurations(
                 wifiManager = wifiManager,
@@ -108,15 +113,17 @@ class WiFiRootService : RootService() {
         }
 
         override fun persistEphemeralNetworks() {
-            val ephemeralConfigs = getConfiguredNetworks().filter {
-                Refine.unsafeCast<WifiConfigurationHidden>(it).isEphemeral
-            }
+            val ephemeralConfigs =
+                getConfiguredNetworks().filter {
+                    Refine.unsafeCast<WifiConfigurationHidden>(it).isEphemeral
+                }
 
             for (config in ephemeralConfigs) {
-                val hiddenConfig = Refine.unsafeCast<WifiConfigurationHidden>(config).apply {
-                    ephemeral = false
-                    fromWifiNetworkSuggestion = false
-                }
+                val hiddenConfig =
+                    Refine.unsafeCast<WifiConfigurationHidden>(config).apply {
+                        ephemeral = false
+                        fromWifiNetworkSuggestion = false
+                    }
                 addOrUpdateNetwork(Refine.unsafeCast(hiddenConfig))
             }
         }

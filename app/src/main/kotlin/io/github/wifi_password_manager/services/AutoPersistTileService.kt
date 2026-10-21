@@ -34,8 +34,10 @@ class AutoPersistTileService : TileService() {
         super.onStartListening()
         listeningJob?.cancel()
         listeningJob = coroutineScope?.launch {
-            settingRepository.settings.map { it.autoPersistEphemeralNetworks }
-                .distinctUntilChanged().collect(::updateTileState)
+            settingRepository.settings
+                .map { it.autoPersistEphemeralNetworks }
+                .distinctUntilChanged()
+                .collect(::updateTileState)
         }
     }
 

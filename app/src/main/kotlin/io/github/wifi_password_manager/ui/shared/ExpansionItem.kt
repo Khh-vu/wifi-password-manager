@@ -38,33 +38,37 @@ import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 fun ExpansionItem(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
-    itemsContent: @Composable ColumnScope.() -> Unit
+    itemsContent: @Composable ColumnScope.() -> Unit,
 ) {
     val resources = LocalResources.current
 
     var isExpanded by retain { mutableStateOf(false) }
-    val rotationAngle by animateFloatAsState(
-        targetValue = if (isExpanded) 180f else 0f,
-        animationSpec = tween(durationMillis = 300),
-    )
+    val rotationAngle by
+        animateFloatAsState(
+            targetValue = if (isExpanded) 180f else 0f,
+            animationSpec = tween(durationMillis = 300),
+        )
 
     ListItem(
-        modifier = modifier.semantics {
-            stateDescription = if (isExpanded) {
-                resources.getString(R.string.state_expanded)
-            } else {
-                resources.getString(R.string.state_collapsed)
-            }
-        },
+        modifier =
+            modifier.semantics {
+                stateDescription =
+                    if (isExpanded) {
+                        resources.getString(R.string.state_expanded)
+                    } else {
+                        resources.getString(R.string.state_collapsed)
+                    }
+            },
         onClick = { isExpanded = !isExpanded },
         trailingContent = {
             Icon(
                 imageVector = KeyboardArrowDown,
-                contentDescription = if (isExpanded) {
-                    stringResource(R.string.collapse_description)
-                } else {
-                    stringResource(R.string.expand_description)
-                },
+                contentDescription =
+                    if (isExpanded) {
+                        stringResource(R.string.collapse_description)
+                    } else {
+                        stringResource(R.string.expand_description)
+                    },
                 modifier = Modifier.graphicsLayer { rotationZ = rotationAngle },
             )
         },

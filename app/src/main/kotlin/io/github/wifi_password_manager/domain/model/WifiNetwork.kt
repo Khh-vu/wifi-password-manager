@@ -22,11 +22,26 @@ data class WifiNetwork(
     @Transient val randomizedMacAddress: String? = null,
 ) {
     @Serializable
-    enum class SecurityType { OPEN, OWE, WPA2, WPA3, WEP, }
+    enum class SecurityType {
+        OPEN,
+        OWE,
+        WPA2,
+        WPA3,
+        WEP,
+    }
 
     @Serializable
-    enum class MeteredOverride { NONE, METERED, NOT_METERED }
+    enum class MeteredOverride {
+        NONE,
+        METERED,
+        NOT_METERED,
+    }
 
     @Serializable
-    enum class Randomization { NONE, PERSISTENT, NON_PERSISTENT, AUTO, }
+    enum class Randomization {
+        NONE,
+        PERSISTENT,
+        NON_PERSISTENT,
+        AUTO,
+    }
 }

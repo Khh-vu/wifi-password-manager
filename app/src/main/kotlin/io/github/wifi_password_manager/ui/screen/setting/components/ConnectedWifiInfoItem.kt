@@ -40,7 +40,9 @@ import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 
 private enum class ConnectedWifiInfoStatus {
-    ACTIVE, PERMISSION_REQUIRED, LOCATION_DISABLED,
+    ACTIVE,
+    PERMISSION_REQUIRED,
+    LOCATION_DISABLED,
 }
 
 @Composable
@@ -48,13 +50,14 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
     val context = LocalContext.current
     val isInspectMode = LocalInspectionMode.current
 
-    val locationManager = remember(context) {
-        if (isInspectMode) {
-            null
-        } else {
-            context.getSystemService<LocationManager>()
+    val locationManager =
+        remember(context) {
+            if (isInspectMode) {
+                null
+            } else {
+                context.getSystemService<LocationManager>()
+            }
         }
-    }
     var permissionGranted by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -64,27 +67,30 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
         )
     }
     var locationEnabled by remember { mutableStateOf(locationManager?.isLocationEnabled == true) }
-    val status by remember(mode, permissionGranted, locationEnabled) {
-        derivedStateOf {
-            when {
-                mode.hasPrivilegedAccess -> ConnectedWifiInfoStatus.ACTIVE
-                !permissionGranted -> ConnectedWifiInfoStatus.PERMISSION_REQUIRED
-                !locationEnabled -> ConnectedWifiInfoStatus.LOCATION_DISABLED
-                else -> ConnectedWifiInfoStatus.ACTIVE
+    val status by
+        remember(mode, permissionGranted, locationEnabled) {
+            derivedStateOf {
+                when {
+                    mode.hasPrivilegedAccess -> ConnectedWifiInfoStatus.ACTIVE
+                    !permissionGranted -> ConnectedWifiInfoStatus.PERMISSION_REQUIRED
+                    !locationEnabled -> ConnectedWifiInfoStatus.LOCATION_DISABLED
+                    else -> ConnectedWifiInfoStatus.ACTIVE
+                }
             }
         }
-    }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-        permissionGranted = it
-    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+            permissionGranted = it
+        }
 
     DisposableEffect(Unit) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(ctx: Context, intent: Intent) {
-                locationEnabled =
-                    intent.getBooleanExtra(LocationManager.EXTRA_LOCATION_ENABLED, false)
+        val receiver =
+            object : BroadcastReceiver() {
+                override fun onReceive(ctx: Context, intent: Intent) {
+                    locationEnabled =
+                        intent.getBooleanExtra(LocationManager.EXTRA_LOCATION_ENABLED, false)
+                }
             }
-        }
         context.registerReceiver(receiver, IntentFilter(LocationManager.MODE_CHANGED_ACTION))
         onDispose { context.unregisterReceiver(receiver) }
     }
@@ -93,30 +99,35 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
         modifier = modifier,
         supportingContent = {
             Text(
-                text = when (status) {
-                    ConnectedWifiInfoStatus.ACTIVE -> {
-                        if (mode.hasPrivilegedAccess) {
-                            stringResource(
-                                R.string.connected_wifi_active_with_access,
-                                mode.name.lowercase().replaceFirstChar { it.uppercase() },
-                            )
-                        } else {
-                            stringResource(R.string.connected_wifi_active)
+                text =
+                    when (status) {
+                        ConnectedWifiInfoStatus.ACTIVE -> {
+                            if (mode.hasPrivilegedAccess) {
+                                stringResource(
+                                    R.string.connected_wifi_active_with_access,
+                                    mode.name.lowercase().replaceFirstChar { it.uppercase() },
+                                )
+                            } else {
+                                stringResource(R.string.connected_wifi_active)
+                            }
                         }
-                    }
 
-                    ConnectedWifiInfoStatus.PERMISSION_REQUIRED -> stringResource(R.string.location_permission_required)
-                    ConnectedWifiInfoStatus.LOCATION_DISABLED -> stringResource(R.string.location_services_disabled)
-                },
-                color = when (status) {
-                    ConnectedWifiInfoStatus.ACTIVE -> MaterialTheme.colorScheme.primary
-                    else -> MaterialTheme.colorScheme.error
-                },
-                style = if (status == ConnectedWifiInfoStatus.ACTIVE) {
-                    MaterialTheme.typography.titleSmall
-                } else {
-                    LocalTextStyle.current
-                },
+                        ConnectedWifiInfoStatus.PERMISSION_REQUIRED ->
+                            stringResource(R.string.location_permission_required)
+                        ConnectedWifiInfoStatus.LOCATION_DISABLED ->
+                            stringResource(R.string.location_services_disabled)
+                    },
+                color =
+                    when (status) {
+                        ConnectedWifiInfoStatus.ACTIVE -> MaterialTheme.colorScheme.primary
+                        else -> MaterialTheme.colorScheme.error
+                    },
+                style =
+                    if (status == ConnectedWifiInfoStatus.ACTIVE) {
+                        MaterialTheme.typography.titleSmall
+                    } else {
+                        LocalTextStyle.current
+                    },
             )
         },
         trailingContent = {
@@ -124,7 +135,7 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
                 ConnectedWifiInfoStatus.PERMISSION_REQUIRED -> {
                     TextButton(
                         onClick = { launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION) },
-                        shapes = ButtonDefaults.shapes()
+                        shapes = ButtonDefaults.shapes(),
                     ) {
                         Text(text = stringResource(R.string.grant))
                     }
@@ -132,8 +143,10 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
 
                 ConnectedWifiInfoStatus.LOCATION_DISABLED -> {
                     TextButton(
-                        onClick = { context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) },
-                        shapes = ButtonDefaults.shapes()
+                        onClick = {
+                            context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                        },
+                        shapes = ButtonDefaults.shapes(),
                     ) {
                         Text(text = stringResource(R.string.open_settings))
                     }

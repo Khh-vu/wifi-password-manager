@@ -17,13 +17,13 @@ import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.utils.Crypto
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class ExportWifiReceiver : BroadcastReceiver(), KoinComponent {
     companion object {
@@ -46,27 +46,29 @@ class ExportWifiReceiver : BroadcastReceiver(), KoinComponent {
         val mimeTypeMap = MimeTypeMap.getSingleton()
 
         val pendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            if (!settingRepository.getCurrentSettings().allowInsecureReceiver) return@launch
+        CoroutineScope(Dispatchers.IO)
+            .launch {
+                if (!settingRepository.getCurrentSettings().allowInsecureReceiver) return@launch
 
-            val exportOption = extractExportOption(intent) ?: ExportOption.PLAIN
-            val password = intent.getStringExtra(EXTRA_PASSWORD)
-            val fileName = intent.getStringExtra(EXTRA_FILE_NAME) ?: defaultFileName
+                val exportOption = extractExportOption(intent) ?: ExportOption.PLAIN
+                val password = intent.getStringExtra(EXTRA_PASSWORD)
+                val fileName = intent.getStringExtra(EXTRA_FILE_NAME) ?: defaultFileName
 
-            val extension = exportOption.getFileExtension(password)
-            val mimeType = mimeTypeMap.getMimeTypeFromExtension(extension) ?: "*/*"
-            val uri = getOutputUri(appContext, mimeType, fileName, extension) ?: return@launch
+                val extension = exportOption.getFileExtension(password)
+                val mimeType = mimeTypeMap.getMimeTypeFromExtension(extension) ?: "*/*"
+                val uri = getOutputUri(appContext, mimeType, fileName, extension) ?: return@launch
 
-            val bytes = getExportData(exportOption, password)
-            appContext.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
-        }.invokeOnCompletion {
-            pendingResult.finish()
-            if (it != null) {
-                Log.e(TAG, "Job Failed during export", it)
-            } else {
-                Log.d(TAG, "Job export process completed.")
+                val bytes = getExportData(exportOption, password)
+                appContext.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
             }
-        }
+            .invokeOnCompletion {
+                pendingResult.finish()
+                if (it != null) {
+                    Log.e(TAG, "Job Failed during export", it)
+                } else {
+                    Log.d(TAG, "Job export process completed.")
+                }
+            }
     }
 
     private val defaultFileName: String
@@ -91,35 +93,45 @@ class ExportWifiReceiver : BroadcastReceiver(), KoinComponent {
         extension: String,
     ): Uri? {
         val displayName = "$name.$extension"
-        val existingUri = context.contentResolver.query(
-            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-            arrayOf(MediaStore.MediaColumns._ID),
-            "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND ${MediaStore.MediaColumns.DISPLAY_NAME}=?",
-            arrayOf("${Environment.DIRECTORY_DOWNLOADS}/", displayName),
-            null,
-        ).use { c ->
-            c?.takeIf { it.count == 1 }?.apply { moveToFirst() }
-                ?.getLongOrNull(c.getColumnIndex(MediaStore.MediaColumns._ID))?.let {
-                    ContentUris.withAppendedId(MediaStore.Downloads.EXTERNAL_CONTENT_URI, it)
+        val existingUri =
+            context.contentResolver
+                .query(
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    arrayOf(MediaStore.MediaColumns._ID),
+                    "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND ${MediaStore.MediaColumns.DISPLAY_NAME}=?",
+                    arrayOf("${Environment.DIRECTORY_DOWNLOADS}/", displayName),
+                    null,
+                )
+                .use { c ->
+                    c?.takeIf { it.count == 1 }
+                        ?.apply { moveToFirst() }
+                        ?.getLongOrNull(c.getColumnIndex(MediaStore.MediaColumns._ID))
+                        ?.let {
+                            ContentUris.withAppendedId(
+                                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                                it,
+                            )
+                        }
                 }
-        }
 
-        return existingUri ?: context.contentResolver.insert(
-            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-            contentValuesOf(
-                MediaStore.Downloads.DISPLAY_NAME to displayName,
-                MediaStore.Downloads.MIME_TYPE to mimeType,
-                MediaStore.Downloads.RELATIVE_PATH to Environment.DIRECTORY_DOWNLOADS,
-            ),
-        )
+        return existingUri
+            ?: context.contentResolver.insert(
+                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                contentValuesOf(
+                    MediaStore.Downloads.DISPLAY_NAME to displayName,
+                    MediaStore.Downloads.MIME_TYPE to mimeType,
+                    MediaStore.Downloads.RELATIVE_PATH to Environment.DIRECTORY_DOWNLOADS,
+                ),
+            )
     }
 
     private suspend fun getExportData(option: ExportOption, password: String?): ByteArray {
         val networks = wifiRepository.getAllNetworksList().groupAndSortedBySsid()
-        val data = when (option) {
-            ExportOption.PLAIN -> fileRepository.networksToJson(networks).toByteArray()
-            ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
-        }
+        val data =
+            when (option) {
+                ExportOption.PLAIN -> fileRepository.networksToJson(networks).toByteArray()
+                ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
+            }
 
         return if (!password.isNullOrEmpty()) {
             Crypto.encrypt(data, password, option)

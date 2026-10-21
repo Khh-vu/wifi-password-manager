@@ -52,7 +52,9 @@ fun MethodInspectorView(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    BackHandler(enabled = state.showingSearch) { onAction(MethodInspectorViewModel.Action.ToggleSearch) }
+    BackHandler(enabled = state.showingSearch) {
+        onAction(MethodInspectorViewModel.Action.ToggleSearch)
+    }
 
     Scaffold(
         topBar = {
@@ -72,19 +74,22 @@ fun MethodInspectorView(
                         navigationIcon = { BackButton() },
                         title = {
                             Text(
-                                text = pluralStringResource(
-                                    R.plurals.method_inspector_title,
-                                    state.methods.size,
-                                    state.methods.size
-                                )
+                                text =
+                                    pluralStringResource(
+                                        R.plurals.method_inspector_title,
+                                        state.methods.size,
+                                        state.methods.size,
+                                    )
                             )
                         },
                         actions = {
                             TooltipIconButton(
-                                onClick = { onAction(MethodInspectorViewModel.Action.ToggleSearch) },
+                                onClick = {
+                                    onAction(MethodInspectorViewModel.Action.ToggleSearch)
+                                },
                                 imageVector = Search,
                                 tooltip = stringResource(R.string.search_tooltip),
-                                positioning = TooltipAnchorPosition.Below
+                                positioning = TooltipAnchorPosition.Below,
                             )
                         },
                         scrollBehavior = scrollBehavior,
@@ -99,7 +104,7 @@ fun MethodInspectorView(
                 icon = {
                     Icon(
                         imageVector = Download,
-                        contentDescription = stringResource(R.string.export_methods_action)
+                        contentDescription = stringResource(R.string.export_methods_action),
                     )
                 },
                 onClick = { onAction(MethodInspectorViewModel.Action.ExportMethods) },
@@ -115,12 +120,16 @@ fun MethodInspectorView(
                 Card {
                     ExpansionItem(
                         content = {
-                            ListItem(colors = ListItemDefaults.colors(containerColor = Color.Transparent)) {
+                            ListItem(
+                                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                            ) {
                                 Text(text = name)
                             }
-                        },
+                        }
                     ) {
-                        ListItem(colors = ListItemDefaults.colors(containerColor = Color.Transparent)) {
+                        ListItem(
+                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                        ) {
                             Text(text = signature)
                         }
                     }
@@ -139,13 +148,15 @@ fun MethodInspectorView(
 @PreviewWrapper(ThemeWrapper::class)
 private fun MethodInspectorViewPreview() {
     MethodInspectorView(
-        state = MethodInspectorViewModel.State(
-            methods = listOf(
-                "method1" to "signature1",
-                "method2" to "signature2",
-                "method3" to "signature3",
+        state =
+            MethodInspectorViewModel.State(
+                methods =
+                    listOf(
+                        "method1" to "signature1",
+                        "method2" to "signature2",
+                        "method3" to "signature3",
+                    )
             ),
-        ),
         searchState = rememberTextFieldState(),
         onAction = {},
     )

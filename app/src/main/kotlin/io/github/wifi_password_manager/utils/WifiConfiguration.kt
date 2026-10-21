@@ -8,8 +8,8 @@ val WifiConfigurationHidden.simpleKey: String
     get() {
         return when {
             !preSharedKey.isNullOrBlank() -> preSharedKey.removeSurrounding("\"")
-            !wepKeys.all { it.isNullOrBlank() } -> wepKeys.filterNotNull()
-                .joinToString("\n") { it.removeSurrounding("\"") }
+            !wepKeys.all { it.isNullOrBlank() } ->
+                wepKeys.filterNotNull().joinToString("\n") { it.removeSurrounding("\"") }
 
             else -> ""
         }
@@ -22,11 +22,13 @@ val WifiConfigurationHidden.securityType: WifiNetwork.SecurityType
 
             allowedKeyManagement.get(WifiConfiguration.KeyMgmt.OWE) -> WifiNetwork.SecurityType.OWE
 
-            allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK) || allowedKeyManagement.get(
-                WifiConfiguration.KeyMgmt.WPA_EAP
-            ) || allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA2_PSK) -> WifiNetwork.SecurityType.WPA2
+            allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_PSK) ||
+                allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA_EAP) ||
+                allowedKeyManagement.get(WifiConfiguration.KeyMgmt.WPA2_PSK) ->
+                WifiNetwork.SecurityType.WPA2
 
-            allowedKeyManagement.get(WifiConfiguration.KeyMgmt.NONE) && wepKeys[0] != null -> WifiNetwork.SecurityType.WEP
+            allowedKeyManagement.get(WifiConfiguration.KeyMgmt.NONE) && wepKeys[0] != null ->
+                WifiNetwork.SecurityType.WEP
 
             else -> WifiNetwork.SecurityType.OPEN
         }

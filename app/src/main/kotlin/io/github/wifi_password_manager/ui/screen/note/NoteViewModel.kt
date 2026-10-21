@@ -32,7 +32,8 @@ class NoteViewModel(private val wifiRepository: WifiRepository, private val netw
         data object NavigateBack : Event
     }
 
-    val state: StateFlow<String> field = MutableStateFlow(network.note.orEmpty())
+    val state: StateFlow<String>
+        field = MutableStateFlow(network.note.orEmpty())
 
     private val _event = Channel<Event>()
     val event = _event.receiveAsFlow()
@@ -53,17 +54,27 @@ class NoteViewModel(private val wifiRepository: WifiRepository, private val netw
             }
 
             val note = state.value.trim().ifBlank { null }
-            runCatching { wifiRepository.updateNote(network.ssid, note) }.fold(
-                onSuccess = {
-                    wifiRepository.refresh()
-                    _event.send(Event.ShowMessage(UiText.StringResource(if (note == null) R.string.empty_note_discarded else R.string.note_saved)))
-                    _event.send(Event.NavigateBack)
-                },
-                onFailure = {
-                    Log.e(TAG, "Failed to update note", it)
-                    _event.send(Event.ShowMessage(UiText.StringResource(R.string.note_save_failed)))
-                },
-            )
+            runCatching { wifiRepository.updateNote(network.ssid, note) }
+                .fold(
+                    onSuccess = {
+                        wifiRepository.refresh()
+                        _event.send(
+                            Event.ShowMessage(
+                                UiText.StringResource(
+                                    if (note == null) R.string.empty_note_discarded
+                                    else R.string.note_saved
+                                )
+                            )
+                        )
+                        _event.send(Event.NavigateBack)
+                    },
+                    onFailure = {
+                        Log.e(TAG, "Failed to update note", it)
+                        _event.send(
+                            Event.ShowMessage(UiText.StringResource(R.string.note_save_failed))
+                        )
+                    },
+                )
         }
     }
 }

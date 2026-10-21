@@ -25,5 +25,9 @@ fun NetworkListScreen() {
         }
     }
 
-    NetworkListView(state = state, searchState = viewModel.searchState, onAction = viewModel::onAction)
+    NetworkListView(
+        state = state,
+        searchState = viewModel.searchState,
+        onAction = viewModel::onAction,
+    )
 }

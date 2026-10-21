@@ -25,21 +25,22 @@ fun WiFiPasswordManagerTheme(
     pureBlackTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colorScheme =
+        when {
+            dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                val context = LocalContext.current
+                if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
 
-        darkTheme -> darkColorScheme()
-        else -> expressiveLightColorScheme()
-    }.let {
-        if (pureBlackTheme && darkTheme) {
-            it.copy(background = Color.Black, surface = Color.Black)
-        } else {
-            it
+            darkTheme -> darkColorScheme()
+            else -> expressiveLightColorScheme()
+        }.let {
+            if (pureBlackTheme && darkTheme) {
+                it.copy(background = Color.Black, surface = Color.Black)
+            } else {
+                it
+            }
         }
-    }
 
     MaterialExpressiveTheme(colorScheme = colorScheme, content = content)
 }
@@ -57,7 +58,9 @@ class ScaffoldWrapper : PreviewWrapperProvider {
     @Composable
     override fun Wrap(content: @Composable () -> Unit) {
         themeWrapper.Wrap {
-            Scaffold { innerPadding -> Box(modifier = Modifier.padding(innerPadding)) { content() } }
+            Scaffold { innerPadding ->
+                Box(modifier = Modifier.padding(innerPadding)) { content() }
+            }
         }
     }
 }

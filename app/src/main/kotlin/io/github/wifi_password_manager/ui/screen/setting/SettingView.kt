@@ -70,7 +70,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 title = { Text(text = stringResource(R.string.settings_title)) },
                 scrollBehavior = scrollBehavior,
             )
-        },
+        }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -103,7 +103,13 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                         ListItem(
-                            onClick = { onAction(SettingViewModel.Action.ToggleMaterialYou(!settings.useMaterialYou)) },
+                            onClick = {
+                                onAction(
+                                    SettingViewModel.Action.ToggleMaterialYou(
+                                        !settings.useMaterialYou
+                                    )
+                                )
+                            },
                             trailingContent = {
                                 Switch(
                                     checked = settings.useMaterialYou,
@@ -128,13 +134,25 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                             ListItem(
-                                onClick = { onAction(SettingViewModel.Action.TogglePureBlackTheme(!settings.pureBlackTheme)) },
-                                supportingContent = { Text(text = stringResource(R.string.pure_black_theme_description)) },
+                                onClick = {
+                                    onAction(
+                                        SettingViewModel.Action.TogglePureBlackTheme(
+                                            !settings.pureBlackTheme
+                                        )
+                                    )
+                                },
+                                supportingContent = {
+                                    Text(
+                                        text = stringResource(R.string.pure_black_theme_description)
+                                    )
+                                },
                                 trailingContent = {
                                     Switch(
                                         checked = settings.pureBlackTheme,
                                         onCheckedChange = {
-                                            onAction(SettingViewModel.Action.TogglePureBlackTheme(it))
+                                            onAction(
+                                                SettingViewModel.Action.TogglePureBlackTheme(it)
+                                            )
                                         },
                                     )
                                 },
@@ -156,7 +174,9 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 ) {
                     ListItem(
                         onClick = { onAction(SettingViewModel.Action.ImportNetworks) },
-                        supportingContent = { Text(text = stringResource(R.string.import_description)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.import_description))
+                        },
                         shapes = UiConfig.listItemShapes(),
                         colors = UiConfig.listItemColors(),
                         enabled = state.mode.hasPrivilegedAccess,
@@ -168,7 +188,9 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
 
                     ListItem(
                         onClick = { onAction(SettingViewModel.Action.ShowExportDialog) },
-                        supportingContent = { Text(text = stringResource(R.string.export_description)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.export_description))
+                        },
                         shapes = UiConfig.listItemShapes(),
                         colors = UiConfig.listItemColors(),
                     ) {
@@ -191,8 +213,16 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                     HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                     ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ToggleSecureScreen(!settings.secureScreenEnabled)) },
-                        supportingContent = { Text(text = stringResource(R.string.secure_screen_description)) },
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleSecureScreen(
+                                    !settings.secureScreenEnabled
+                                )
+                            )
+                        },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.secure_screen_description))
+                        },
                         trailingContent = {
                             Switch(
                                 checked = settings.secureScreenEnabled,
@@ -226,13 +256,25 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                     title = stringResource(R.string.external_integration_section),
                 ) {
                     ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ToggleAllowInsecureReceiver(!settings.allowInsecureReceiver)) },
-                        supportingContent = { Text(text = stringResource(R.string.allow_insecure_receiver_description)) },
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleAllowInsecureReceiver(
+                                    !settings.allowInsecureReceiver
+                                )
+                            )
+                        },
+                        supportingContent = {
+                            Text(
+                                text = stringResource(R.string.allow_insecure_receiver_description)
+                            )
+                        },
                         trailingContent = {
                             Switch(
                                 checked = settings.allowInsecureReceiver,
                                 onCheckedChange = {
-                                    onAction(SettingViewModel.Action.ToggleAllowInsecureReceiver(it))
+                                    onAction(
+                                        SettingViewModel.Action.ToggleAllowInsecureReceiver(it)
+                                    )
                                 },
                             )
                         },
@@ -270,7 +312,9 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 ) {
                     ListItem(
                         onClick = { onAction(SettingViewModel.Action.ShowForgetAllDialog) },
-                        supportingContent = { Text(text = stringResource(R.string.forget_all_description)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.forget_all_description))
+                        },
                         shapes = UiConfig.listItemShapes(),
                         colors = UiConfig.listItemColors(),
                         enabled = state.mode.hasPrivilegedAccess,
@@ -282,9 +326,20 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
 
                     ListItem(
                         onClick = {
-                            onAction(SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(!settings.autoPersistEphemeralNetworks))
+                            onAction(
+                                SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
+                                    !settings.autoPersistEphemeralNetworks
+                                )
+                            )
                         },
-                        supportingContent = { Text(text = stringResource(R.string.auto_persist_ephemeral_networks_description)) },
+                        supportingContent = {
+                            Text(
+                                text =
+                                    stringResource(
+                                        R.string.auto_persist_ephemeral_networks_description
+                                    )
+                            )
+                        },
                         trailingContent = {
                             Switch(
                                 checked = settings.autoPersistEphemeralNetworks,
@@ -306,8 +361,16 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                     HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
                     ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ToggleAllowCacheMode(!settings.allowCacheMode)) },
-                        supportingContent = { Text(text = stringResource(R.string.allow_cache_mode_description)) },
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleAllowCacheMode(
+                                    !settings.allowCacheMode
+                                )
+                            )
+                        },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.allow_cache_mode_description))
+                        },
                         trailingContent = {
                             Switch(
                                 checked = settings.allowCacheMode,
@@ -352,7 +415,9 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                 ) {
                     ListItem(
                         onClick = { navBackStack.add(Route.LicenseScreen) },
-                        supportingContent = { Text(text = stringResource(R.string.license_description)) },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.license_description))
+                        },
                         shapes = UiConfig.listItemShapes(),
                         colors = UiConfig.listItemColors(),
                     ) {
@@ -398,7 +463,10 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 Text(text = "Brand: ${Build.BRAND}")
                                 Text(text = "Model: ${Build.MODEL}")
                                 Text(text = "Manufacturer: ${Build.MANUFACTURER}")
-                                Text(text = "Android Version: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
+                                Text(
+                                    text =
+                                        "Android Version: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})"
+                                )
                             }
                         },
                         colors = UiConfig.listItemColors(),

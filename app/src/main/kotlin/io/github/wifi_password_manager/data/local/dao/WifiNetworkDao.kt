@@ -26,8 +26,7 @@ interface WifiNetworkDao {
     @Query("SELECT * FROM wifi_networks ORDER BY ssid ASC")
     suspend fun getAllNetworksList(): List<WifiNetworkEntity>
 
-    @Upsert
-    suspend fun upsertNetworks(networks: List<WifiNetworkEntity>)
+    @Upsert suspend fun upsertNetworks(networks: List<WifiNetworkEntity>)
 
     @Query("UPDATE wifi_networks SET existInSystem = 0 WHERE ssid NOT IN (:systemSsids)")
     suspend fun markNotExistInSystem(systemSsids: List<String>)
@@ -39,17 +38,13 @@ interface WifiNetworkDao {
         markNotExistInSystem(networks.map { it.ssid })
     }
 
-    @Query("UPDATE wifi_networks SET existInSystem = 0")
-    suspend fun markAllNotExistInSystem()
+    @Query("UPDATE wifi_networks SET existInSystem = 0") suspend fun markAllNotExistInSystem()
 
-    @Query("DELETE FROM wifi_networks WHERE ssid = :ssid")
-    suspend fun deleteNetwork(ssid: String)
+    @Query("DELETE FROM wifi_networks WHERE ssid = :ssid") suspend fun deleteNetwork(ssid: String)
 
-    @Query("DELETE FROM wifi_networks")
-    suspend fun clearNetworks()
+    @Query("DELETE FROM wifi_networks") suspend fun clearNetworks()
 
-    @Query("SELECT COUNT(*) FROM wifi_networks")
-    suspend fun getNetworkCount(): Int
+    @Query("SELECT COUNT(*) FROM wifi_networks") suspend fun getNetworkCount(): Int
 
     @Query("UPDATE wifi_networks SET note = :note WHERE ssid = :ssid")
     suspend fun updateNote(ssid: String, note: String?)

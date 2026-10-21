@@ -33,7 +33,7 @@ fun ExportWifiSetupView() {
                 title = { Text(text = stringResource(R.string.export_wifi_setup_title)) },
                 scrollBehavior = scrollBehavior,
             )
-        },
+        }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

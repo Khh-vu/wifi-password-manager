@@ -50,20 +50,25 @@ fun WifiCardDropdownMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
-        DropdownMenuGroup(shapes = MenuDefaults.groupShapes(shape = MenuDefaults.leadingGroupShape)) {
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.leadingGroupShape)
+        ) {
             DropdownMenuItem(
                 onClick = {},
                 text = {
                     Text(text = network.ssid, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 },
                 enabled = false,
-                colors = MenuDefaults.itemColors(disabledTextColor = MaterialTheme.colorScheme.primary),
+                colors =
+                    MenuDefaults.itemColors(disabledTextColor = MaterialTheme.colorScheme.primary),
             )
         }
 
         Spacer(Modifier.height(MenuDefaults.GroupSpacing))
 
-        DropdownMenuGroup(shapes = MenuDefaults.groupShapes(shape = MenuDefaults.middleGroupShape)) {
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.middleGroupShape)
+        ) {
             if (!isCacheMode) {
                 DropdownMenuItem(
                     onClick = {
@@ -77,10 +82,11 @@ fun WifiCardDropdownMenu(
                             contentDescription = stringResource(R.string.forget_action),
                         )
                     },
-                    colors = MenuDefaults.itemColors(
-                        textColor = MaterialTheme.colorScheme.error,
-                        leadingIconColor = MaterialTheme.colorScheme.error,
-                    ),
+                    colors =
+                        MenuDefaults.itemColors(
+                            textColor = MaterialTheme.colorScheme.error,
+                            leadingIconColor = MaterialTheme.colorScheme.error,
+                        ),
                 )
 
                 DropdownMenuItem(
@@ -92,12 +98,24 @@ fun WifiCardDropdownMenu(
                             onAction(NetworkListViewModel.Action.Connect(network))
                         }
                     },
-                    text = { Text(text = stringResource(if (connected) R.string.disconnect_action else R.string.connect_action)) },
+                    text = {
+                        Text(
+                            text =
+                                stringResource(
+                                    if (connected) R.string.disconnect_action
+                                    else R.string.connect_action
+                                )
+                        )
+                    },
                     enabled = connectionStatus !is WifiConnectionStatus.Connecting,
                     leadingIcon = {
                         Icon(
                             imageVector = if (connected) Close else Wifi,
-                            contentDescription = stringResource(if (connected) R.string.disconnect_action else R.string.connect_action),
+                            contentDescription =
+                                stringResource(
+                                    if (connected) R.string.disconnect_action
+                                    else R.string.connect_action
+                                ),
                         )
                     },
                 )
@@ -120,17 +138,29 @@ fun WifiCardDropdownMenu(
 
         Spacer(Modifier.height(MenuDefaults.GroupSpacing))
 
-        DropdownMenuGroup(shapes = MenuDefaults.groupShapes(shape = MenuDefaults.trailingGroupShape)) {
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.trailingGroupShape)
+        ) {
             DropdownMenuItem(
                 onClick = {
                     onDismissRequest()
                     navBackStack.add(Route.NoteScreen(network = network))
                 },
-                text = { Text(text = stringResource(if (network.note != null) R.string.edit_note else R.string.add_note)) },
+                text = {
+                    Text(
+                        text =
+                            stringResource(
+                                if (network.note != null) R.string.edit_note else R.string.add_note
+                            )
+                    )
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = EditNote,
-                        contentDescription = stringResource(if (network.note != null) R.string.edit_note else R.string.add_note),
+                        contentDescription =
+                            stringResource(
+                                if (network.note != null) R.string.edit_note else R.string.add_note
+                            ),
                     )
                 },
             )
@@ -148,10 +178,11 @@ fun WifiCardDropdownMenu(
                             contentDescription = stringResource(R.string.delete_note),
                         )
                     },
-                    colors = MenuDefaults.itemColors(
-                        textColor = MaterialTheme.colorScheme.error,
-                        leadingIconColor = MaterialTheme.colorScheme.error,
-                    ),
+                    colors =
+                        MenuDefaults.itemColors(
+                            textColor = MaterialTheme.colorScheme.error,
+                            leadingIconColor = MaterialTheme.colorScheme.error,
+                        ),
                 )
             }
         }

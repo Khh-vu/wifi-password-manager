@@ -25,8 +25,7 @@ val Context.hasShizukuPermission: Boolean
 fun Context.launchUrl(url: String) {
     try {
         startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
-    } catch (_: Exception) {
-    }
+    } catch (_: Exception) {}
 }
 
 fun Context.toast(text: CharSequence, duration: Int = Toast.LENGTH_SHORT) =
@@ -37,6 +36,6 @@ fun Context.toast(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT) =
 
 fun Context.isBiometricAuthenticationSupported(): Boolean {
     val authenticators = Authenticators.BIOMETRIC_WEAK or Authenticators.DEVICE_CREDENTIAL
-    return BiometricManager.from(this)
-        .canAuthenticate(authenticators) == BiometricManager.BIOMETRIC_SUCCESS
+    return BiometricManager.from(this).canAuthenticate(authenticators) ==
+        BiometricManager.BIOMETRIC_SUCCESS
 }

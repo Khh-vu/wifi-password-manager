@@ -17,6 +17,8 @@ import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.UiText
 import io.github.wifi_password_manager.utils.groupAndSortedBySsid
 import io.github.wifi_password_manager.utils.toWifiConfigurations
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -36,8 +38,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class NetworkListViewModel(
@@ -50,14 +50,18 @@ class NetworkListViewModel(
     }
 
     enum class Filter {
-        ALL, ON_DEVICE, APP_ONLY;
+        ALL,
+        ON_DEVICE,
+        APP_ONLY;
 
         val labelResId: Int
-            @StringRes get() = when (this) {
-                ALL -> R.string.filter_all
-                ON_DEVICE -> R.string.filter_on_device
-                APP_ONLY -> R.string.filter_app_only
-            }
+            @StringRes
+            get() =
+                when (this) {
+                    ALL -> R.string.filter_all
+                    ON_DEVICE -> R.string.filter_on_device
+                    APP_ONLY -> R.string.filter_app_only
+                }
     }
 
     @Immutable
@@ -97,8 +101,12 @@ class NetworkListViewModel(
 
     private val _uiState = MutableStateFlow(State())
     private val _pendingNetwork = MutableStateFlow<WifiNetwork?>(null)
-    private val _networks = snapshotFlow { searchState.text }.debounce(200.milliseconds)
-        .distinctUntilChanged().flatMapLatest { searchText ->
+    private val _networks = snapshotFlow {
+        searchState.text
+    }
+        .debounce(200.milliseconds)
+        .distinctUntilChanged()
+        .flatMapLatest { searchText ->
             val query = searchText.replace(searchQueryRegex, "").trim()
             if (query.isBlank()) {
                 wifiRepository.getAllNetworks()
@@ -107,39 +115,50 @@ class NetworkListViewModel(
             }
         }
 
-    val state = combine(
-        _uiState,
-        _networks,
-        privilegedManager.mode,
-        wifiRepository.getConnectedWifiSsidFlow().onEach { refresh() },
-        _pendingNetwork,
-    ) { ui, networks, mode, connectedSsid, pendingNetwork ->
-        val sorted = networks.groupAndSortedBySsid().filter {
-            when (ui.filter) {
-                Filter.ALL -> true
-                Filter.ON_DEVICE -> it.existInSystem
-                Filter.APP_ONLY -> !it.existInSystem
+    val state =
+        combine(
+                _uiState,
+                _networks,
+                privilegedManager.mode,
+                wifiRepository.getConnectedWifiSsidFlow().onEach { refresh() },
+                _pendingNetwork,
+            ) { ui, networks, mode, connectedSsid, pendingNetwork ->
+                val sorted =
+                    networks
+                        .groupAndSortedBySsid()
+                        .filter {
+                            when (ui.filter) {
+                                Filter.ALL -> true
+                                Filter.ON_DEVICE -> it.existInSystem
+                                Filter.APP_ONLY -> !it.existInSystem
+                            }
+                        }
+                        .let { if (ui.sortAscending) it else it.asReversed() }
+                ui.copy(
+                    savedNetworks =
+                        if (connectedSsid.isNotBlank()) {
+                            val (connected, others) = sorted.partition { it.ssid == connectedSsid }
+                            connected + others
+                        } else {
+                            sorted
+                        },
+                    isCacheMode = mode == PrivilegedMode.NONE,
+                    connectionStatus =
+                        when {
+                            connectedSsid.isNotBlank() ->
+                                WifiConnectionStatus.Connected(connectedSsid)
+                            pendingNetwork != null ->
+                                WifiConnectionStatus.Connecting(pendingNetwork.ssid)
+                            else -> WifiConnectionStatus.Disconnected
+                        },
+                )
             }
-        }.let { if (ui.sortAscending) it else it.asReversed() }
-        ui.copy(
-            savedNetworks = if (connectedSsid.isNotBlank()) {
-                val (connected, others) = sorted.partition { it.ssid == connectedSsid }
-                connected + others
-            } else {
-                sorted
-            },
-            isCacheMode = mode == PrivilegedMode.NONE,
-            connectionStatus = when {
-                connectedSsid.isNotBlank() -> WifiConnectionStatus.Connected(connectedSsid)
-                pendingNetwork != null -> WifiConnectionStatus.Connecting(pendingNetwork.ssid)
-                else -> WifiConnectionStatus.Disconnected
-            },
-        )
-    }.flowOn(Dispatchers.Default).stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5.seconds),
-        initialValue = State(),
-    )
+            .flowOn(Dispatchers.Default)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5.seconds),
+                initialValue = State(),
+            )
     val searchState = TextFieldState()
 
     private val _event = Channel<Event>()
@@ -157,9 +176,8 @@ class NetworkListViewModel(
             is Action.FilterChanged -> _uiState.update { it.copy(filter = action.filter) }
             is Action.ToggleSort -> _uiState.update { it.copy(sortAscending = !it.sortAscending) }
             is Action.DeleteNote -> onDeleteNote(action.ssid)
-            is Action.DismissMethodInspectorError -> _uiState.update {
-                it.copy(showMethodSignatureError = false)
-            }
+            is Action.DismissMethodInspectorError ->
+                _uiState.update { it.copy(showMethodSignatureError = false) }
 
             is Action.Disconnect -> onDisconnect()
             is Action.Connect -> onConnect(action.network)
@@ -199,8 +217,8 @@ class NetworkListViewModel(
                 if (!wifiRepository.disconnect()) return@launch
                 _event.send(
                     Event.ShowMessage(
-                        UiText.StringResource(R.string.disconnected_from_message, status.ssid),
-                    ),
+                        UiText.StringResource(R.string.disconnected_from_message, status.ssid)
+                    )
                 )
             }
         }
@@ -211,35 +229,41 @@ class NetworkListViewModel(
             _pendingNetwork.update { network }
             _event.send(
                 Event.ShowMessage(
-                    UiText.StringResource(R.string.connecting_to_message, network.ssid),
-                ),
+                    UiText.StringResource(R.string.connecting_to_message, network.ssid)
+                )
             )
 
-            val connected = withTimeoutOrNull(10.seconds) {
-                wifiRepository.connect(network)
-                wifiRepository.getConnectedWifiSsidFlow().first { it == network.ssid }
-            } != null
+            val connected =
+                withTimeoutOrNull(10.seconds) {
+                    wifiRepository.connect(network)
+                    wifiRepository.getConnectedWifiSsidFlow().first { it == network.ssid }
+                } != null
 
             _pendingNetwork.update { null }
             _event.send(
                 Event.ShowMessage(
                     UiText.StringResource(
-                        if (connected) R.string.connected_to_message else R.string.connect_failed_message,
+                        if (connected) R.string.connected_to_message
+                        else R.string.connect_failed_message,
                         network.ssid,
-                    ),
-                ),
+                    )
+                )
             )
         }
     }
 
     private fun onForget(network: WifiNetwork) {
         viewModelScope.launch {
-            network.toWifiConfigurations().map { it.networkId }.filter { it != -1 }.toSet()
+            network
+                .toWifiConfigurations()
+                .map { it.networkId }
+                .filter { it != -1 }
+                .toSet()
                 .forEach { wifiRepository.forget(it) }
             wifiRepository.delete(network.ssid)
             refresh()
             _event.send(
-                Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),
+                Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid))
             )
         }
     }

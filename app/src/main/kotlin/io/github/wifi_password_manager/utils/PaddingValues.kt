@@ -10,13 +10,13 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 operator fun PaddingValues.plus(paddingValues: PaddingValues): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
     return PaddingValues(
-        start = calculateStartPadding(layoutDirection) + paddingValues.calculateStartPadding(
-            layoutDirection
-        ),
+        start =
+            calculateStartPadding(layoutDirection) +
+                paddingValues.calculateStartPadding(layoutDirection),
         top = calculateTopPadding() + paddingValues.calculateTopPadding(),
-        end = calculateEndPadding(layoutDirection) + paddingValues.calculateEndPadding(
-            layoutDirection
-        ),
+        end =
+            calculateEndPadding(layoutDirection) +
+                paddingValues.calculateEndPadding(layoutDirection),
         bottom = calculateBottomPadding() + paddingValues.calculateBottomPadding(),
     )
 }

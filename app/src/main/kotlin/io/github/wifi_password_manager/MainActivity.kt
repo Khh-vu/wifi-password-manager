@@ -38,9 +38,8 @@ class MainActivity : AppCompatActivity() {
     private val settingRepository by inject<SettingRepository>()
     private val privilegedManager by inject<PrivilegedManager>()
 
-    private val viewModel by viewModel<MainViewModel> {
-        parametersOf(isBiometricAuthenticationSupported())
-    }
+    private val viewModel by
+        viewModel<MainViewModel> { parametersOf(isBiometricAuthenticationSupported()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +69,8 @@ class MainActivity : AppCompatActivity() {
                             LockView(viewModel::onAuthenticated)
                         }
 
-                        privilegedMode.hasPrivilegedAccess || (privilegedMode == PrivilegedMode.NONE && skipPrivilegedCheck) -> {
+                        privilegedMode.hasPrivilegedAccess ||
+                            (privilegedMode == PrivilegedMode.NONE && skipPrivilegedCheck) -> {
                             NavigationRoot()
                         }
 
@@ -102,7 +102,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupSecureScreen() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingRepository.settings.map { it.secureScreenEnabled }.distinctUntilChanged()
+                settingRepository.settings
+                    .map { it.secureScreenEnabled }
+                    .distinctUntilChanged()
                     .collect { enabled ->
                         if (enabled) {
                             window?.setFlags(
@@ -120,7 +122,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupLanguage() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingRepository.settings.map { it.language }.distinctUntilChanged()
+                settingRepository.settings
+                    .map { it.language }
+                    .distinctUntilChanged()
                     .collect { language ->
                         val localeList = LocaleListCompat.forLanguageTags(language.code)
                         AppCompatDelegate.setApplicationLocales(localeList)

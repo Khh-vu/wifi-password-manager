@@ -3,47 +3,58 @@ package io.github.wifi_password_manager.utils
 import androidx.window.core.layout.WindowSizeClass
 
 private enum class SizeClass {
-    COMPACT, MEDIUM, EXPANDED;
+    COMPACT,
+    MEDIUM,
+    EXPANDED;
 
-    val isCompact: Boolean get() = this == COMPACT
+    val isCompact: Boolean
+        get() = this == COMPACT
 
-    val isMedium: Boolean get() = this == MEDIUM
+    val isMedium: Boolean
+        get() = this == MEDIUM
 
-    val isExpanded: Boolean get() = this == EXPANDED
+    val isExpanded: Boolean
+        get() = this == EXPANDED
 }
 
 private val WindowSizeClass.heightClass: SizeClass
-    get() = when {
-        isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND) -> {
-            SizeClass.EXPANDED
-        }
+    get() =
+        when {
+            isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND) -> {
+                SizeClass.EXPANDED
+            }
 
-        isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND) -> {
-            SizeClass.MEDIUM
-        }
+            isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND) -> {
+                SizeClass.MEDIUM
+            }
 
-        else -> {
-            SizeClass.COMPACT
+            else -> {
+                SizeClass.COMPACT
+            }
         }
-    }
 
 private val WindowSizeClass.widthClass: SizeClass
-    get() = when {
-        isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) -> {
-            SizeClass.EXPANDED
-        }
+    get() =
+        when {
+            isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND) -> {
+                SizeClass.EXPANDED
+            }
 
-        isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) -> {
-            SizeClass.MEDIUM
-        }
+            isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) -> {
+                SizeClass.MEDIUM
+            }
 
-        else -> {
-            SizeClass.COMPACT
+            else -> {
+                SizeClass.COMPACT
+            }
         }
-    }
 
 enum class DeviceConfiguration {
-    MOBILE_PORTRAIT, MOBILE_LANDSCAPE, TABLET_PORTRAIT, TABLET_LANDSCAPE, DESKTOP;
+    MOBILE_PORTRAIT,
+    MOBILE_LANDSCAPE,
+    TABLET_PORTRAIT,
+    TABLET_LANDSCAPE,
+    DESKTOP;
 
     companion object {
         fun fromWindowSizeClass(windowSizeClass: WindowSizeClass): DeviceConfiguration {

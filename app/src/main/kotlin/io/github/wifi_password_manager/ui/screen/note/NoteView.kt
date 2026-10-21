@@ -66,36 +66,48 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
         val windowSizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
         val deviceConfiguration = DeviceConfiguration.fromWindowSizeClass(windowSizeClass)
 
-        val contentPadding = when (deviceConfiguration) {
-            DeviceConfiguration.MOBILE_PORTRAIT -> PaddingValues(12.dp)
-            DeviceConfiguration.MOBILE_LANDSCAPE -> PaddingValues(
-                horizontal = 24.dp, vertical = 16.dp
-            )
+        val contentPadding =
+            when (deviceConfiguration) {
+                DeviceConfiguration.MOBILE_PORTRAIT -> PaddingValues(12.dp)
+                DeviceConfiguration.MOBILE_LANDSCAPE ->
+                    PaddingValues(
+                        horizontal = 24.dp,
+                        vertical = 16.dp,
+                    )
 
-            DeviceConfiguration.TABLET_PORTRAIT -> PaddingValues(24.dp)
-            DeviceConfiguration.TABLET_LANDSCAPE -> PaddingValues(
-                horizontal = 48.dp, vertical = 24.dp
-            )
+                DeviceConfiguration.TABLET_PORTRAIT -> PaddingValues(24.dp)
+                DeviceConfiguration.TABLET_LANDSCAPE ->
+                    PaddingValues(
+                        horizontal = 48.dp,
+                        vertical = 24.dp,
+                    )
 
-            DeviceConfiguration.DESKTOP -> PaddingValues(horizontal = 64.dp, vertical = 32.dp)
-        }
+                DeviceConfiguration.DESKTOP -> PaddingValues(horizontal = 64.dp, vertical = 32.dp)
+            }
 
-        val maxWidth = when (deviceConfiguration) {
-            DeviceConfiguration.MOBILE_PORTRAIT, DeviceConfiguration.MOBILE_LANDSCAPE -> WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND.dp
-            DeviceConfiguration.TABLET_PORTRAIT -> WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp
-            DeviceConfiguration.TABLET_LANDSCAPE, DeviceConfiguration.DESKTOP -> WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
-        }
+        val maxWidth =
+            when (deviceConfiguration) {
+                DeviceConfiguration.MOBILE_PORTRAIT,
+                DeviceConfiguration.MOBILE_LANDSCAPE ->
+                    WindowSizeClass.WIDTH_DP_LARGE_LOWER_BOUND.dp
+                DeviceConfiguration.TABLET_PORTRAIT ->
+                    WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND.dp
+                DeviceConfiguration.TABLET_LANDSCAPE,
+                DeviceConfiguration.DESKTOP -> WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+            }
 
-        val minLines = when (deviceConfiguration) {
-            DeviceConfiguration.MOBILE_PORTRAIT, DeviceConfiguration.MOBILE_LANDSCAPE -> 3
-            else -> 5
-        }
+        val minLines =
+            when (deviceConfiguration) {
+                DeviceConfiguration.MOBILE_PORTRAIT,
+                DeviceConfiguration.MOBILE_LANDSCAPE -> 3
+                else -> 5
+            }
 
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .imePadding(),
+            modifier =
+                Modifier.fillMaxSize()
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .imePadding(),
             contentPadding = innerPadding + contentPadding,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -103,10 +115,10 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
                 OutlinedTextField(
                     value = state,
                     onValueChange = { onAction(NoteViewModel.Action.UpdateNote(it)) },
-                    modifier = Modifier
-                        .widthIn(max = maxWidth)
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
+                    modifier =
+                        Modifier.widthIn(max = maxWidth)
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
                     placeholder = { Text(text = stringResource(R.string.note_hint)) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),

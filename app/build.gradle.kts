@@ -1,6 +1,6 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import java.util.Properties
 
 plugins {
     alias(libs.plugins.aboutLibraries)
@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.ktfmt.gradle)
     alias(libs.plugins.refine)
     alias(libs.plugins.room3)
     alias(libs.plugins.stability.analyzer)
@@ -38,17 +39,20 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField(
-            "String", "SOURCE_CODE_URL", "\"https://github.com/Khh-vu/wifi-password-manager\""
+            "String",
+            "SOURCE_CODE_URL",
+            "\"https://github.com/Khh-vu/wifi-password-manager\"",
         )
     }
 
     signingConfigs {
-        val keystoreProperties = Properties().apply {
-            val keystorePropertiesFile = rootProject.file("key.properties")
-            if (keystorePropertiesFile.exists()) {
-                keystorePropertiesFile.inputStream().use(::load)
+        val keystoreProperties =
+            Properties().apply {
+                val keystorePropertiesFile = rootProject.file("key.properties")
+                if (keystorePropertiesFile.exists()) {
+                    keystorePropertiesFile.inputStream().use(::load)
+                }
             }
-        }
         register("release") {
             storeFile = keystoreProperties["storeFile"]?.let { file(it) }
             storePassword = keystoreProperties["storePassword"]?.toString()
@@ -78,9 +82,11 @@ android {
     packaging {
         resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
         jniLibs {
-            keepDebugSymbols += setOf(
-                "**/libandroidx.graphics.path.so", "**/libdatastore_shared_counter.so"
-            )
+            keepDebugSymbols +=
+                setOf(
+                    "**/libandroidx.graphics.path.so",
+                    "**/libdatastore_shared_counter.so",
+                )
         }
     }
     dependenciesInfo {
@@ -94,15 +100,21 @@ android {
 }
 
 composeCompiler {
-    stabilityConfigurationFiles.addAll(rootProject.layout.projectDirectory.file("stability_config.conf"))
+    stabilityConfigurationFiles.addAll(
+        rootProject.layout.projectDirectory.file("stability_config.conf")
+    )
     reportsDestination = layout.buildDirectory.dir("compose_compiler")
     metricsDestination = layout.buildDirectory.dir("compose_compiler")
 }
 
 composeStabilityAnalyzer {
-    stabilityConfigurationFiles.addAll(rootProject.layout.projectDirectory.file("stability_config.conf"))
+    stabilityConfigurationFiles.addAll(
+        rootProject.layout.projectDirectory.file("stability_config.conf")
+    )
     stabilityValidation { outputDir = layout.buildDirectory.dir("stability") }
 }
+
+ktfmt { kotlinLangStyle() }
 
 dependencies {
     // AndroidX
@@ -178,6 +190,4 @@ dependencies {
     debugImplementation(libs.leakcanary.android)
 }
 
-room3 {
-    schemaDirectory("$projectDir/schemas")
-}
+room3 { schemaDirectory("$projectDir/schemas") }

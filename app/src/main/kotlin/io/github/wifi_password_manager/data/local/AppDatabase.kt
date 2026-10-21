@@ -12,11 +12,12 @@ import io.github.wifi_password_manager.data.local.entity.WifiNetworkFtsEntity
 @Database(
     entities = [WifiNetworkEntity::class, WifiNetworkFtsEntity::class],
     version = 5,
-    autoMigrations = [
-        AutoMigration(2, 3),
-        AutoMigration(3, 4),
-        AutoMigration(4, 5),
-    ]
+    autoMigrations =
+        [
+            AutoMigration(2, 3),
+            AutoMigration(3, 4),
+            AutoMigration(4, 5),
+        ],
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun wifiNetworkDao(): WifiNetworkDao
@@ -24,10 +25,11 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         const val DATABASE_NAME = "app.db"
 
-        val MIGRATION_1_2 = Migration(1, 2) { connection ->
-            connection.apply {
-                execSQL(
-                    """
+        val MIGRATION_1_2 =
+            Migration(1, 2) { connection ->
+                connection.apply {
+                    execSQL(
+                        """
                         CREATE TABLE IF NOT EXISTS `wifi_networks_new` (
                             `ssid` TEXT NOT NULL,
                             `networkId` INTEGER NOT NULL,
@@ -39,18 +41,20 @@ abstract class AppDatabase : RoomDatabase() {
                             `note` TEXT,
                             PRIMARY KEY(`ssid`, `securityTypes`)
                         )
-                        """.trimIndent()
-                )
-                execSQL(
-                    """
+                        """
+                            .trimIndent()
+                    )
+                    execSQL(
+                        """
                         INSERT OR IGNORE INTO `wifi_networks_new`
                         SELECT ssid, networkId, securityTypes, password, hidden, autojoin, private, note
                         FROM `wifi_networks`
-                        """.trimIndent()
-                )
-                execSQL("DROP TABLE `wifi_networks`")
-                execSQL("ALTER TABLE `wifi_networks_new` RENAME TO `wifi_networks`")
+                        """
+                            .trimIndent()
+                    )
+                    execSQL("DROP TABLE `wifi_networks`")
+                    execSQL("ALTER TABLE `wifi_networks_new` RENAME TO `wifi_networks`")
+                }
             }
-        }
     }
 }

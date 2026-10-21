@@ -61,7 +61,9 @@ fun NetworkListView(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    BackHandler(enabled = state.showingSearch) { onAction(NetworkListViewModel.Action.ToggleSearch) }
+    BackHandler(enabled = state.showingSearch) {
+        onAction(NetworkListViewModel.Action.ToggleSearch)
+    }
 
     Scaffold(
         topBar = {
@@ -81,20 +83,23 @@ fun NetworkListView(
                         TopAppBar(
                             title = {
                                 Text(
-                                    text = if (state.savedNetworks.isNotEmpty()) {
-                                        pluralStringResource(
-                                            R.plurals.network_list_title,
-                                            state.savedNetworks.size,
-                                            state.savedNetworks.size,
-                                        )
-                                    } else {
-                                        stringResource(R.string.app_name)
-                                    }
+                                    text =
+                                        if (state.savedNetworks.isNotEmpty()) {
+                                            pluralStringResource(
+                                                R.plurals.network_list_title,
+                                                state.savedNetworks.size,
+                                                state.savedNetworks.size,
+                                            )
+                                        } else {
+                                            stringResource(R.string.app_name)
+                                        }
                                 )
                             },
                             actions = {
                                 TooltipIconButton(
-                                    onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                                    onClick = {
+                                        onAction(NetworkListViewModel.Action.ToggleSearch)
+                                    },
                                     imageVector = Search,
                                     tooltip = stringResource(R.string.search_tooltip),
                                     positioning = TooltipAnchorPosition.Below,
@@ -111,14 +116,23 @@ fun NetworkListView(
                         )
                     }
                 }
-                FilterSortBar(filter = state.filter, sortAscending = state.sortAscending, onAction = onAction)
+                FilterSortBar(
+                    filter = state.filter,
+                    sortAscending = state.sortAscending,
+                    onAction = onAction,
+                )
             }
         },
         floatingActionButton = {
             if (!state.isCacheMode) {
                 TooltipBox(
-                    positionProvider = TooltipDefaults.rememberTooltipPositionProvider(positioning = TooltipAnchorPosition.Above),
-                    tooltip = { PlainTooltip { Text(text = stringResource(R.string.refresh_description)) } },
+                    positionProvider =
+                        TooltipDefaults.rememberTooltipPositionProvider(
+                            positioning = TooltipAnchorPosition.Above
+                        ),
+                    tooltip = {
+                        PlainTooltip { Text(text = stringResource(R.string.refresh_description)) }
+                    },
                     state = rememberTooltipState(),
                 ) {
                     FloatingActionButton(
@@ -135,10 +149,7 @@ fun NetworkListView(
         },
     ) { innerPadding ->
         val modifier =
-            Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection)
-                .imePadding()
+            Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection).imePadding()
 
         if (state.savedNetworks.isEmpty()) {
             Box(modifier = modifier.padding(innerPadding), contentAlignment = Alignment.Center) {
@@ -193,7 +204,11 @@ private fun NetworkListViewPreview() {
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun EmptyNetworkListViewPreview() {
-    NetworkListView(state = NetworkListViewModel.State(), searchState = rememberTextFieldState(), onAction = {})
+    NetworkListView(
+        state = NetworkListViewModel.State(),
+        searchState = rememberTextFieldState(),
+        onAction = {},
+    )
 }
 
 @PreviewLightDark
@@ -201,9 +216,11 @@ private fun EmptyNetworkListViewPreview() {
 @PreviewWrapper(ThemeWrapper::class)
 private fun SearchNetworkListViewPreview() {
     NetworkListView(
-        state = NetworkListViewModel.State(
-            showingSearch = true, savedNetworks = WifiNetwork.MOCK
-        ),
+        state =
+            NetworkListViewModel.State(
+                showingSearch = true,
+                savedNetworks = WifiNetwork.MOCK,
+            ),
         searchState = rememberTextFieldState(),
         onAction = {},
     )

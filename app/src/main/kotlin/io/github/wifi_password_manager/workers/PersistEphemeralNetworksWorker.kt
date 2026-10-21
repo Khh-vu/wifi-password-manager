@@ -12,9 +12,9 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
+import java.util.concurrent.TimeUnit
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.concurrent.TimeUnit
 
 class PersistEphemeralNetworksWorker(appContext: Context, params: WorkerParameters) :
     CoroutineWorker(appContext, params), KoinComponent {
@@ -26,16 +26,20 @@ class PersistEphemeralNetworksWorker(appContext: Context, params: WorkerParamete
             val constraints =
                 Constraints.Builder().setRequiredNetworkType(NetworkType.UNMETERED).build()
 
-            val workRequest = PeriodicWorkRequestBuilder<PersistEphemeralNetworksWorker>(
-                repeatInterval = PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
-                repeatIntervalTimeUnit = TimeUnit.MILLISECONDS,
-            ).setConstraints(constraints).build()
+            val workRequest =
+                PeriodicWorkRequestBuilder<PersistEphemeralNetworksWorker>(
+                        repeatInterval = PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                        repeatIntervalTimeUnit = TimeUnit.MILLISECONDS,
+                    )
+                    .setConstraints(constraints)
+                    .build()
 
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                uniqueWorkName = WORK_NAME,
-                existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
-                request = workRequest,
-            )
+            WorkManager.getInstance(context)
+                .enqueueUniquePeriodicWork(
+                    uniqueWorkName = WORK_NAME,
+                    existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
+                    request = workRequest,
+                )
 
             Log.d(TAG, "Scheduled periodic work to persist ephemeral networks")
         }

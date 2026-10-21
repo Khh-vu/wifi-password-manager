@@ -31,7 +31,8 @@ fun TooltipIconButton(
     positioning: TooltipAnchorPosition,
 ) {
     TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(positioning = positioning),
+        positionProvider =
+            TooltipDefaults.rememberTooltipPositionProvider(positioning = positioning),
         tooltip = { PlainTooltip { Text(text = tooltip) } },
         state = rememberTooltipState(),
     ) {

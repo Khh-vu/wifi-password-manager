@@ -28,7 +28,7 @@ fun LicenseView() {
                 title = { Text(text = stringResource(R.string.license_title)) },
                 scrollBehavior = scrollBehavior,
             )
-        },
+        }
     ) { innerPadding ->
         val libraries by produceLibraries(R.raw.aboutlibraries)
         LibrariesContainer(

@@ -51,7 +51,8 @@ class WifiRepositoryImpl(
     private var cachedDataSource: WifiDataSource? = null
 
     private val dataSource: WifiDataSource
-        @Synchronized get() {
+        @Synchronized
+        get() {
             val mode = privilegedManager.currentMode
             if (mode != cachedPrivilegedMode) {
                 cachedPrivilegedMode = mode
@@ -81,67 +82,79 @@ class WifiRepositoryImpl(
 
     override fun getConnectedWifiSsidFlow(): Flow<String> {
         return callbackFlow {
-            suspend fun sendInfo(wifiInfo: WifiInfo?) {
-                val ssid = wifiInfo?.ssid?.takeIf { it != WifiManager.UNKNOWN_SSID }
-                    ?.removeSurrounding("\"").orEmpty()
-                send(ssid)
-            }
+                suspend fun sendInfo(wifiInfo: WifiInfo?) {
+                    val ssid =
+                        wifiInfo
+                            ?.ssid
+                            ?.takeIf { it != WifiManager.UNKNOWN_SSID }
+                            ?.removeSurrounding("\"")
+                            .orEmpty()
+                    send(ssid)
+                }
 
-            val callback = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
-                    override fun onCapabilitiesChanged(
-                        network: Network,
-                        capabilities: NetworkCapabilities,
-                    ) {
-                        launch {
-                            sendInfo(
-                                dataSource.getConnectionInfo()
-                                    ?: capabilities.transportInfo as? WifiInfo
-                            )
+                val callback =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        object : ConnectivityManager.NetworkCallback(FLAG_INCLUDE_LOCATION_INFO) {
+                            override fun onCapabilitiesChanged(
+                                network: Network,
+                                capabilities: NetworkCapabilities,
+                            ) {
+                                launch {
+                                    sendInfo(
+                                        dataSource.getConnectionInfo()
+                                            ?: capabilities.transportInfo as? WifiInfo
+                                    )
+                                }
+                            }
+
+                            override fun onLost(network: Network) {
+                                launch { sendInfo(null) }
+                            }
+                        }
+                    } else {
+                        object : ConnectivityManager.NetworkCallback() {
+                            override fun onCapabilitiesChanged(
+                                network: Network,
+                                capabilities: NetworkCapabilities,
+                            ) {
+                                launch {
+                                    sendInfo(
+                                        dataSource.getConnectionInfo()
+                                            ?: capabilities.transportInfo as? WifiInfo
+                                    )
+                                }
+                            }
+
+                            override fun onLost(network: Network) {
+                                launch { sendInfo(null) }
+                            }
                         }
                     }
 
-                    override fun onLost(network: Network) {
-                        launch { sendInfo(null) }
-                    }
-                }
-            } else {
-                object : ConnectivityManager.NetworkCallback() {
-                    override fun onCapabilitiesChanged(
-                        network: Network,
-                        capabilities: NetworkCapabilities,
-                    ) {
-                        launch {
-                            sendInfo(
-                                dataSource.getConnectionInfo()
-                                    ?: capabilities.transportInfo as? WifiInfo
-                            )
-                        }
-                    }
+                val request =
+                    NetworkRequest.Builder()
+                        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                        .build()
 
-                    override fun onLost(network: Network) {
-                        launch { sendInfo(null) }
-                    }
-                }
+                sendInfo(dataSource.getConnectionInfo())
+
+                connectivityManager?.registerNetworkCallback(request, callback)
+                awaitClose { connectivityManager?.unregisterNetworkCallback(callback) }
             }
-
-            val request =
-                NetworkRequest.Builder().addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                    .build()
-
-            sendInfo(dataSource.getConnectionInfo())
-
-            connectivityManager?.registerNetworkCallback(request, callback)
-            awaitClose { connectivityManager?.unregisterNetworkCallback(callback) }
-        }.flowOn(dispatcher).distinctUntilChanged()
+            .flowOn(dispatcher)
+            .distinctUntilChanged()
     }
 
     override fun getAllNetworks(): Flow<List<WifiNetwork>> =
-        wifiNetworkDao.getAllNetworks().map { entities -> entities.map { it.toDomain() } }
+        wifiNetworkDao
+            .getAllNetworks()
+            .map { entities -> entities.map { it.toDomain() } }
             .distinctUntilChanged()
 
     override fun getAllNetworks(query: String): Flow<List<WifiNetwork>> =
-        wifiNetworkDao.getAllNetworks(query).map { entities -> entities.map { it.toDomain() } }
+        wifiNetworkDao
+            .getAllNetworks(query)
+            .map { entities -> entities.map { it.toDomain() } }
             .distinctUntilChanged()
 
     override suspend fun getAllNetworksList(): List<WifiNetwork> {
@@ -169,7 +182,9 @@ class WifiRepositoryImpl(
     }
 
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean =
-        dispatcher { dataSource.addOrUpdateNetworkPrivileged(config) }
+        dispatcher {
+            dataSource.addOrUpdateNetworkPrivileged(config)
+        }
 
     override suspend fun forget(netId: Int): Boolean = dispatcher { dataSource.forget(netId) }
 

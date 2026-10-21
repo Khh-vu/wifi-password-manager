@@ -18,17 +18,20 @@ fun PlaintextPasswordsItem(
     value: Boolean,
     onValueChange: (Boolean) -> Unit,
 ) {
-    val overlineContent = @Composable {
-        Text(
-            text = stringResource(R.string.require_secure_screen),
-            color = ListItemDefaults.contentColor,
-        )
-    }
+    val overlineContent =
+        @Composable {
+            Text(
+                text = stringResource(R.string.require_secure_screen),
+                color = ListItemDefaults.contentColor,
+            )
+        }
     ListItem(
         enabled = enabled,
         onClick = { onValueChange(!value) },
         overlineContent = overlineContent.takeUnless { enabled },
-        supportingContent = { Text(text = stringResource(R.string.plaintext_passwords_description)) },
+        supportingContent = {
+            Text(text = stringResource(R.string.plaintext_passwords_description))
+        },
         trailingContent = {
             Switch(enabled = enabled, checked = value, onCheckedChange = onValueChange)
         },

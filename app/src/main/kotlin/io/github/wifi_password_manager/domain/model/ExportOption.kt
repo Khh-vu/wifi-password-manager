@@ -4,25 +4,31 @@ import androidx.annotation.StringRes
 import io.github.wifi_password_manager.R
 
 enum class ExportOption {
-    PLAIN, COMPRESSED;
+    PLAIN,
+    COMPRESSED;
 
     val titleResId: Int
-        @StringRes get() = when (this) {
-            PLAIN -> R.string.export_option_plain
-            COMPRESSED -> R.string.export_option_compressed
-        }
+        @StringRes
+        get() =
+            when (this) {
+                PLAIN -> R.string.export_option_plain
+                COMPRESSED -> R.string.export_option_compressed
+            }
 
     val descriptionResId: Int
-        @StringRes get() = when (this) {
-            PLAIN -> R.string.export_option_plain_description
-            COMPRESSED -> R.string.export_option_compressed_description
-        }
+        @StringRes
+        get() =
+            when (this) {
+                PLAIN -> R.string.export_option_plain_description
+                COMPRESSED -> R.string.export_option_compressed_description
+            }
 
     fun getFileExtension(password: String? = null): String {
-        val baseExtension = when (this) {
-            PLAIN -> "json"
-            COMPRESSED -> "json.gz"
-        }
+        val baseExtension =
+            when (this) {
+                PLAIN -> "json"
+                COMPRESSED -> "json.gz"
+            }
         return if (!password.isNullOrEmpty()) "$baseExtension.bin" else baseExtension
     }
 }

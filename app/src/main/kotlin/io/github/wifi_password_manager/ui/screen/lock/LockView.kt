@@ -47,9 +47,14 @@ fun LockView(onAuthenticated: () -> Unit) {
         when (result) {
             is AuthenticationResult.Error -> {
                 when (result.errorCode) {
-                    BiometricPrompt.ERROR_USER_CANCELED, BiometricPrompt.ERROR_NEGATIVE_BUTTON, BiometricPrompt.ERROR_TIMEOUT, BiometricPrompt.ERROR_CANCELED -> Unit
-                    BiometricPrompt.ERROR_LOCKOUT -> context.toast(R.string.app_lock_too_many_attempts)
-                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT -> context.toast(R.string.app_lock_permanently_locked)
+                    BiometricPrompt.ERROR_USER_CANCELED,
+                    BiometricPrompt.ERROR_NEGATIVE_BUTTON,
+                    BiometricPrompt.ERROR_TIMEOUT,
+                    BiometricPrompt.ERROR_CANCELED -> Unit
+                    BiometricPrompt.ERROR_LOCKOUT ->
+                        context.toast(R.string.app_lock_too_many_attempts)
+                    BiometricPrompt.ERROR_LOCKOUT_PERMANENT ->
+                        context.toast(R.string.app_lock_permanently_locked)
                     else -> context.toast(R.string.app_lock_authentication_failed)
                 }
             }
@@ -59,19 +64,18 @@ fun LockView(onAuthenticated: () -> Unit) {
         }
     }
     val startAuthentication by rememberUpdatedState {
-        val request = AuthenticationRequest.biometricRequest(
-            title = resources.getString(R.string.app_lock_required),
-            AuthenticationRequest.Biometric.Fallback.DeviceCredential,
-        ) {}
+        val request =
+            AuthenticationRequest.biometricRequest(
+                title = resources.getString(R.string.app_lock_required),
+                AuthenticationRequest.Biometric.Fallback.DeviceCredential,
+            ) {}
         launcher.launch(request)
     }
 
     LaunchedEffect(Unit) { startAuthentication() }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding(),
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         color = MaterialTheme.colorScheme.background,
     ) {
         Box(modifier = Modifier.padding(32.dp), contentAlignment = Alignment.Center) {

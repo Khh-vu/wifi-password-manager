@@ -10,12 +10,12 @@ import io.github.wifi_password_manager.ui.screen.methodinspector.MethodInspector
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.screen.note.NoteViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
+import kotlin.reflect.KClass
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.InjectedParam
 import org.koin.core.annotation.KoinViewModel
 import org.koin.core.annotation.Module
-import kotlin.reflect.KClass
 
 @Module
 @Configuration

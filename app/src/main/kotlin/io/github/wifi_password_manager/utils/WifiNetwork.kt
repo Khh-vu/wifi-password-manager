@@ -26,116 +26,132 @@ fun WifiNetwork.Companion.fromWifiConfiguration(config: WifiConfiguration): Wifi
         autojoin = network.allowAutojoin,
         private = !network.shared,
         meteredOverride = WifiNetwork.MeteredOverride.entries[network.meteredOverride],
-        macRandomizationSetting = WifiNetwork.Randomization.entries[network.macRandomizationSetting],
-        randomizedMacAddress = network.randomizedMacAddress.toString().takeIf {
-            it != "02:00:00:00:00:00"
-        },
+        macRandomizationSetting =
+            WifiNetwork.Randomization.entries[network.macRandomizationSetting],
+        randomizedMacAddress =
+            network.randomizedMacAddress.toString().takeIf { it != "02:00:00:00:00:00" },
     )
 }
 
 val WifiNetwork.Companion.MOCK
-    get() = List(20) {
-        val type = SecurityType.entries.random()
-        WifiNetwork(
-            networkId = it,
-            ssid = "ssid $it",
-            password = if (type !in setOf(SecurityType.OWE, SecurityType.OPEN)) {
-                "password $it"
-            } else {
-                ""
-            },
-            securityType = setOf(type),
-            hidden = Random.nextBoolean(),
-            autojoin = Random.nextBoolean(),
-            private = Random.nextBoolean(),
-            note = "Note $it".takeIf { Random.nextBoolean() },
-            existInSystem = it % 3 != 0,
-        )
-    }
+    get() =
+        List(20) {
+            val type = SecurityType.entries.random()
+            WifiNetwork(
+                networkId = it,
+                ssid = "ssid $it",
+                password =
+                    if (type !in setOf(SecurityType.OWE, SecurityType.OPEN)) {
+                        "password $it"
+                    } else {
+                        ""
+                    },
+                securityType = setOf(type),
+                hidden = Random.nextBoolean(),
+                autojoin = Random.nextBoolean(),
+                private = Random.nextBoolean(),
+                note = "Note $it".takeIf { Random.nextBoolean() },
+                existInSystem = it % 3 != 0,
+            )
+        }
 
-fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> =
-    groupBy { it.ssid }.values.map { duplicateNetworks ->
-        duplicateNetworks.first().copy(
-            securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
-            existInSystem = duplicateNetworks.any { it.existInSystem },
-        )
-    }.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid))
+fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> = groupBy {
+    it.ssid
+}
+    .values
+    .map { duplicateNetworks ->
+        duplicateNetworks
+            .first()
+            .copy(
+                securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
+                existInSystem = duplicateNetworks.any { it.existInSystem },
+            )
+    }
+    .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid))
 
 fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
     return securityType.map { type ->
-        val config = WifiConfigurationHidden().apply {
-            networkId = if (existInSystem) this@toWifiConfigurations.networkId else -1
-            SSID = "\"$ssid\""
-            when (type) {
-                SecurityType.OPEN -> {
-                    setSecurityParams(WifiConfiguration.SECURITY_TYPE_OPEN)
-                }
-
-                SecurityType.OWE -> {
-                    setSecurityParams(WifiConfiguration.SECURITY_TYPE_OWE)
-                }
-
-                SecurityType.WPA2 -> {
-                    setSecurityParams(WifiConfiguration.SECURITY_TYPE_PSK)
-                    preSharedKey = "\"$password\""
-                }
-
-                SecurityType.WPA3 -> {
-                    setSecurityParams(WifiConfiguration.SECURITY_TYPE_SAE)
-                    preSharedKey = "\"$password\""
-                }
-
-                SecurityType.WEP -> {
-                    setSecurityParams(WifiConfiguration.SECURITY_TYPE_WEP)
-                    // WEP-40, WEP-104, and WEP-256
-                    if ((password.length == 10 || password.length == 26 || password.length == 58) && password matches "[0-9A-Fa-f]*".toRegex()) {
-                        wepKeys[0] = password
-                    } else {
-                        wepKeys[0] = "\"$password\""
+        val config =
+            WifiConfigurationHidden().apply {
+                networkId = if (existInSystem) this@toWifiConfigurations.networkId else -1
+                SSID = "\"$ssid\""
+                when (type) {
+                    SecurityType.OPEN -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_OPEN)
                     }
-                    wepTxKeyIndex = 0
+
+                    SecurityType.OWE -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_OWE)
+                    }
+
+                    SecurityType.WPA2 -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_PSK)
+                        preSharedKey = "\"$password\""
+                    }
+
+                    SecurityType.WPA3 -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_SAE)
+                        preSharedKey = "\"$password\""
+                    }
+
+                    SecurityType.WEP -> {
+                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_WEP)
+                        // WEP-40, WEP-104, and WEP-256
+                        if (
+                            (password.length == 10 ||
+                                password.length == 26 ||
+                                password.length == 58) && password matches "[0-9A-Fa-f]*".toRegex()
+                        ) {
+                            wepKeys[0] = password
+                        } else {
+                            wepKeys[0] = "\"$password\""
+                        }
+                        wepTxKeyIndex = 0
+                    }
                 }
+                allowAutojoin = autojoin
+                hiddenSSID = hidden
+                shared = !private
+                meteredOverride = this@toWifiConfigurations.meteredOverride.ordinal
+                macRandomizationSetting =
+                    this@toWifiConfigurations.macRandomizationSetting.ordinal.let {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            it
+                        } else {
+                            it.coerceAtMost(1)
+                        }
+                    }
             }
-            allowAutojoin = autojoin
-            hiddenSSID = hidden
-            shared = !private
-            meteredOverride = this@toWifiConfigurations.meteredOverride.ordinal
-            macRandomizationSetting =
-                this@toWifiConfigurations.macRandomizationSetting.ordinal.let {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        it
-                    } else {
-                        it.coerceAtMost(1)
-                    }
-                }
-        }
         Refine.unsafeCast(config)
     }
 }
 
 fun WifiNetwork.getSecurity(context: Context): String =
-    securityType.sortedBy { it.ordinal }.joinToString("/") {
-        context.getString(
-            when (it) {
-                SecurityType.OPEN -> R.string.security_open
-                SecurityType.OWE -> R.string.security_owe
-                SecurityType.WPA2 -> R.string.security_wpa2
-                SecurityType.WPA3 -> R.string.security_wpa3
-                SecurityType.WEP -> R.string.security_wep
-            }
-        )
-    }
+    securityType
+        .sortedBy { it.ordinal }
+        .joinToString("/") {
+            context.getString(
+                when (it) {
+                    SecurityType.OPEN -> R.string.security_open
+                    SecurityType.OWE -> R.string.security_owe
+                    SecurityType.WPA2 -> R.string.security_wpa2
+                    SecurityType.WPA3 -> R.string.security_wpa3
+                    SecurityType.WEP -> R.string.security_wep
+                }
+            )
+        }
 
 fun WifiNetwork.passwordClipEntry(isSensitive: Boolean = true): ClipEntry {
     val clipData = ClipData.newPlainText(ssid, password)
     if (isSensitive) {
-        clipData.description.extras = PersistableBundle().apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
-            } else {
-                putBoolean("android.content.extra.IS_SENSITIVE", true)
+        clipData.description.extras =
+            PersistableBundle().apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+                } else {
+                    putBoolean("android.content.extra.IS_SENSITIVE", true)
+                }
             }
-        }
     }
     return clipData.toClipEntry()
 }

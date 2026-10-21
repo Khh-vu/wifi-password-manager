@@ -57,17 +57,19 @@ fun SearchBar(
 
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.secondaryContainer) {
         TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .height(TopAppBarDefaults.TopAppBarExpandedHeight)
-                .focusRequester(focusRequester),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .statusBarsPadding()
+                    .height(TopAppBarDefaults.TopAppBarExpandedHeight)
+                    .focusRequester(focusRequester),
             state = state,
             lineLimits = TextFieldLineLimits.SingleLine,
             placeholder = { Text(text = placeholder) },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search, keyboardType = KeyboardType.Text
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    imeAction = ImeAction.Search,
+                    keyboardType = KeyboardType.Text,
+                ),
             onKeyboardAction = { keyboardController?.hide() },
             leadingIcon = { BackButton(onClick = onBack) },
             trailingIcon = {
@@ -78,14 +80,15 @@ fun SearchBar(
                     positioning = TooltipAnchorPosition.Below,
                 )
             },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent,
-            ),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    errorIndicatorColor = Color.Transparent,
+                ),
         )
     }
 }

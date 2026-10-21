@@ -52,17 +52,19 @@ private const val REQUEST_CODE = 10001
 
 @Composable
 fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
-    val privilegedManager = if (LocalInspectionMode.current) {
-        null
-    } else {
-        koinInject<PrivilegedManager>()
-    }
+    val privilegedManager =
+        if (LocalInspectionMode.current) {
+            null
+        } else {
+            koinInject<PrivilegedManager>()
+        }
 
     val scope = rememberCoroutineScope()
     var showErrorDialog by retain { mutableStateOf(false) }
 
     val permissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { granted ->
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+            granted ->
             if (!granted) {
                 showErrorDialog = true
                 return@rememberLauncherForActivityResult
@@ -70,24 +72,26 @@ fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
             privilegedManager?.run { scope.launch { refresh() } }
         }
 
-    val shizukuPermissionListener = object : Shizuku.OnRequestPermissionResultListener {
-        override fun onRequestPermissionResult(requestCode: Int, grantResult: Int) {
-            if (requestCode != REQUEST_CODE) return
+    val shizukuPermissionListener =
+        object : Shizuku.OnRequestPermissionResultListener {
+            override fun onRequestPermissionResult(requestCode: Int, grantResult: Int) {
+                if (requestCode != REQUEST_CODE) return
 
-            Shizuku.removeRequestPermissionResultListener(this)
-            if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                privilegedManager?.run { scope.launch { refresh() } }
-            } else {
-                showErrorDialog = true
+                Shizuku.removeRequestPermissionResultListener(this)
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    privilegedManager?.run { scope.launch { refresh() } }
+                } else {
+                    showErrorDialog = true
+                }
             }
         }
-    }
 
     fun requestAccess() {
         scope.launch {
             val isRoot = runCatching {
                 withContext(Shell.EXECUTOR.asCoroutineDispatcher()) { Shell.getShell().isRoot }
-            }.getOrElse { false }
+            }
+                .getOrElse { false }
 
             if (isRoot) {
                 privilegedManager?.refresh()
@@ -108,9 +112,7 @@ fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
     }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding(),
+        modifier = Modifier.fillMaxSize().systemBarsPadding(),
         color = MaterialTheme.colorScheme.background,
     ) {
         LazyColumn(

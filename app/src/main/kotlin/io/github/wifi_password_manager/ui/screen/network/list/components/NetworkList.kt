@@ -57,11 +57,12 @@ fun NetworkList(
         else -> {
             LazyVerticalGrid(
                 modifier = modifier,
-                columns = if (deviceConfiguration == DeviceConfiguration.TABLET_PORTRAIT) {
-                    GridCells.Fixed(2)
-                } else {
-                    GridCells.Adaptive(400.dp)
-                },
+                columns =
+                    if (deviceConfiguration == DeviceConfiguration.TABLET_PORTRAIT) {
+                        GridCells.Fixed(2)
+                    } else {
+                        GridCells.Adaptive(400.dp)
+                    },
                 contentPadding = contentPadding + PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),

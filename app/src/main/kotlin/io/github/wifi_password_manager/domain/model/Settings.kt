@@ -26,48 +26,65 @@ data class Settings(
 ) {
     @Serializable
     enum class ThemeMode {
-        LIGHT, DARK, SYSTEM;
+        LIGHT,
+        DARK,
+        SYSTEM;
 
         val isDark: Boolean
-            @Composable @ReadOnlyComposable get() = when (this) {
-                LIGHT -> false
-                DARK -> true
-                SYSTEM -> isSystemInDarkTheme()
-            }
+            @Composable
+            @ReadOnlyComposable
+            get() =
+                when (this) {
+                    LIGHT -> false
+                    DARK -> true
+                    SYSTEM -> isSystemInDarkTheme()
+                }
 
         val resId: Int
-            @StringRes get() = when (this) {
-                LIGHT -> R.string.theme_mode_light
-                DARK -> R.string.theme_mode_dark
-                SYSTEM -> R.string.theme_mode_system
-            }
+            @StringRes
+            get() =
+                when (this) {
+                    LIGHT -> R.string.theme_mode_light
+                    DARK -> R.string.theme_mode_dark
+                    SYSTEM -> R.string.theme_mode_system
+                }
     }
 
     @Serializable
     enum class Language {
-        SYSTEM, ENGLISH, RUSSIAN, CHINESE_SIMPLIFIED, JAPANESE, TURKISH, ARABIC;
+        SYSTEM,
+        ENGLISH,
+        RUSSIAN,
+        CHINESE_SIMPLIFIED,
+        JAPANESE,
+        TURKISH,
+        ARABIC;
 
         val code: String
-            get() = when (this) {
-                SYSTEM -> ""
-                ENGLISH -> "en"
-                RUSSIAN -> "ru"
-                CHINESE_SIMPLIFIED -> "zh-CN"
-                JAPANESE -> "ja"
-                TURKISH -> "tr"
-                ARABIC -> "ar"
-            }
+            get() =
+                when (this) {
+                    SYSTEM -> ""
+                    ENGLISH -> "en"
+                    RUSSIAN -> "ru"
+                    CHINESE_SIMPLIFIED -> "zh-CN"
+                    JAPANESE -> "ja"
+                    TURKISH -> "tr"
+                    ARABIC -> "ar"
+                }
 
         val displayName: String
-            @Composable @ReadOnlyComposable get() = when (this) {
-                SYSTEM -> stringResource(R.string.language_system_default)
-                ENGLISH -> "English"
-                RUSSIAN -> "Русский"
-                CHINESE_SIMPLIFIED -> "中文 (简体)"
-                JAPANESE -> "日本語"
-                TURKISH -> "Türkçe"
-                ARABIC -> "العربية"
-            }
+            @Composable
+            @ReadOnlyComposable
+            get() =
+                when (this) {
+                    SYSTEM -> stringResource(R.string.language_system_default)
+                    ENGLISH -> "English"
+                    RUSSIAN -> "Русский"
+                    CHINESE_SIMPLIFIED -> "中文 (简体)"
+                    JAPANESE -> "日本語"
+                    TURKISH -> "Türkçe"
+                    ARABIC -> "العربية"
+                }
     }
 }
 

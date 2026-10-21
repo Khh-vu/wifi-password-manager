@@ -11,15 +11,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
 class PrivilegedManager(private val context: Context) {
-    val mode: StateFlow<PrivilegedMode> field = MutableStateFlow(PrivilegedMode.NONE)
+    val mode: StateFlow<PrivilegedMode>
+        field = MutableStateFlow(PrivilegedMode.NONE)
 
-    val currentMode: PrivilegedMode get() = mode.value
+    val currentMode: PrivilegedMode
+        get() = mode.value
 
     suspend fun refresh() = mode.update { detectPrivilegedMode() }
 
-    private suspend fun detectPrivilegedMode(): PrivilegedMode = when {
-        withContext(Shell.EXECUTOR.asCoroutineDispatcher()) { Shell.getShell().isRoot } -> PrivilegedMode.ROOT
-        context.hasShizukuPermission -> PrivilegedMode.SHIZUKU
-        else -> PrivilegedMode.NONE
-    }
+    private suspend fun detectPrivilegedMode(): PrivilegedMode =
+        when {
+            withContext(Shell.EXECUTOR.asCoroutineDispatcher()) { Shell.getShell().isRoot } ->
+                PrivilegedMode.ROOT
+            context.hasShizukuPermission -> PrivilegedMode.SHIZUKU
+            else -> PrivilegedMode.NONE
+        }
 }
