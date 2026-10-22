@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.skydoves.compose.stability.runtime.ComposeStabilityAnalyzer
 import com.topjohnwu.superuser.Shell
 import io.github.wifi_password_manager.domain.repository.SettingRepository
+import io.github.wifi_password_manager.utils.setAppTheme
 import io.github.wifi_password_manager.workers.PersistEphemeralNetworksWorker
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -38,6 +39,7 @@ class App : Application() {
         }
 
         ComposeStabilityAnalyzer.setEnabled(BuildConfig.DEBUG)
+        setAppTheme()
         observeAutoPersistEphemeralNetworks()
     }
 
@@ -46,6 +48,13 @@ class App : Application() {
 
         ShizukuProvider.enableMultiProcessSupport(true)
         HiddenApiBypass.addHiddenApiExemptions("")
+    }
+
+    private fun setAppTheme() {
+        ProcessLifecycleOwner.get().lifecycleScope.launch {
+            val themeMode = settingRepository.getCurrentSettings().themeMode
+            setAppTheme(themeMode)
+        }
     }
 
     private fun observeAutoPersistEphemeralNetworks() {

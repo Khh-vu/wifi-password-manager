@@ -109,6 +109,8 @@ class SettingViewModel(
 
     sealed interface Event {
         data class ShowMessage(val message: UiText) : Event
+
+        data class UpdateThemeMode(val themeMode: Settings.ThemeMode) : Event
     }
 
     private val _isLoading = MutableStateFlow(false)
@@ -147,7 +149,7 @@ class SettingViewModel(
         Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.UpdateLanguage -> updateSettings { it.copy(language = action.language) }
-            is Action.UpdateThemeMode -> updateSettings { it.copy(themeMode = action.themeMode) }
+            is Action.UpdateThemeMode -> onUpdateThemeMode(action.themeMode)
             is Action.ToggleMaterialYou -> updateSettings { it.copy(useMaterialYou = action.value) }
             is Action.TogglePureBlackTheme ->
                 updateSettings { it.copy(pureBlackTheme = action.value) }
@@ -180,6 +182,11 @@ class SettingViewModel(
 
     private fun updateSettings(block: (Settings) -> Settings) {
         viewModelScope.launch { settingRepository.updateSettings(block) }
+    }
+
+    private fun onUpdateThemeMode(themeMode: Settings.ThemeMode) {
+        updateSettings { it.copy(themeMode = themeMode) }
+        viewModelScope.launch { _event.send(Event.UpdateThemeMode(themeMode)) }
     }
 
     private fun onShowExportDialog() {
