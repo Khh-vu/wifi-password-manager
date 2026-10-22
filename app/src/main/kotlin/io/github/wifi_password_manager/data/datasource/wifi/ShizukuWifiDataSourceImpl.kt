@@ -157,7 +157,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
             listener.onFailure(0)
             return
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             wifiManager.connect(
                 config,
                 netId,

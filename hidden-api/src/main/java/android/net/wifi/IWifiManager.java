@@ -32,15 +32,15 @@ public interface IWifiManager extends IInterface {
 
     boolean disconnect(String packageName);
 
-    //Android 14+
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    //Android 15+
+    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     void connect(WifiConfiguration config, int netId, IActionListener listener, String packageName, Bundle extras);
 
-    //Android 13
+    //Android 13+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     void connect(WifiConfiguration config, int netId, IActionListener listener, String packageName);
 
-    //Android 12 & 12L
+    //Android 12+
     @RequiresApi(Build.VERSION_CODES.S)
     void connect(WifiConfiguration config, int netId, IActionListener listener);
 

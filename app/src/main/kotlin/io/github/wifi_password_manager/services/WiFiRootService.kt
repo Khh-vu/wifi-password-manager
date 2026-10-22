@@ -133,7 +133,7 @@ class WiFiRootService : RootService() {
         }
 
         override fun connect(config: WifiNetworkParcel?, netId: Int, listener: IActionListener) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 wifiManager.connect(
                     config?.toWifiConfiguration(),
                     netId,
