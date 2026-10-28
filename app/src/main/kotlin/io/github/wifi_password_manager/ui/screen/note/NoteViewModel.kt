@@ -39,7 +39,6 @@ class NoteViewModel(private val wifiRepository: WifiRepository, private val netw
     val event = _event.receiveAsFlow()
 
     fun onAction(action: Action) {
-        Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.UpdateNote -> state.update { action.note }
             is Action.SaveOrDeleteNote -> onSaveOrDeleteNote()

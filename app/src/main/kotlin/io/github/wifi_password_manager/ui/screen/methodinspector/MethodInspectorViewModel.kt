@@ -115,7 +115,6 @@ class MethodInspectorViewModel<T : Any>(
     val event = _event.receiveAsFlow()
 
     fun onAction(action: Action) {
-        Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.ExportMethods -> onExportMethods()
             is Action.ToggleSearch -> onToggleSearch()

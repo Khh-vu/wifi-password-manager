@@ -165,7 +165,6 @@ class NetworkListViewModel(
     val event = _event.receiveAsFlow()
 
     fun onAction(action: Action) {
-        Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.Refresh -> onRefresh()
             is Action.ToggleSearch -> {

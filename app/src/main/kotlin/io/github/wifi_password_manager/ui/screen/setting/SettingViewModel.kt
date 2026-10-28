@@ -146,13 +146,13 @@ class SettingViewModel(
     @Volatile private var pendingImportFiles: List<PlatformFile> = emptyList()
 
     fun onAction(action: Action) {
-        Log.d(TAG, "onAction: $action")
         when (action) {
             is Action.UpdateLanguage -> updateSettings { it.copy(language = action.language) }
             is Action.UpdateThemeMode -> onUpdateThemeMode(action.themeMode)
             is Action.ToggleMaterialYou -> updateSettings { it.copy(useMaterialYou = action.value) }
             is Action.TogglePureBlackTheme ->
                 updateSettings { it.copy(pureBlackTheme = action.value) }
+
             is Action.ToggleAppLock -> updateSettings { it.copy(appLockEnabled = action.value) }
             is Action.ToggleSecureScreen ->
                 updateSettings {
@@ -161,13 +161,16 @@ class SettingViewModel(
 
             is Action.TogglePlaintextPasswords ->
                 updateSettings { it.copy(plaintextPasswords = action.value) }
+
             is Action.ToggleAutoPersistEphemeralNetworks ->
                 updateSettings { it.copy(autoPersistEphemeralNetworks = action.value) }
 
             is Action.ToggleAllowCacheMode ->
                 updateSettings { it.copy(allowCacheMode = action.value) }
+
             is Action.ToggleAllowInsecureReceiver ->
                 updateSettings { it.copy(allowInsecureReceiver = action.value) }
+
             is Action.ImportNetworks -> onImportNetworks()
             is Action.HideImportPasswordDialog -> onHideImportPasswordDialog()
             is Action.ConfirmImportWithPassword -> onConfirmImportWithPassword(action.password)
@@ -218,6 +221,7 @@ class SettingViewModel(
                             when (option) {
                                 ExportOption.PLAIN ->
                                     fileRepository.networksToJson(networks).toByteArray()
+
                                 ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
                             }
                         file.write(
