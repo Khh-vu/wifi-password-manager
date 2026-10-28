@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             privilegedManager.refresh()
             viewModel.isAuthenticated.collect {
                 keepSplashScreenOn = false
-                cancel()
+                this@launch.cancel()
             }
         }
     }
