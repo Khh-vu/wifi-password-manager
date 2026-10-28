@@ -43,12 +43,12 @@ class MainViewModel(
         Shizuku.addBinderReceivedListenerSticky(shizukuBinderReceivedListener)
         Shizuku.addBinderDeadListener(shizukuBinderDeadListener)
         viewModelScope.launch {
-            val settings = settingRepository.settings.value
+            val settings = settingRepository.getCurrentSettings()
             if (settings.appLockEnabled && !isBiometricSupported) {
                 settingRepository.updateSettings { it.copy(appLockEnabled = false) }
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.app_lock_disabled)))
             }
-            isAuthenticated.update { !settingRepository.settings.value.appLockEnabled }
+            isAuthenticated.update { !settingRepository.getCurrentSettings().appLockEnabled }
         }
     }
 
