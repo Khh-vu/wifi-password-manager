@@ -1,6 +1,5 @@
 package io.github.wifi_password_manager.data.datasource.wifi
 
-import android.net.wifi.IActionListener
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
 import io.github.wifi_password_manager.data.local.dao.WifiNetworkDao
@@ -13,8 +12,8 @@ class CachedWifiDataSourceImpl(private val wifiNetworkDao: WifiNetworkDao) : Wif
         return networks.flatMap { it.toWifiConfigurations() }
     }
 
-    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
-        return false
+    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int {
+        return -1
     }
 
     override suspend fun forget(netId: Int): Boolean {
@@ -31,11 +30,7 @@ class CachedWifiDataSourceImpl(private val wifiNetworkDao: WifiNetworkDao) : Wif
         return false
     }
 
-    override suspend fun connect(
-        config: WifiConfiguration?,
-        netId: Int,
-        listener: IActionListener,
-    ) {
-        listener.onFailure(0)
+    override suspend fun connect(config: WifiConfiguration?, netId: Int): Boolean {
+        return false
     }
 }

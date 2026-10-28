@@ -22,7 +22,6 @@ import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
-import io.github.wifi_password_manager.utils.awaitAction
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.toWifiConfigurations
 import kotlinx.coroutines.CoroutineDispatcher
@@ -86,8 +85,8 @@ class WifiRepositoryImpl(
                     val ssid =
                         wifiInfo
                             ?.ssid
-                            ?.takeIf { it != WifiManager.UNKNOWN_SSID }
                             ?.removeSurrounding("\"")
+                            ?.takeIf { it != WifiManager.UNKNOWN_SSID }
                             .orEmpty()
                     send(ssid)
                 }
@@ -183,7 +182,7 @@ class WifiRepositoryImpl(
 
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean =
         dispatcher {
-            dataSource.addOrUpdateNetworkPrivileged(config)
+            dataSource.addOrUpdateNetworkPrivileged(config) != -1
         }
 
     override suspend fun forget(netId: Int): Boolean = dispatcher { dataSource.forget(netId) }
@@ -212,18 +211,12 @@ class WifiRepositoryImpl(
 
         if (netIds.isNotEmpty()) {
             for (netId in netIds) {
-                val result = awaitAction { listener ->
-                    dataSource.connect(netId = netId, listener = listener)
-                }
-                if (result) return@dispatcher
+                if (dataSource.connect(netId = netId)) return@dispatcher
             }
         }
 
         for (config in network.copy(existInSystem = false).toWifiConfigurations()) {
-            val result = awaitAction { listener ->
-                dataSource.connect(config = config, listener = listener)
-            }
-            if (result) return@dispatcher
+            if (dataSource.connect(config = config)) return@dispatcher
         }
     }
 }

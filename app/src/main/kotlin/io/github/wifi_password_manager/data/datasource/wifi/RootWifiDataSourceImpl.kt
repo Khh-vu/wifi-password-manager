@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.wifi.IActionListener
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
 import android.os.IBinder
@@ -84,11 +83,11 @@ class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
         return service.privilegedConfiguredNetworks.orEmpty().map { it.toWifiConfiguration() }
     }
 
-    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
+    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int {
         val service = getService()
         if (service == null) {
             Log.w(TAG, "Root service not available, cannot add/update network")
-            return false
+            return -1
         }
         val parcel = WifiNetworkParcel.fromWifiConfiguration(config)
         return service.addOrUpdateNetworkPrivileged(parcel)
@@ -130,21 +129,18 @@ class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
         return service.disconnect()
     }
 
-    override suspend fun connect(
-        config: WifiConfiguration?,
-        netId: Int,
-        listener: IActionListener,
-    ) {
+    override suspend fun connect(config: WifiConfiguration?, netId: Int): Boolean {
         val service = getService()
         if (service == null) {
             Log.w(TAG, "Root service not available, cannot connect to network")
-            listener.onFailure(0)
-            return
+            return false
         }
-        return service.connect(
-            config?.let(WifiNetworkParcel::fromWifiConfiguration),
-            netId,
-            listener,
-        )
+        return awaitAction { listener ->
+            service.connect(
+                config?.let(WifiNetworkParcel::fromWifiConfiguration),
+                netId,
+                listener,
+            )
+        }
     }
 }

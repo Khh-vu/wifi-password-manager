@@ -3,7 +3,6 @@ package io.github.wifi_password_manager.data.datasource.wifi
 import android.content.AttributionSource
 import android.content.AttributionSourceHidden
 import android.content.Context
-import android.net.wifi.IActionListener
 import android.net.wifi.IWifiManager
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiConfigurationHidden
@@ -84,17 +83,17 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         )
     }
 
-    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean {
+    override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, cannot add/update network")
-            return false
+            return -1
         }
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val result = wifiManager.addOrUpdateNetworkPrivileged(config, user)
-            result?.statusCode == WifiManager.AddNetworkResult.STATUS_SUCCESS
+            result?.networkId ?: -1
         } else {
-            wifiManager.addOrUpdateNetwork(config, user) != -1
+            wifiManager.addOrUpdateNetwork(config, user)
         }
     }
 
@@ -147,38 +146,40 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
         return wifiManager.disconnect(callingPackage)
     }
 
-    override suspend fun connect(
-        config: WifiConfiguration?,
-        netId: Int,
-        listener: IActionListener,
-    ) {
+    override suspend fun connect(config: WifiConfiguration?, netId: Int): Boolean {
         if (!context.hasShizukuPermission) {
             Log.w(TAG, "Shizuku permission not available, cannot connect to network")
-            listener.onFailure(0)
-            return
+            return false
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            wifiManager.connect(
-                config,
-                netId,
-                listener,
-                callingPackage,
-                Bundle().apply {
-                    putParcelable("EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE", attributionSource)
-                },
-            )
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            wifiManager.connect(config, netId, listener, callingPackage)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            wifiManager.connect(config, netId, listener)
-        } else {
-            wifiManager.connect(
-                config,
-                netId,
-                Binder(),
-                listener,
-                listener.hashCode(),
-            )
+        return awaitAction { listener ->
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM -> {
+                    wifiManager.connect(
+                        config,
+                        netId,
+                        listener,
+                        callingPackage,
+                        Bundle().apply {
+                            putParcelable(
+                                "EXTRA_PARAM_KEY_ATTRIBUTION_SOURCE",
+                                attributionSource,
+                            )
+                        },
+                    )
+                }
+
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                    wifiManager.connect(config, netId, listener, callingPackage)
+                }
+
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    wifiManager.connect(config, netId, listener)
+                }
+
+                else -> {
+                    wifiManager.connect(config, netId, Binder(), listener, listener.hashCode())
+                }
+            }
         }
     }
 }

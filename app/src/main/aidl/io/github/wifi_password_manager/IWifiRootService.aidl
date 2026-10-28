@@ -7,7 +7,9 @@ import io.github.wifi_password_manager.ipc.WifiInfoParcel;
 interface IWifiRootService {
     List<WifiNetworkParcel> getPrivilegedConfiguredNetworks();
 
-    boolean addOrUpdateNetworkPrivileged(in WifiNetworkParcel config);
+    int addOrUpdateNetworkPrivileged(in WifiNetworkParcel config);
+
+    boolean removeNetwork(int netId);
 
     oneway void forget(int netId, in IActionListener listener);
 

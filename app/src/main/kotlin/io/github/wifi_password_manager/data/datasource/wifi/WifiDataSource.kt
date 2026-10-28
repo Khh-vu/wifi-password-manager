@@ -1,13 +1,12 @@
 package io.github.wifi_password_manager.data.datasource.wifi
 
-import android.net.wifi.IActionListener
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
 
 interface WifiDataSource {
     suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration>
 
-    suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean
+    suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int
 
     suspend fun forget(netId: Int): Boolean
 
@@ -17,9 +16,5 @@ interface WifiDataSource {
 
     suspend fun disconnect(): Boolean
 
-    suspend fun connect(
-        config: WifiConfiguration? = null,
-        netId: Int = -1,
-        listener: IActionListener,
-    )
+    suspend fun connect(config: WifiConfiguration? = null, netId: Int = -1): Boolean
 }
