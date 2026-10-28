@@ -60,4 +60,6 @@ class MainViewModel(
     fun onAuthenticated() = isAuthenticated.update { true }
 
     fun onSkipPrivilegedCheck() = skipPrivilegedCheck.update { true }
+
+    suspend fun refreshPrivilegedMode() = privilegedManager.refresh()
 }

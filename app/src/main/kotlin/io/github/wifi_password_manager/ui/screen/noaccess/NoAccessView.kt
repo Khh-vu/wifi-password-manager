@@ -28,7 +28,6 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -37,28 +36,23 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.topjohnwu.superuser.Shell
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.ui.icons.Lock
 import io.github.wifi_password_manager.ui.screen.noaccess.components.ShizukuErrorDialog
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.koin.compose.koinInject
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuProvider
 
 private const val REQUEST_CODE = 10001
 
 @Composable
-fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
-    val privilegedManager =
-        if (LocalInspectionMode.current) {
-            null
-        } else {
-            koinInject<PrivilegedManager>()
-        }
-
+fun NoAccessView(
+    allowSkip: Boolean,
+    onSkip: () -> Unit,
+    onGranted: () -> Unit,
+) {
     val scope = rememberCoroutineScope()
     var showErrorDialog by retain { mutableStateOf(false) }
 
@@ -69,7 +63,7 @@ fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
                 showErrorDialog = true
                 return@rememberLauncherForActivityResult
             }
-            privilegedManager?.run { scope.launch { refresh() } }
+            onGranted()
         }
 
     val shizukuPermissionListener =
@@ -79,7 +73,7 @@ fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
 
                 Shizuku.removeRequestPermissionResultListener(this)
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    privilegedManager?.run { scope.launch { refresh() } }
+                    onGranted()
                 } else {
                     showErrorDialog = true
                 }
@@ -94,7 +88,7 @@ fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
                 .getOrElse { false }
 
             if (isRoot) {
-                privilegedManager?.refresh()
+                onGranted()
                 return@launch
             }
 
@@ -172,12 +166,20 @@ fun NoAccessView(allowSkip: Boolean, onSkip: () -> Unit) {
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun NoAccessViewPreview() {
-    NoAccessView(allowSkip = false, onSkip = {})
+    NoAccessView(
+        allowSkip = false,
+        onSkip = {},
+        onGranted = {},
+    )
 }
 
 @PreviewScreenSizes
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun AdaptiveNoAccessViewPreview() {
-    NoAccessView(allowSkip = false, onSkip = {})
+    NoAccessView(
+        allowSkip = false,
+        onSkip = {},
+        onGranted = {},
+    )
 }
