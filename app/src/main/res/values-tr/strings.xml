@@ -99,6 +99,14 @@
     <string name="app_lock_description">Uygulamayı açmak için ekran kilidi gereklidir</string>
     <string name="app_lock_disable_title">Uygulama Kilidini devre dışı bırakmak için kimlik doğrulaması yapın</string>
     <string name="app_lock_enable_title">Uygulama Kilidini etkinleştirmek için kimlik doğrulaması yapın</string>
+    <string name="lock_timeout_title">Kilit Zaman Aşımı</string>
+    <string name="lock_timeout_description">Kilitlenmeden önce arka planda geçen süre</string>
+    <string name="lock_timeout_immediately">Hemen</string>
+    <string name="lock_timeout_never">Asla</string>
+    <string name="lock_timeout_value">Süre</string>
+    <string name="lock_timeout_unit_seconds">Saniye</string>
+    <string name="lock_timeout_unit_minutes">Dakika</string>
+    <string name="lock_timeout_custom">Özel</string>
     <string name="secure_screen_title">Güvenli Ekran</string>
     <string name="secure_screen_description">Ekran görüntüsü alımını engelleyin ve güvenli olmayan ekranlarda görüntülenmesini önleyin</string>
     <string name="lock_screen_required_title">Kilit Ekranı Gerekli</string>

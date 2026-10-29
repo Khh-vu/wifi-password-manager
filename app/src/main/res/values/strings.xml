@@ -100,6 +100,14 @@
     <string name="app_lock_description">Require screen lock to open the app</string>
     <string name="app_lock_disable_title">Authenticate to disable App Lock</string>
     <string name="app_lock_enable_title">Authenticate to enable App Lock</string>
+    <string name="lock_timeout_title">Lock Timeout</string>
+    <string name="lock_timeout_description">Time in background before the app locks</string>
+    <string name="lock_timeout_immediately">Immediately</string>
+    <string name="lock_timeout_never">Never</string>
+    <string name="lock_timeout_value">Duration</string>
+    <string name="lock_timeout_unit_seconds">Seconds</string>
+    <string name="lock_timeout_unit_minutes">Minutes</string>
+    <string name="lock_timeout_custom">Custom</string>
     <string name="secure_screen_title">Secure Screen</string>
     <string name="secure_screen_description">Block screenshots and prevent display on insecure screens</string>
     <string name="lock_screen_required_title">Lock Screen Required</string>

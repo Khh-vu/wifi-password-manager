@@ -53,6 +53,7 @@ import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeIte
 import io.github.wifi_password_manager.ui.shared.BackButton
 import io.github.wifi_password_manager.ui.shared.LoadingDialog
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
+import io.github.wifi_password_manager.utils.label
 import io.github.wifi_password_manager.utils.plus
 
 @Composable
@@ -209,6 +210,28 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         appLockEnabled = settings.appLockEnabled,
                         onToggleAppLock = { onAction(SettingViewModel.Action.ToggleAppLock(it)) },
                     )
+
+                    AnimatedVisibility(
+                        visible = settings.appLockEnabled,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically(),
+                    ) {
+                        Column {
+                            HorizontalDivider(color = MaterialTheme.colorScheme.background)
+
+                            ListItem(
+                                onClick = { navBackStack.add(Route.LockTimeoutScreen) },
+                                supportingContent = {
+                                    Text(text = stringResource(R.string.lock_timeout_description))
+                                },
+                                trailingContent = { Text(text = settings.lockTimeout.label) },
+                                shapes = UiConfig.listItemShapes(),
+                                colors = UiConfig.listItemColors(),
+                            ) {
+                                Text(text = stringResource(R.string.lock_timeout_title))
+                            }
+                        }
+                    }
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.background)
 

@@ -98,6 +98,14 @@
     <string name="app_lock_description">打开应用需要屏幕锁定</string>
     <string name="app_lock_disable_title">验证身份以禁用应用锁定</string>
     <string name="app_lock_enable_title">验证身份以启用应用锁定</string>
+    <string name="lock_timeout_title">锁定超时</string>
+    <string name="lock_timeout_description">应用在后台多久后锁定</string>
+    <string name="lock_timeout_immediately">立即</string>
+    <string name="lock_timeout_never">从不</string>
+    <string name="lock_timeout_value">时长</string>
+    <string name="lock_timeout_unit_seconds">秒</string>
+    <string name="lock_timeout_unit_minutes">分钟</string>
+    <string name="lock_timeout_custom">自定义</string>
     <string name="secure_screen_title">安全屏幕</string>
     <string name="secure_screen_description">屏蔽截图并防止在不安全的屏幕上显示</string>
     <string name="lock_screen_required_title">需要屏幕锁定</string>

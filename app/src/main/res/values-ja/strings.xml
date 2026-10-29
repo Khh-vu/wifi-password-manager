@@ -98,6 +98,14 @@
     <string name="app_lock_description">アプリを開く際に画面ロックを要求する</string>
     <string name="app_lock_disable_title">アプリロックを無効にするために認証する</string>
     <string name="app_lock_enable_title">アプリロックを有効にするために認証する</string>
+    <string name="lock_timeout_title">ロックまでの時間</string>
+    <string name="lock_timeout_description">バックグラウンドからロックされるまでの時間</string>
+    <string name="lock_timeout_immediately">すぐに</string>
+    <string name="lock_timeout_never">なし</string>
+    <string name="lock_timeout_value">時間</string>
+    <string name="lock_timeout_unit_seconds">秒</string>
+    <string name="lock_timeout_unit_minutes">分</string>
+    <string name="lock_timeout_custom">カスタム</string>
     <string name="secure_screen_title">セキュア画面</string>
     <string name="secure_screen_description">スクリーンショットをブロックし、安全でない画面への表示を防ぐ</string>
     <string name="lock_screen_required_title">画面ロックが必要</string>

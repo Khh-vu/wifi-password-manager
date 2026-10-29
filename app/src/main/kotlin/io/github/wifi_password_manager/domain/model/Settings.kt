@@ -8,6 +8,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.res.stringResource
 import io.github.wifi_password_manager.R
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.Serializable
 
 @Immutable
@@ -18,6 +20,7 @@ data class Settings(
     val useMaterialYou: Boolean = true,
     val autoPersistEphemeralNetworks: Boolean = false,
     val appLockEnabled: Boolean = false,
+    val lockTimeout: Duration = 30.seconds,
     val secureScreenEnabled: Boolean = false,
     val allowCacheMode: Boolean = false,
     val allowInsecureReceiver: Boolean = false,

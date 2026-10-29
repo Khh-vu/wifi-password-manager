@@ -49,6 +49,7 @@ private const val REQUEST_CODE = 10001
 
 @Composable
 fun NoAccessView(
+    modifier: Modifier = Modifier,
     allowSkip: Boolean,
     onSkip: () -> Unit,
     onGranted: () -> Unit,
@@ -106,7 +107,7 @@ fun NoAccessView(
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = modifier.fillMaxSize().systemBarsPadding(),
         color = MaterialTheme.colorScheme.background,
     ) {
         LazyColumn(

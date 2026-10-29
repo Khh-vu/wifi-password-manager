@@ -101,6 +101,14 @@
     <string name="app_lock_description">Запрашивать блокировку экрана при входе</string>
     <string name="app_lock_disable_title">Подтвердите личность для отключения блокировки</string>
     <string name="app_lock_enable_title">Подтвердите личность для включения блокировки</string>
+    <string name="lock_timeout_title">Тайм-аут блокировки</string>
+    <string name="lock_timeout_description">Время в фоне до блокировки приложения</string>
+    <string name="lock_timeout_immediately">Сразу</string>
+    <string name="lock_timeout_never">Никогда</string>
+    <string name="lock_timeout_value">Длительность</string>
+    <string name="lock_timeout_unit_seconds">Секунды</string>
+    <string name="lock_timeout_unit_minutes">Минуты</string>
+    <string name="lock_timeout_custom">Другое</string>
     <string name="secure_screen_title">Защита экрана</string>
     <string name="secure_screen_description">Блокировать скриншоты и скрывать содержимое на небезопасных экранах</string>
     <string name="lock_screen_required_title">Требуется блокировка экрана</string>

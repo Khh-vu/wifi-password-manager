@@ -7,7 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.core.os.LocaleListCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
@@ -20,7 +23,9 @@ import io.github.vinceglb.filekit.dialogs.init
 import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.repository.SettingRepository
+import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.NavigationRoot
+import io.github.wifi_password_manager.navigation.rememberAppBackStack
 import io.github.wifi_password_manager.ui.screen.lock.LockView
 import io.github.wifi_password_manager.ui.screen.noaccess.NoAccessView
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
@@ -54,27 +59,31 @@ class MainActivity : AppCompatActivity() {
         setContent {
             val settings by settingRepository.settings.collectAsStateWithLifecycle()
             val privilegedMode by viewModel.privilegedMode.collectAsStateWithLifecycle()
-            val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
+            val isAuthenticated by viewModel.isAuthenticated.collectAsState()
             val skipPrivilegedCheck by viewModel.skipPrivilegedCheck.collectAsStateWithLifecycle()
+            val backStack = rememberAppBackStack()
 
-            CompositionLocalProvider(LocalSettings provides settings) {
+            CompositionLocalProvider(
+                LocalSettings provides settings,
+                LocalNavBackStack provides backStack,
+            ) {
                 WiFiPasswordManagerTheme(
                     darkTheme = settings.themeMode.isDark,
                     dynamicColor = settings.useMaterialYou,
                     pureBlackTheme = settings.pureBlackTheme,
                 ) {
-                    when {
-                        settings.appLockEnabled && !isAuthenticated -> {
-                            LockView(viewModel::onAuthenticated)
-                        }
+                    val isLocked = settings.appLockEnabled && !isAuthenticated
+                    val modifier = if (isLocked) Modifier.clearAndSetSemantics {} else Modifier
 
+                    when {
                         privilegedMode.hasPrivilegedAccess ||
                             (privilegedMode == PrivilegedMode.NONE && skipPrivilegedCheck) -> {
-                            NavigationRoot()
+                            NavigationRoot(modifier = modifier)
                         }
 
                         else -> {
                             NoAccessView(
+                                modifier = modifier,
                                 allowSkip = settings.allowCacheMode,
                                 onSkip = viewModel::onSkipPrivilegedCheck,
                                 onGranted = {
@@ -85,9 +94,21 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
+
+                    if (isLocked) LockView(viewModel::onAuthenticated)
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.onStarted()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!isChangingConfigurations) viewModel.onStopped()
     }
 
     private fun setupSplashScreen() {

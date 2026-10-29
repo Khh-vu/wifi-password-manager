@@ -6,6 +6,7 @@ import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
+import io.github.wifi_password_manager.ui.screen.locktimeout.LockTimeoutViewModel
 import io.github.wifi_password_manager.ui.screen.methodinspector.MethodInspectorViewModel
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.screen.note.NoteViewModel
@@ -42,6 +43,10 @@ class ViewModelModule {
         fileRepository: FileRepository,
         privilegedManager: PrivilegedManager,
     ) = SettingViewModel(settingRepository, wifiRepository, fileRepository, privilegedManager)
+
+    @KoinViewModel
+    fun lockTimeoutViewModel(settingRepository: SettingRepository) =
+        LockTimeoutViewModel(settingRepository)
 
     @KoinViewModel
     fun <T : Any> methodInspectorViewModel(@InjectedParam forClass: KClass<T>, json: Json) =

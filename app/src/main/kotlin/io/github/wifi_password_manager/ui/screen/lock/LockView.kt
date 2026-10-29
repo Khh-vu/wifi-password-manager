@@ -75,10 +75,13 @@ fun LockView(onAuthenticated: () -> Unit) {
     LaunchedEffect(Unit) { startAuthentication() }
 
     Surface(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        Box(modifier = Modifier.padding(32.dp), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier.systemBarsPadding().padding(32.dp),
+            contentAlignment = Alignment.Center,
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,

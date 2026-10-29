@@ -10,6 +10,8 @@ sealed interface Route : NavKey {
 
     @Serializable data object SettingScreen : Route, NavKey
 
+    @Serializable data object LockTimeoutScreen : Route, NavKey
+
     @Serializable data object LicenseScreen : Route, NavKey
 
     @Serializable data class NoteScreen(val network: WifiNetwork) : Route, NavKey

@@ -1,10 +1,12 @@
 package io.github.wifi_password_manager
 
+import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.UiText
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,6 +29,9 @@ class MainViewModel(
     val skipPrivilegedCheck: StateFlow<Boolean>
         field = MutableStateFlow(false)
     val privilegedMode = privilegedManager.mode
+
+    private var job: Job? = null
+    private var lockDeadline: Long? = null
 
     private val _event = Channel<Event>()
     val event = _event.receiveAsFlow()
@@ -55,6 +60,24 @@ class MainViewModel(
     override fun onCleared() {
         Shizuku.removeBinderReceivedListener(shizukuBinderReceivedListener)
         Shizuku.removeBinderDeadListener(shizukuBinderDeadListener)
+    }
+
+    fun onStopped() {
+        job?.cancel()
+        job = viewModelScope.launch {
+            val settings = settingRepository.getCurrentSettings()
+            if (!settings.appLockEnabled || settings.lockTimeout.isInfinite()) return@launch
+            lockDeadline = SystemClock.elapsedRealtime() + settings.lockTimeout.inWholeMilliseconds
+        }
+    }
+
+    fun onStarted() {
+        job?.cancel()
+        val deadline = lockDeadline
+        if (deadline != null && SystemClock.elapsedRealtime() >= deadline) {
+            isAuthenticated.update { false }
+        }
+        lockDeadline = null
     }
 
     fun onAuthenticated() = isAuthenticated.update { true }

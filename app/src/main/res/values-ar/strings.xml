@@ -103,6 +103,14 @@
     <string name="app_lock_description">طلب قفل الشاشة لفتح التطبيق</string>
     <string name="app_lock_disable_title">قم بالمصادقة لتعطيل قفل التطبيق</string>
     <string name="app_lock_enable_title">قم بالمصادقة لتمكين قفل التطبيق</string>
+    <string name="lock_timeout_title">مهلة القفل</string>
+    <string name="lock_timeout_description">المدة في الخلفية قبل قفل التطبيق</string>
+    <string name="lock_timeout_immediately">فوراً</string>
+    <string name="lock_timeout_never">أبداً</string>
+    <string name="lock_timeout_value">المدة</string>
+    <string name="lock_timeout_unit_seconds">ثوانٍ</string>
+    <string name="lock_timeout_unit_minutes">دقائق</string>
+    <string name="lock_timeout_custom">مخصص</string>
     <string name="secure_screen_title">شاشة آمنة</string>
     <string name="secure_screen_description">حظر لقطات الشاشة ومنع العرض على الشاشات غير الآمنة</string>
     <string name="lock_screen_required_title">مطلوب قفل الشاشة</string>
