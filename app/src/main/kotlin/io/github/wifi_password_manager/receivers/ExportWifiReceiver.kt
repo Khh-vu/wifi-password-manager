@@ -59,7 +59,7 @@ class ExportWifiReceiver : BroadcastReceiver(), KoinComponent {
                 val uri = getOutputUri(appContext, mimeType, fileName, extension) ?: return@launch
 
                 val bytes = getExportData(exportOption, password)
-                appContext.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
+                appContext.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
             }
             .invokeOnCompletion {
                 pendingResult.finish()
