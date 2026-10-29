@@ -1,0 +1,4 @@
+- Improved connect logic
+- Added support for metered override and MAC randomization settings
+- Fixed crash issue in connect feature on Android 14
+- Added app lock timeout feature
