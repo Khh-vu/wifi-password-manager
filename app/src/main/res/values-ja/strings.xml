@@ -50,7 +50,7 @@
 
     <!-- Network List Screen -->
     <plurals name="network_list_title">
-        <item quantity="other">%d件のWiFiネットワークを保存済み</item>
+        <item quantity="other">%d件のネットワーク</item>
     </plurals>
     <string name="search_hint">SSIDまたはメモで検索</string>
     <string name="search_tooltip">検索</string>
@@ -182,7 +182,7 @@
     <!-- Method Inspector Screen -->
     <string name="method_inspector_search_hint">メソッドを検索…</string>
     <plurals name="method_inspector_title">
-        <item quantity="other">%d件のメソッドを表示中</item>
+        <item quantity="other">%d件のメソッド</item>
     </plurals>
     <string name="export_methods_action">エクスポート</string>
     <string name="export_methods_success">メソッドをエクスポートしました</string>

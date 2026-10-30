@@ -50,7 +50,7 @@
 
     <!-- 网络列表界面 -->
     <plurals name="network_list_title">
-        <item quantity="other">已保存 %d 个 WiFi 网络</item>
+        <item quantity="other">%d 个网络</item>
     </plurals>
     <string name="search_hint">按 SSID 或备注搜索</string>
     <string name="search_tooltip">搜索</string>
@@ -182,7 +182,7 @@
     <!-- 方法检查器界面 -->
     <string name="method_inspector_search_hint">搜索方法…</string>
     <plurals name="method_inspector_title">
-        <item quantity="other">正在显示 %d 个方法</item>
+        <item quantity="other">%d 个方法</item>
     </plurals>
     <string name="export_methods_action">导出</string>
     <string name="export_methods_success">方法导出成功</string>

@@ -50,8 +50,8 @@
 
     <!-- Network List Screen -->
     <plurals name="network_list_title">
-        <item quantity="one">%d WiFi Bağlantısı Kaydedildi</item>
-        <item quantity="other">%d WiFi Bağlantısı Kaydedildi</item>
+        <item quantity="one">%d Ağ</item>
+        <item quantity="other">%d Ağ</item>
     </plurals>
     <string name="search_hint">SSID veya Not\'a Göre Ara</string>
     <string name="search_tooltip">Ara</string>
@@ -183,8 +183,8 @@
     <!-- Method Inspector Screen -->
     <string name="method_inspector_search_hint">Metotları ara…</string>
     <plurals name="method_inspector_title">
-        <item quantity="one">1 metot gösteriliyor</item>
-        <item quantity="other">%d metot gösteriliyor</item>
+        <item quantity="one">%d metot</item>
+        <item quantity="other">%d metot</item>
     </plurals>
     <string name="export_methods_action">Dışa Aktar</string>
     <string name="export_methods_success">Metotlar başarıyla dışa aktarıldı</string>

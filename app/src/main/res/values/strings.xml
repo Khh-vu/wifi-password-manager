@@ -51,8 +51,8 @@
 
     <!-- Network List Screen -->
     <plurals name="network_list_title">
-        <item quantity="one">Saved %d WiFi Network</item>
-        <item quantity="other">Saved %d WiFi Networks</item>
+        <item quantity="one">%d Network</item>
+        <item quantity="other">%d Networks</item>
     </plurals>
     <string name="search_hint">Search by SSID or Note</string>
     <string name="search_tooltip">Search</string>
@@ -184,8 +184,8 @@
     <!-- Method Inspector Screen -->
     <string name="method_inspector_search_hint">Search methods…</string>
     <plurals name="method_inspector_title">
-        <item quantity="one">Showing %d method</item>
-        <item quantity="other">Showing %d methods</item>
+        <item quantity="one">%d Method</item>
+        <item quantity="other">%d Methods</item>
     </plurals>
     <string name="export_methods_action">Export</string>
     <string name="export_methods_success">Methods exported successfully</string>

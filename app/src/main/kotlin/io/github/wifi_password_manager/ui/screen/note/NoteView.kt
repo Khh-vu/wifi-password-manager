@@ -1,6 +1,10 @@
 package io.github.wifi_password_manager.ui.screen.note
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.MarqueeAnimationMode
+import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -58,7 +62,21 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
         topBar = {
             TopAppBar(
                 navigationIcon = { BackButton { onAction(NoteViewModel.Action.SaveOrDeleteNote) } },
-                title = { Text(text = stringResource(R.string.note_title, network.ssid)) },
+                title = {
+                    val focusRequester = remember { FocusRequester() }
+                    Text(
+                        text = stringResource(R.string.note_title, network.ssid),
+                        maxLines = 1,
+                        modifier =
+                            Modifier.basicMarquee(
+                                    iterations = Int.MAX_VALUE,
+                                    animationMode = MarqueeAnimationMode.WhileFocused,
+                                )
+                                .focusRequester(focusRequester)
+                                .focusable()
+                                .clickable { focusRequester.requestFocus() },
+                    )
+                },
                 scrollBehavior = scrollBehavior,
             )
         },

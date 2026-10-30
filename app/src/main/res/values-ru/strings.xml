@@ -50,10 +50,10 @@
 
     <!-- Network List Screen -->
     <plurals name="network_list_title">
-        <item quantity="one">Сохранена %d сеть WiFi</item>
-        <item quantity="few">Сохранено %d сети WiFi</item>
-        <item quantity="many">Сохранено %d сетей WiFi</item>
-        <item quantity="other">Сохранено %d сети WiFi</item>
+        <item quantity="one">%d сеть</item>
+        <item quantity="few">%d сети</item>
+        <item quantity="many">%d сетей</item>
+        <item quantity="other">%d сети</item>
     </plurals>
     <string name="search_hint">Поиск по SSID или заметке</string>
     <string name="search_tooltip">Поиск</string>
@@ -185,10 +185,10 @@
     <!-- Method Inspector Screen -->
     <string name="method_inspector_search_hint">Поиск методов…</string>
     <plurals name="method_inspector_title">
-        <item quantity="one">Показан метод: %d</item>
-        <item quantity="few">Показано метода: %d</item>
-        <item quantity="many">Показано методов: %d</item>
-        <item quantity="other">Показано методов: %d</item>
+        <item quantity="one">Метод: %d</item>
+        <item quantity="few">Метода: %d</item>
+        <item quantity="many">Методов: %d</item>
+        <item quantity="other">Методов: %d</item>
     </plurals>
     <string name="export_methods_action">Экспорт</string>
     <string name="export_methods_success">Методы успешно экспортированы</string>

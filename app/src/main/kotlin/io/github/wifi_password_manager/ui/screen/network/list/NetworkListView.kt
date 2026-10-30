@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
@@ -32,9 +34,11 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
@@ -82,18 +86,23 @@ fun NetworkListView(
                     } else {
                         TopAppBar(
                             title = {
-                                Text(
-                                    text =
-                                        if (state.savedNetworks.isNotEmpty()) {
+                                if (state.savedNetworks.isNotEmpty()) {
+                                    Text(
+                                        text =
                                             pluralStringResource(
                                                 R.plurals.network_list_title,
                                                 state.savedNetworks.size,
                                                 state.savedNetworks.size,
-                                            )
-                                        } else {
-                                            stringResource(R.string.app_name)
-                                        }
-                                )
+                                            ),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        autoSize =
+                                            TextAutoSize.StepBased(
+                                                minFontSize = 16.sp,
+                                                maxFontSize = LocalTextStyle.current.fontSize,
+                                            ),
+                                    )
+                                }
                             },
                             actions = {
                                 TooltipIconButton(
