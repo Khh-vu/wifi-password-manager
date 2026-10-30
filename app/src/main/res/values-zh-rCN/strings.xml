@@ -55,6 +55,7 @@
     <string name="search_hint">按 SSID 或备注搜索</string>
     <string name="search_tooltip">搜索</string>
     <string name="refresh_description">刷新</string>
+    <string name="scroll_to_top_description">回到顶部</string>
     <string name="no_networks_found">未找到 WiFi 网络</string>
     <string name="no_networks_available">此设备上没有已保存的 WiFi 网络</string>
 

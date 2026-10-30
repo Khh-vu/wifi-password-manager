@@ -58,6 +58,7 @@
     <string name="search_hint">Поиск по SSID или заметке</string>
     <string name="search_tooltip">Поиск</string>
     <string name="refresh_description">Обновить</string>
+    <string name="scroll_to_top_description">Наверх</string>
     <string name="no_networks_found">Сети WiFi не найдены</string>
     <string name="no_networks_available">На этом устройстве нет сохранённых сетей WiFi</string>
 

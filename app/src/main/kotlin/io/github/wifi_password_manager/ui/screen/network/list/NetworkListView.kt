@@ -1,7 +1,14 @@
 package io.github.wifi_password_manager.ui.screen.network.list
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -21,6 +28,10 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -33,12 +44,14 @@ import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
+import io.github.wifi_password_manager.ui.icons.ArrowUpward
 import io.github.wifi_password_manager.ui.icons.Refresh
 import io.github.wifi_password_manager.ui.screen.network.list.components.MethodSignatureErrorDialog
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkListTopBar
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import io.github.wifi_password_manager.utils.MOCK
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +63,8 @@ fun NetworkListView(
     val navBackStack = LocalNavBackStack.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val gridState = rememberLazyGridState()
+    val scope = rememberCoroutineScope()
+    val showScrollToTop by remember { derivedStateOf { gridState.firstVisibleItemIndex > 3 } }
 
     BackHandler(enabled = state.showingSearch) {
         onAction(NetworkListViewModel.Action.ToggleSearch)
@@ -66,25 +81,61 @@ fun NetworkListView(
             )
         },
         floatingActionButton = {
-            if (!state.isCacheMode) {
-                TooltipBox(
-                    positionProvider =
-                        TooltipDefaults.rememberTooltipPositionProvider(
-                            positioning = TooltipAnchorPosition.Above
-                        ),
-                    tooltip = {
-                        PlainTooltip { Text(text = stringResource(R.string.refresh_description)) }
-                    },
-                    state = rememberTooltipState(),
+            Column(
+                modifier = Modifier.imePadding(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                AnimatedVisibility(
+                    visible = showScrollToTop,
+                    enter = scaleIn() + fadeIn(),
+                    exit = scaleOut() + fadeOut(),
                 ) {
-                    FloatingActionButton(
-                        modifier = Modifier.imePadding(),
-                        onClick = { onAction(NetworkListViewModel.Action.Refresh) },
+                    TooltipBox(
+                        positionProvider =
+                            TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above
+                            ),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(text = stringResource(R.string.scroll_to_top_description))
+                            }
+                        },
+                        state = rememberTooltipState(),
                     ) {
-                        Icon(
-                            imageVector = Refresh,
-                            contentDescription = stringResource(R.string.refresh_description),
-                        )
+                        FloatingActionButton(
+                            onClick = { scope.launch { gridState.animateScrollToItem(0) } }
+                        ) {
+                            Icon(
+                                imageVector = ArrowUpward,
+                                contentDescription =
+                                    stringResource(R.string.scroll_to_top_description),
+                            )
+                        }
+                    }
+                }
+
+                if (!state.isCacheMode) {
+                    TooltipBox(
+                        positionProvider =
+                            TooltipDefaults.rememberTooltipPositionProvider(
+                                positioning = TooltipAnchorPosition.Above
+                            ),
+                        tooltip = {
+                            PlainTooltip {
+                                Text(text = stringResource(R.string.refresh_description))
+                            }
+                        },
+                        state = rememberTooltipState(),
+                    ) {
+                        FloatingActionButton(
+                            onClick = { onAction(NetworkListViewModel.Action.Refresh) }
+                        ) {
+                            Icon(
+                                imageVector = Refresh,
+                                contentDescription = stringResource(R.string.refresh_description),
+                            )
+                        }
                     }
                 }
             }

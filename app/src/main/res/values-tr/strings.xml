@@ -56,6 +56,7 @@
     <string name="search_hint">SSID veya Not\'a Göre Ara</string>
     <string name="search_tooltip">Ara</string>
     <string name="refresh_description">Yenile</string>
+    <string name="scroll_to_top_description">Başa dön</string>
     <string name="no_networks_found">Hiçbir WiFi ağı bulunamadı</string>
     <string name="no_networks_available">Bu cihazda kayıtlı WiFi ağı bulunmamaktadır</string>
 

@@ -60,6 +60,7 @@
     <string name="search_hint">البحث بواسطة SSID أو ملاحظة</string>
     <string name="search_tooltip">بحث</string>
     <string name="refresh_description">تحديث</string>
+    <string name="scroll_to_top_description">العودة إلى الأعلى</string>
     <string name="no_networks_found">لم يتم العثور على شبكات WiFi</string>
     <string name="no_networks_available">لا توجد شبكات WiFi محفوظة متاحة على هذا الجهاز</string>
 
