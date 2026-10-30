@@ -297,10 +297,10 @@ class SettingViewModel(
                     Event.ShowMessage(UiText.StringResource(R.string.import_networks_success))
                 )
             } catch (e: SerializationException) {
-                Log.e(TAG, "Error parsing JSON", e)
+                Log.w(TAG, "Error parsing JSON", e)
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.invalid_json)))
             } catch (e: AEADBadTagException) {
-                Log.e(TAG, "Decryption failed - wrong password or malformed", e)
+                Log.w(TAG, "Decryption failed - wrong password or malformed", e)
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.wrong_password)))
             } catch (e: Throwable) {
                 Log.e(TAG, "Error importing networks", e)

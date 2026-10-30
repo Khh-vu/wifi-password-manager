@@ -32,7 +32,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     open fun bind(connection: ServiceConnection, onUnavailable: () -> Unit) {
         Shell.getShell { shell ->
             if (!shell.isRoot) {
-                Log.w(TAG, "Root permission not available")
+                Log.d(TAG, "Root permission not available")
                 onUnavailable()
                 return@getShell
             }
@@ -79,7 +79,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, returning empty list")
+            Log.d(TAG, "Service not available, returning empty list")
             return emptyList()
         }
         return service.privilegedConfiguredNetworks.orEmpty().map { it.toWifiConfiguration() }
@@ -88,7 +88,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, cannot add/update network")
+            Log.d(TAG, "Service not available, cannot add/update network")
             return -1
         }
         val parcel = WifiNetworkParcel.fromWifiConfiguration(config)
@@ -98,7 +98,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun forget(netId: Int): Boolean {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, cannot forget network")
+            Log.d(TAG, "Service not available, cannot forget network")
             return false
         }
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -111,7 +111,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun getConnectionInfo(): WifiInfo? {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, cannot get connection info")
+            Log.d(TAG, "Service not available, cannot get connection info")
             return null
         }
         return service.connectionInfo?.toWifiInfo()
@@ -120,7 +120,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun persistEphemeralNetworks() {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, cannot persist ephemeral networks")
+            Log.d(TAG, "Service not available, cannot persist ephemeral networks")
             return
         }
         service.persistEphemeralNetworks()
@@ -129,7 +129,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun disconnect(): Boolean {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, cannot disconnect")
+            Log.d(TAG, "Service not available, cannot disconnect")
             return false
         }
         return service.disconnect()
@@ -138,7 +138,7 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
     override suspend fun connect(config: WifiConfiguration?, netId: Int): Boolean {
         val service = getService()
         if (service == null) {
-            Log.w(TAG, "Service not available, cannot connect to network")
+            Log.d(TAG, "Service not available, cannot connect to network")
             return false
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

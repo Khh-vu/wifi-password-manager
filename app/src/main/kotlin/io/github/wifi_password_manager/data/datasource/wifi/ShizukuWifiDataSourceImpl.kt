@@ -62,7 +62,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, returning empty list")
+            Log.d(TAG, "Shizuku permission not available, returning empty list")
             return emptyList()
         }
 
@@ -85,7 +85,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot add/update network")
+            Log.d(TAG, "Shizuku permission not available, cannot add/update network")
             return -1
         }
 
@@ -99,7 +99,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     override suspend fun forget(netId: Int): Boolean {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot forget network")
+            Log.d(TAG, "Shizuku permission not available, cannot forget network")
             return false
         }
 
@@ -118,7 +118,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     override suspend fun getConnectionInfo(): WifiInfo? {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, returning null")
+            Log.d(TAG, "Shizuku permission not available, returning null")
             return null
         }
         if (wifiManager.wifiEnabledState != WifiManager.WIFI_STATE_ENABLED) return null
@@ -148,7 +148,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     override suspend fun disconnect(): Boolean {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot disconnect")
+            Log.d(TAG, "Shizuku permission not available, cannot disconnect")
             return false
         }
         return wifiManager.disconnect(callingPackage)
@@ -156,7 +156,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
 
     override suspend fun connect(config: WifiConfiguration?, netId: Int): Boolean {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available, cannot connect to network")
+            Log.d(TAG, "Shizuku permission not available, cannot connect to network")
             return false
         }
 

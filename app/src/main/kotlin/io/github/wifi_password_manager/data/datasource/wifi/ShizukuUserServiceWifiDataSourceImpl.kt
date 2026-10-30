@@ -27,7 +27,7 @@ class ShizukuUserServiceWifiDataSourceImpl(private val context: Context) :
 
     override fun bind(connection: ServiceConnection, onUnavailable: () -> Unit) {
         if (!context.hasShizukuPermission) {
-            Log.w(TAG, "Shizuku permission not available")
+            Log.d(TAG, "Shizuku permission not available")
             onUnavailable()
             return
         }

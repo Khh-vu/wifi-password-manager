@@ -56,7 +56,7 @@ class PersistEphemeralNetworksWorker(appContext: Context, params: WorkerParamete
     override suspend fun doWork(): Result {
         privilegedManager.refresh()
         if (!privilegedManager.currentMode.hasPrivilegedAccess) {
-            Log.w(TAG, "Privileged permission (root or Shizuku) not available, skipping work")
+            Log.i(TAG, "Privileged permission (root or Shizuku) not available, skipping work")
             return Result.success()
         }
 
