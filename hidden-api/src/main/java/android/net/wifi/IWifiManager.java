@@ -20,13 +20,21 @@ public interface IWifiManager extends IInterface {
     @RequiresApi(Build.VERSION_CODES.S)
     WifiManager.AddNetworkResult addOrUpdateNetworkPrivileged(WifiConfiguration config, String packageName);
 
-    //Android 11
+    //Android 10+
     int addOrUpdateNetwork(WifiConfiguration config, String packageName);
 
-    //Android 11+
     boolean removeNetwork(int netId, String packageName);
 
+    boolean enableNetwork(int netId, boolean disableOthers, String packageName);
+
+    boolean reconnect(String packageName);
+
+    //Android 11+
+    @RequiresApi(Build.VERSION_CODES.R)
     WifiInfo getConnectionInfo(String callingPackage, String callingFeatureId);
+
+    //Android 10
+    WifiInfo getConnectionInfo(String callingPackage);
 
     int getWifiEnabledState();
 
@@ -45,6 +53,7 @@ public interface IWifiManager extends IInterface {
     void connect(WifiConfiguration config, int netId, IActionListener listener);
 
     //Android 11
+    @RequiresApi(Build.VERSION_CODES.R)
     void connect(WifiConfiguration config, int netId, IBinder binder, IActionListener listener, int callbackIdentifier);
 
     //Android 13+
@@ -56,6 +65,7 @@ public interface IWifiManager extends IInterface {
     void save(WifiConfiguration config, IActionListener listener);
 
     //Android 11
+    @RequiresApi(Build.VERSION_CODES.R)
     void save(WifiConfiguration config, IBinder binder, IActionListener listener, int callbackIdentifier);
 
     //Android 12+
@@ -63,5 +73,6 @@ public interface IWifiManager extends IInterface {
     void forget(int netId, IActionListener listener);
 
     //Android 11
+    @RequiresApi(Build.VERSION_CODES.R)
     void forget(int netId, IBinder binder, IActionListener listener, int callbackIdentifier);
 }

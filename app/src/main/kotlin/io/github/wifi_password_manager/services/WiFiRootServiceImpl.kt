@@ -12,6 +12,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.Process
+import androidx.annotation.RequiresApi
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.IWifiRootService
 import io.github.wifi_password_manager.ipc.WifiInfoParcel
@@ -19,16 +20,18 @@ import io.github.wifi_password_manager.ipc.WifiNetworkParcel
 import io.github.wifi_password_manager.utils.WifiManagerHelper
 import rikka.shizuku.SystemServiceHelper
 
-class WiFiRootServiceImpl : IWifiRootService.Stub() {
+open class WiFiRootServiceImpl : IWifiRootService.Stub() {
     companion object {
         private const val PACKAGE_NAME = "android"
-        private const val USER = "root"
     }
 
     private val wifiManager: IWifiManager by lazy {
         SystemServiceHelper.getSystemService(Context.WIFI_SERVICE)
             .let(IWifiManager.Stub::asInterface)
     }
+
+    private val user: String
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) "root" else "android"
 
     private val attributionSource: AttributionSource?
         get() =
@@ -58,7 +61,7 @@ class WiFiRootServiceImpl : IWifiRootService.Stub() {
 
         return WifiManagerHelper.getWifiConfigurations(
             wifiManager = wifiManager,
-            packageName = USER,
+            packageName = user,
             featureId = PACKAGE_NAME,
             extras = extras,
         )
@@ -66,10 +69,10 @@ class WiFiRootServiceImpl : IWifiRootService.Stub() {
 
     private fun addOrUpdateNetwork(config: WifiConfiguration): Int {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val result = wifiManager.addOrUpdateNetworkPrivileged(config, USER)
+            val result = wifiManager.addOrUpdateNetworkPrivileged(config, user)
             result?.networkId ?: -1
         } else {
-            wifiManager.addOrUpdateNetwork(config, USER)
+            wifiManager.addOrUpdateNetwork(config, user)
         }
     }
 
@@ -82,9 +85,18 @@ class WiFiRootServiceImpl : IWifiRootService.Stub() {
     }
 
     override fun removeNetwork(netId: Int): Boolean {
-        return wifiManager.removeNetwork(netId, USER)
+        return wifiManager.removeNetwork(netId, user)
     }
 
+    override fun enableNetwork(netId: Int): Boolean {
+        return wifiManager.enableNetwork(netId, true, user)
+    }
+
+    override fun reconnect(): Boolean {
+        return wifiManager.reconnect(user)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun forget(netId: Int, listener: IActionListener) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             wifiManager.forget(netId, listener)
@@ -95,7 +107,12 @@ class WiFiRootServiceImpl : IWifiRootService.Stub() {
 
     override fun getConnectionInfo(): WifiInfoParcel? {
         if (wifiManager.wifiEnabledState != WifiManager.WIFI_STATE_ENABLED) return null
-        val info = wifiManager.getConnectionInfo(USER, null)
+        val info =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                wifiManager.getConnectionInfo(user, null)
+            } else {
+                wifiManager.getConnectionInfo(user)
+            }
         return info?.let(WifiInfoParcel::fromWifiInfo)
     }
 
@@ -119,6 +136,7 @@ class WiFiRootServiceImpl : IWifiRootService.Stub() {
         return wifiManager.disconnect(PACKAGE_NAME)
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun connect(config: WifiNetworkParcel?, netId: Int, listener: IActionListener) {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM -> {

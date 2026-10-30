@@ -38,6 +38,8 @@
     <!-- No Access Screen -->
     <string name="no_access_title">Ayrıcalıklı Erişim Gereklidir</string>
     <string name="no_access_description">Bu uygulama, WiFi şifrelerini okuyabilmek için Shizuku veya root erişimi gerektirir. Devam etmek için lütfen ayrıcalıklı erişim izni verin.</string>
+    <string name="android10_limitation_title">Android 10 sınırlaması</string>
+    <string name="android10_limitation_message">Android 10\'da kayıtlı ağları yalnızca root veya root ya da system (uid 0 veya 1000) olarak çalışan Shizuku okuyabilir. ADB ile başlatılan Shizuku shell (uid 2000) olarak çalışır ve gerekli izne sahip değildir.</string>
     <string name="continue_in_cache_mode">Önbellek Modunda Devam Et</string>
     <string name="grant_access">Erişim Ver</string>
 

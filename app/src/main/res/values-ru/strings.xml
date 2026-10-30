@@ -38,6 +38,8 @@
     <!-- No Access Screen -->
     <string name="no_access_title">Требуется привилегированный доступ</string>
     <string name="no_access_description">Этому приложению требуется Shizuku или root-доступ для чтения паролей WiFi. Пожалуйста, предоставьте привилегированный доступ для продолжения.</string>
+    <string name="android10_limitation_title">Ограничение Android 10</string>
+    <string name="android10_limitation_message">На Android 10 читать сохранённые сети могут только root или Shizuku, запущенный от имени root или system (uid 0 или 1000). Shizuku, запущенный через ADB, работает от имени shell (uid 2000) и не имеет нужных прав.</string>
     <string name="continue_in_cache_mode">Продолжить в режиме кэширования</string>
     <string name="grant_access">Предоставить доступ</string>
 

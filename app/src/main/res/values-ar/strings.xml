@@ -38,6 +38,8 @@
     <!-- No Access Screen -->
     <string name="no_access_title">مطلوب صلاحيات متقدمة</string>
     <string name="no_access_description">يتطلب هذا التطبيق صلاحيات Shizuku أو Root لقراءة كلمات مرور WiFi. يرجى منح صلاحيات الوصول المتقدمة للمتابعة.</string>
+    <string name="android10_limitation_title">قيود Android 10</string>
+    <string name="android10_limitation_message">على Android 10، يمكن فقط لصلاحيات Root أو Shizuku الذي يعمل بصفة root أو system (uid 0 أو 1000) قراءة الشبكات المحفوظة. يعمل Shizuku الذي تم تشغيله عبر ADB بصفة shell (uid 2000) ولا يملك الصلاحيات المطلوبة.</string>
     <string name="continue_in_cache_mode">المتابعة في وضع التخزين المؤقت</string>
     <string name="grant_access">منح الصلاحية</string>
 

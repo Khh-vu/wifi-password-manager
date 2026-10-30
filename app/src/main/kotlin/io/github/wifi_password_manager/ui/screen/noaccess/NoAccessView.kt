@@ -1,6 +1,7 @@
 package io.github.wifi_password_manager.ui.screen.noaccess
 
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.topjohnwu.superuser.Shell
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.ui.icons.Lock
+import io.github.wifi_password_manager.ui.screen.noaccess.components.Android10LimitationCard
 import io.github.wifi_password_manager.ui.screen.noaccess.components.ShizukuErrorDialog
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -51,6 +53,7 @@ private const val REQUEST_CODE = 10001
 fun NoAccessView(
     modifier: Modifier = Modifier,
     allowSkip: Boolean,
+    isShizukuUnsupported: Boolean,
     onSkip: () -> Unit,
     onGranted: () -> Unit,
 ) {
@@ -139,6 +142,11 @@ fun NoAccessView(
                     textAlign = TextAlign.Center,
                 )
 
+                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Android10LimitationCard()
+                }
+
                 Spacer(modifier = Modifier.height(32.dp))
 
                 FlowRow(horizontalArrangement = Arrangement.Center) {
@@ -150,7 +158,11 @@ fun NoAccessView(
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    Button(onClick = ::requestAccess, shapes = ButtonDefaults.shapes()) {
+                    Button(
+                        onClick = ::requestAccess,
+                        enabled = !isShizukuUnsupported,
+                        shapes = ButtonDefaults.shapes(),
+                    ) {
                         Text(text = stringResource(R.string.grant_access))
                     }
                 }
@@ -169,6 +181,7 @@ fun NoAccessView(
 private fun NoAccessViewPreview() {
     NoAccessView(
         allowSkip = false,
+        isShizukuUnsupported = false,
         onSkip = {},
         onGranted = {},
     )
@@ -180,6 +193,7 @@ private fun NoAccessViewPreview() {
 private fun AdaptiveNoAccessViewPreview() {
     NoAccessView(
         allowSkip = false,
+        isShizukuUnsupported = false,
         onSkip = {},
         onGranted = {},
     )

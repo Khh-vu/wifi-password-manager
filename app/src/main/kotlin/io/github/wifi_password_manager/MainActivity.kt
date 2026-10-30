@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
             val privilegedMode by viewModel.privilegedMode.collectAsStateWithLifecycle()
             val isAuthenticated by viewModel.isAuthenticated.collectAsState()
             val skipPrivilegedCheck by viewModel.skipPrivilegedCheck.collectAsStateWithLifecycle()
+            val isShizukuUnsupported by viewModel.isShizukuUnsupported.collectAsStateWithLifecycle()
             val backStack = rememberAppBackStack()
 
             CompositionLocalProvider(
@@ -85,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                             NoAccessView(
                                 modifier = modifier,
                                 allowSkip = settings.allowCacheMode,
+                                isShizukuUnsupported = isShizukuUnsupported,
                                 onSkip = viewModel::onSkipPrivilegedCheck,
                                 onGranted = {
                                     viewModel.run {

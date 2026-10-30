@@ -38,6 +38,8 @@
     <!-- 无权限访问界面 -->
     <string name="no_access_title">需要特权访问</string>
     <string name="no_access_description">此应用需要 Shizuku 或 root 权限才能读取 WiFi 密码。请授予特权访问以继续使用。</string>
+    <string name="android10_limitation_title">Android 10 限制</string>
+    <string name="android10_limitation_message">在 Android 10 上，只有 root 或以 root 或 system 身份（uid 0 或 1000）运行的 Shizuku 才能读取已保存的网络。通过 ADB 启动的 Shizuku 以 shell 身份（uid 2000）运行，没有所需的权限。</string>
     <string name="continue_in_cache_mode">以缓存模式继续</string>
     <string name="grant_access">授予访问权限</string>
 

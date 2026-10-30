@@ -39,6 +39,8 @@
     <!-- No Access Screen -->
     <string name="no_access_title">Privileged Access Required</string>
     <string name="no_access_description">This app requires Shizuku or root access to read WiFi passwords. Please grant privileged access to continue.</string>
+    <string name="android10_limitation_title">Android 10 limitation</string>
+    <string name="android10_limitation_message">On Android 10, only root, or Shizuku running as root or system (uid 0 or 1000), can read saved networks. Shizuku started via ADB runs as shell (uid 2000) and does not have the required permission.</string>
     <string name="continue_in_cache_mode">Continue in Cache Mode</string>
     <string name="grant_access">Grant Access</string>
 

@@ -29,6 +29,7 @@ class MainViewModel(
     val skipPrivilegedCheck: StateFlow<Boolean>
         field = MutableStateFlow(false)
     val privilegedMode = privilegedManager.mode
+    val isShizukuUnsupported = privilegedManager.isShizukuUnsupported
 
     private var job: Job? = null
     private var lockDeadline: Long? = null

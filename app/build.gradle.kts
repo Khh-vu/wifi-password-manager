@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "io.github.wifi_password_manager"
-        minSdk { version = release(30) }
+        minSdk { version = release(29) }
         targetSdk { version = release(37) }
         versionCode = 22
         versionName = "1.21"

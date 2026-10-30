@@ -38,6 +38,8 @@
     <!-- No Access Screen -->
     <string name="no_access_title">特権アクセスが必要</string>
     <string name="no_access_description">このアプリはWiFiパスワードを読み取るためにShizukuまたはrootアクセスが必要です。続行するには特権アクセスを許可してください。</string>
+    <string name="android10_limitation_title">Android 10 の制限</string>
+    <string name="android10_limitation_message">Android 10 では、保存済みネットワークを読み取れるのは root、または root か system（uid 0 または 1000）として実行中の Shizuku のみです。ADB で起動した Shizuku は shell（uid 2000）として実行されるため、必要な権限がありません。</string>
     <string name="continue_in_cache_mode">キャッシュモードで続行</string>
     <string name="grant_access">アクセスを許可</string>
 

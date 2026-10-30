@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.data.repository
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -9,10 +10,12 @@ import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
+import android.os.Process
 import android.util.Log
 import androidx.core.content.getSystemService
 import io.github.wifi_password_manager.data.datasource.wifi.CachedWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.RootWifiDataSourceImpl
+import io.github.wifi_password_manager.data.datasource.wifi.ShizukuUserServiceWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.ShizukuWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.WifiDataSource
 import io.github.wifi_password_manager.data.local.dao.WifiNetworkDao
@@ -33,6 +36,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
+import rikka.shizuku.Shizuku
 
 class WifiRepositoryImpl(
     private val context: Context,
@@ -68,19 +72,28 @@ class WifiRepositoryImpl(
             }
 
             PrivilegedMode.SHIZUKU -> {
-                Log.d(TAG, "Using ShizukuWifiDataSource")
-                ShizukuWifiDataSourceImpl(context)
+                if (
+                    Build.VERSION.SDK_INT == Build.VERSION_CODES.Q &&
+                        Shizuku.getUid() == Process.ROOT_UID
+                ) {
+                    Log.d(TAG, "Using ShizukuUserServiceWifiDataSource")
+                    ShizukuUserServiceWifiDataSourceImpl(context)
+                } else {
+                    Log.d(TAG, "Using ShizukuWifiDataSource")
+                    ShizukuWifiDataSourceImpl(context)
+                }
             }
 
             PrivilegedMode.NONE -> {
                 Log.d(TAG, "Using CachedWifiDataSource")
-                CachedWifiDataSourceImpl(wifiNetworkDao)
+                CachedWifiDataSourceImpl(context, wifiNetworkDao)
             }
         }
     }
 
     override fun getConnectedWifiSsidFlow(): Flow<String> {
         return callbackFlow {
+                @SuppressLint("InlinedApi")
                 suspend fun sendInfo(wifiInfo: WifiInfo?) {
                     val ssid =
                         wifiInfo
@@ -209,10 +222,8 @@ class WifiRepositoryImpl(
         val networks = getPrivilegedConfiguredNetworks().map(WifiNetwork::fromWifiConfiguration)
         val netIds = networks.filter { it.ssid == network.ssid }.map { it.networkId }
 
-        if (netIds.isNotEmpty()) {
-            for (netId in netIds) {
-                if (dataSource.connect(netId = netId)) return@dispatcher
-            }
+        for (netId in netIds) {
+            if (dataSource.connect(netId = netId)) return@dispatcher
         }
 
         for (config in network.copy(existInSystem = false).toWifiConfigurations()) {

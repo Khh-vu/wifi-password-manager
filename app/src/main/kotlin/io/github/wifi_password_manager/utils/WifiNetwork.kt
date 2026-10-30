@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.utils
 
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Context
@@ -23,7 +24,7 @@ fun WifiNetwork.Companion.fromWifiConfiguration(config: WifiConfiguration): Wifi
         securityType = setOf(network.securityType),
         password = network.simpleKey,
         hidden = network.hiddenSSID,
-        autojoin = network.allowAutojoin,
+        autojoin = Build.VERSION.SDK_INT < Build.VERSION_CODES.R || network.allowAutojoin,
         private = !network.shared,
         meteredOverride = WifiNetwork.MeteredOverride.entries[network.meteredOverride],
         macRandomizationSetting =
@@ -69,6 +70,7 @@ fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> = groupBy {
     }
     .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid))
 
+@SuppressLint("InlinedApi")
 fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
     return securityType.map { type ->
         val config =
@@ -109,7 +111,9 @@ fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
                         wepTxKeyIndex = 0
                     }
                 }
-                allowAutojoin = autojoin
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    allowAutojoin = autojoin
+                }
                 hiddenSSID = hidden
                 shared = !private
                 meteredOverride = this@toWifiConfigurations.meteredOverride.ordinal

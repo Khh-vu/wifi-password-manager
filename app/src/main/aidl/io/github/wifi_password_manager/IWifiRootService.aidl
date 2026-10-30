@@ -11,6 +11,10 @@ interface IWifiRootService {
 
     boolean removeNetwork(int netId);
 
+    boolean enableNetwork(int netId);
+
+    boolean reconnect();
+
     oneway void forget(int netId, in IActionListener listener);
 
     WifiInfoParcel getConnectionInfo();

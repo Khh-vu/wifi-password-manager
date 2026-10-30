@@ -1,8 +1,10 @@
 package io.github.wifi_password_manager.ipc
 
+import android.annotation.SuppressLint
 import android.net.MacAddress
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiConfigurationHidden
+import android.os.Build
 import android.os.Parcelable
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.utils.simpleKey
@@ -21,13 +23,16 @@ data class WifiNetworkParcel(
     val macRandomizationSetting: Int,
     val randomizedMacAddress: MacAddress,
 ) : Parcelable {
+    @SuppressLint("InlinedApi")
     fun toWifiConfiguration(): WifiConfiguration {
         val config =
             WifiConfigurationHidden().apply {
                 networkId = this@WifiNetworkParcel.networkId
                 SSID = "\"$ssid\""
                 hiddenSSID = hidden
-                allowAutojoin = autojoin
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    allowAutojoin = autojoin
+                }
                 shared = this@WifiNetworkParcel.shared
                 meteredOverride = this@WifiNetworkParcel.meteredOverride
                 macRandomizationSetting = this@WifiNetworkParcel.macRandomizationSetting
@@ -79,7 +84,7 @@ data class WifiNetworkParcel(
                 password = hidden.simpleKey,
                 securityType = getSecurityType(hidden),
                 hidden = hidden.hiddenSSID,
-                autojoin = hidden.allowAutojoin,
+                autojoin = Build.VERSION.SDK_INT < Build.VERSION_CODES.R || hidden.allowAutojoin,
                 shared = hidden.shared,
                 meteredOverride = hidden.meteredOverride,
                 macRandomizationSetting = hidden.macRandomizationSetting,
@@ -87,6 +92,7 @@ data class WifiNetworkParcel(
             )
         }
 
+        @SuppressLint("InlinedApi")
         private fun getSecurityType(config: WifiConfigurationHidden): Int {
             val keyMgmt = config.allowedKeyManagement
             return when {
@@ -99,6 +105,7 @@ data class WifiNetworkParcel(
 
                 keyMgmt.get(WifiConfiguration.KeyMgmt.NONE) && config.wepKeys[0] != null ->
                     WifiConfiguration.SECURITY_TYPE_WEP
+
                 else -> WifiConfiguration.SECURITY_TYPE_OPEN
             }
         }

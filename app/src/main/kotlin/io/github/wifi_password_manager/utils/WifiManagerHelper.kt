@@ -15,27 +15,8 @@ object WifiManagerHelper {
         extras: Bundle? = null,
     ): List<WifiConfiguration> {
         val networks =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val method =
-                    HiddenApiBypass.getDeclaredMethod(
-                        IWifiManager::class.java,
-                        "getPrivilegedConfiguredNetworks",
-                        String::class.java,
-                        String::class.java,
-                        Bundle::class.java,
-                    )
-                method(wifiManager, packageName, featureId, extras)
-            } else {
-                try {
-                    val method =
-                        HiddenApiBypass.getDeclaredMethod(
-                            IWifiManager::class.java,
-                            "getPrivilegedConfiguredNetworks",
-                            String::class.java,
-                            String::class.java,
-                        )
-                    method(wifiManager, packageName, featureId)
-                } catch (_: NoSuchMethodException) {
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                     val method =
                         HiddenApiBypass.getDeclaredMethod(
                             IWifiManager::class.java,
@@ -46,7 +27,41 @@ object WifiManagerHelper {
                         )
                     method(wifiManager, packageName, featureId, extras)
                 }
+
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                    try {
+                        val method =
+                            HiddenApiBypass.getDeclaredMethod(
+                                IWifiManager::class.java,
+                                "getPrivilegedConfiguredNetworks",
+                                String::class.java,
+                                String::class.java,
+                            )
+                        method(wifiManager, packageName, featureId)
+                    } catch (_: NoSuchMethodException) {
+                        val method =
+                            HiddenApiBypass.getDeclaredMethod(
+                                IWifiManager::class.java,
+                                "getPrivilegedConfiguredNetworks",
+                                String::class.java,
+                                String::class.java,
+                                Bundle::class.java,
+                            )
+                        method(wifiManager, packageName, featureId, extras)
+                    }
+                }
+
+                else -> {
+                    val method =
+                        HiddenApiBypass.getDeclaredMethod(
+                            IWifiManager::class.java,
+                            "getPrivilegedConfiguredNetworks",
+                            String::class.java,
+                        )
+                    method(wifiManager, packageName)
+                }
             }
+
         val result =
             try {
                 networks::class.java.getMethod("getList")(networks) as? List<WifiConfiguration>?

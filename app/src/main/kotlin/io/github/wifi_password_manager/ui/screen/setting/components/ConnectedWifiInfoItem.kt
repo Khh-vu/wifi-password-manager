@@ -87,8 +87,7 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
         val receiver =
             object : BroadcastReceiver() {
                 override fun onReceive(ctx: Context, intent: Intent) {
-                    locationEnabled =
-                        intent.getBooleanExtra(LocationManager.EXTRA_LOCATION_ENABLED, false)
+                    locationEnabled = locationManager?.isLocationEnabled == true
                 }
             }
         context.registerReceiver(receiver, IntentFilter(LocationManager.MODE_CHANGED_ACTION))

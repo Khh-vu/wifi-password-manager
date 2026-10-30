@@ -1,9 +1,11 @@
 package android.net.wifi;
 
 import android.net.MacAddress;
+import android.os.Build;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import java.util.BitSet;
 
@@ -56,6 +58,7 @@ public class WifiConfigurationHidden {
 
     public boolean shared;
 
+    @RequiresApi(Build.VERSION_CODES.R)
     public boolean allowAutojoin;
 
     public boolean ephemeral;

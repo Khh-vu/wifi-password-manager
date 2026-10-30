@@ -27,8 +27,12 @@ An Android application for managing saved WiFi network passwords using privilege
 
 ## Requirements
 
-- **Android 11 (API 30) or higher**
-- **For system-level WiFi management**: [Shizuku](https://shizuku.rikka.app/) or root access
+- **Android 10 (API 29) or higher**
+- [Shizuku](https://shizuku.rikka.app/) or root access
+
+> [!IMPORTANT]
+> For Android 10 specifically, Shizuku running as shell (uid 2000) is not supported because it lacks permissions.  
+> Only root access or Shizuku running as root (uid 0) or system (uid 1000) is supported.
 
 ## Optional Permissions
 

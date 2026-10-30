@@ -5,7 +5,7 @@ android {
     compileSdk { version = release(37) }
 
     defaultConfig {
-        minSdk { version = release(30) }
+        minSdk { version = release(29) }
         consumerProguardFiles("consumer-rules.pro")
     }
 
