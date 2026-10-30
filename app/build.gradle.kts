@@ -177,6 +177,9 @@ dependencies {
     implementation(libs.aboutlibraries.compose.m3)
     implementation(libs.aboutlibraries.core)
 
+    // Compose Unstyled
+    implementation(libs.composeunstyled.scrollbars)
+
     // Testing
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
