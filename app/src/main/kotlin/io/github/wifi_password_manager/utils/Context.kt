@@ -17,11 +17,19 @@ import io.github.wifi_password_manager.domain.model.Settings
 import rikka.shizuku.Shizuku
 import rikka.shizuku.ShizukuProvider
 
+fun Context.checkPermission(permission: String): Int {
+    return ContextCompat.checkSelfPermission(this, permission)
+}
+
+fun Context.permissionGranted(permission: String): Boolean {
+    return checkPermission(permission) == PackageManager.PERMISSION_GRANTED
+}
+
 val Context.hasShizukuPermission: Boolean
     get() {
         if (!Shizuku.pingBinder()) return false
         return if (Shizuku.isPreV11() || Shizuku.getVersion() < 11) {
-            ContextCompat.checkSelfPermission(this, ShizukuProvider.PERMISSION)
+            checkPermission(ShizukuProvider.PERMISSION)
         } else {
             Shizuku.checkSelfPermission()
         } == PackageManager.PERMISSION_GRANTED

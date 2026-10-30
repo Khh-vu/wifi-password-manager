@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.provider.Settings
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -32,12 +32,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
+import io.github.wifi_password_manager.utils.permissionGranted
 
 private enum class ConnectedWifiInfoStatus {
     ACTIVE,
@@ -48,6 +51,7 @@ private enum class ConnectedWifiInfoStatus {
 @Composable
 fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
     val context = LocalContext.current
+    val activity = LocalActivity.current
     val isInspectMode = LocalInspectionMode.current
 
     val locationManager =
@@ -58,13 +62,9 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
                 context.getSystemService<LocationManager>()
             }
         }
+
     var permissionGranted by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-            ) == PackageManager.PERMISSION_GRANTED
-        )
+        mutableStateOf(context.permissionGranted(Manifest.permission.ACCESS_FINE_LOCATION))
     }
     var locationEnabled by remember { mutableStateOf(locationManager?.isLocationEnabled == true) }
     val status by
@@ -79,9 +79,25 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
             }
         }
     val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-            permissionGranted = it
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            permissionGranted = granted
+            val shouldShowRequestPermissionRationale =
+                activity?.shouldShowRequestPermissionRationale(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            if (!granted && shouldShowRequestPermissionRationale == false) {
+                context.startActivity(
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        "package:${context.packageName}".toUri(),
+                    )
+                )
+            }
         }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        permissionGranted = context.permissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
 
     DisposableEffect(Unit) {
         val receiver =
@@ -113,6 +129,7 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
 
                         ConnectedWifiInfoStatus.PERMISSION_REQUIRED ->
                             stringResource(R.string.location_permission_required)
+
                         ConnectedWifiInfoStatus.LOCATION_DISABLED ->
                             stringResource(R.string.location_services_disabled)
                     },
