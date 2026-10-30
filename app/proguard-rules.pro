@@ -22,3 +22,9 @@
 
 # Shizuku create UserService via reflection.
 -keep class io.github.wifi_password_manager.services.WiFiShizukuService { <init>(); }
+
+-assumenosideeffects class android.util.Log {
+    public static int d(...);
+    public static int v(...);
+    public static int i(...);
+}
