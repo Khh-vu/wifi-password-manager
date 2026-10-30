@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -64,6 +65,8 @@ fun NetworkListView(
     val navBackStack = LocalNavBackStack.current
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val gridState = rememberLazyGridState()
 
     BackHandler(enabled = state.showingSearch) {
         onAction(NetworkListViewModel.Action.ToggleSearch)
@@ -182,6 +185,7 @@ fun NetworkListView(
             NetworkList(
                 modifier = modifier,
                 contentPadding = innerPadding,
+                gridState = gridState,
                 networks = state.savedNetworks,
                 connectionStatus = state.connectionStatus,
                 isCacheMode = state.isCacheMode,
