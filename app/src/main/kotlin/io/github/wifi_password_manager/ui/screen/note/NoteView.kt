@@ -58,7 +58,10 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
     Scaffold(
-        modifier = Modifier.pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } },
+        modifier =
+            Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).pointerInput(Unit) {
+                detectTapGestures { focusManager.clearFocus() }
+            },
         topBar = {
             TopAppBar(
                 navigationIcon = { BackButton { onAction(NoteViewModel.Action.SaveOrDeleteNote) } },
@@ -122,10 +125,7 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
             }
 
         LazyColumn(
-            modifier =
-                Modifier.fillMaxSize()
-                    .nestedScroll(scrollBehavior.nestedScrollConnection)
-                    .imePadding(),
+            modifier = Modifier.fillMaxSize().imePadding(),
             contentPadding = innerPadding + contentPadding,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

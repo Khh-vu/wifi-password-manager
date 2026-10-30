@@ -70,6 +70,7 @@ fun NetworkListView(
     }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column {
                 AnimatedContent(
@@ -157,8 +158,7 @@ fun NetworkListView(
             }
         },
     ) { innerPadding ->
-        val modifier =
-            Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection).imePadding()
+        val modifier = Modifier.fillMaxSize().imePadding()
 
         if (state.savedNetworks.isEmpty()) {
             Box(modifier = modifier.padding(innerPadding), contentAlignment = Alignment.Center) {

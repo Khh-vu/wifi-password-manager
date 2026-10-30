@@ -22,17 +22,17 @@ fun LicenseView() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 navigationIcon = { BackButton() },
                 title = { Text(text = stringResource(R.string.license_title)) },
                 scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { innerPadding ->
         val libraries by produceLibraries(R.raw.aboutlibraries)
         LibrariesContainer(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             libraries = libraries,
             contentPadding = innerPadding,
             licenseDialogConfirmText = stringResource(R.string.ok),

@@ -61,6 +61,7 @@ fun MethodInspectorView(
     }
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AnimatedContent(
                 targetState = state.showingSearch,
@@ -123,7 +124,6 @@ fun MethodInspectorView(
         },
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = innerPadding + PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {

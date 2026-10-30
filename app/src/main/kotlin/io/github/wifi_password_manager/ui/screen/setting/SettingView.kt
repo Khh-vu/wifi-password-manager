@@ -65,16 +65,16 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 navigationIcon = { BackButton() },
                 title = { Text(text = stringResource(R.string.settings_title)) },
                 scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = innerPadding + PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {

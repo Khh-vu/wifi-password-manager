@@ -27,16 +27,16 @@ fun ExportWifiSetupView() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 navigationIcon = { BackButton() },
                 title = { Text(text = stringResource(R.string.export_wifi_setup_title)) },
                 scrollBehavior = scrollBehavior,
             )
-        }
+        },
     ) { innerPadding ->
         LazyColumn(
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             contentPadding = innerPadding + PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
