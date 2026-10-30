@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -57,7 +58,7 @@ fun FilterSortBar(
             animationSpec = tween(durationMillis = 300),
         )
 
-    Surface(modifier = modifier.fillMaxWidth()) {
+    Surface(modifier = modifier.fillMaxWidth(), color = Color.Transparent) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
