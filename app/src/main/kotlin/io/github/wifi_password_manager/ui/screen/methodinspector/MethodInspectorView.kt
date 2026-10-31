@@ -2,14 +2,25 @@ package io.github.wifi_password_manager.ui.screen.methodinspector
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -20,12 +31,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,7 +49,11 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.composeunstyled.Thumb
+import com.composeunstyled.UnstyledVerticalScrollbar
+import com.composeunstyled.rememberScrollbarState
 import io.github.wifi_password_manager.R
+import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.ui.icons.Download
 import io.github.wifi_password_manager.ui.icons.Search
 import io.github.wifi_password_manager.ui.shared.BackButton
@@ -54,6 +71,7 @@ fun MethodInspectorView(
     searchState: TextFieldState,
     onAction: (MethodInspectorViewModel.Action) -> Unit,
 ) {
+    val searchAtBottom = LocalSettings.current.searchBarAtBottom
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     BackHandler(enabled = state.showingSearch) {
@@ -64,7 +82,7 @@ fun MethodInspectorView(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             AnimatedContent(
-                targetState = state.showingSearch,
+                targetState = state.showingSearch && !searchAtBottom,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
             ) { showingSearch ->
                 if (showingSearch) {
@@ -95,23 +113,38 @@ fun MethodInspectorView(
                             )
                         },
                         actions = {
-                            TooltipIconButton(
-                                onClick = {
-                                    onAction(MethodInspectorViewModel.Action.ToggleSearch)
-                                },
-                                imageVector = Search,
-                                tooltip = stringResource(R.string.search_tooltip),
-                                positioning = TooltipAnchorPosition.Below,
-                            )
+                            if (!state.showingSearch) {
+                                TooltipIconButton(
+                                    onClick = {
+                                        onAction(MethodInspectorViewModel.Action.ToggleSearch)
+                                    },
+                                    imageVector = Search,
+                                    tooltip = stringResource(R.string.search_tooltip),
+                                    positioning = TooltipAnchorPosition.Below,
+                                )
+                            }
                         },
                         scrollBehavior = scrollBehavior,
                     )
                 }
             }
         },
+        bottomBar = {
+            if (searchAtBottom) {
+                AnimatedVisibility(visible = state.showingSearch) {
+                    SearchBar(
+                        showingSearch = state.showingSearch,
+                        state = searchState,
+                        onBack = { onAction(MethodInspectorViewModel.Action.ToggleSearch) },
+                        placeholder = stringResource(R.string.method_inspector_search_hint),
+                        atBottom = true,
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                modifier = Modifier.imePadding(),
+                modifier = if (searchAtBottom) Modifier else Modifier.imePadding(),
                 text = { Text(text = stringResource(R.string.export_methods_action)) },
                 icon = {
                     Icon(
@@ -123,28 +156,61 @@ fun MethodInspectorView(
             )
         },
     ) { innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding + PaddingValues(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(items = state.methods, key = { (name, _) -> name }) { (name, signature) ->
-                Card {
-                    ExpansionItem(
-                        content = {
+        val listState = rememberLazyListState()
+        val scrollbarState = rememberScrollbarState(listState)
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState,
+                contentPadding = innerPadding + PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(items = state.methods, key = { (name, _) -> name }) { (name, signature) ->
+                    Card {
+                        ExpansionItem(
+                            content = {
+                                ListItem(
+                                    colors =
+                                        ListItemDefaults.colors(containerColor = Color.Transparent)
+                                ) {
+                                    Text(text = name)
+                                }
+                            }
+                        ) {
                             ListItem(
                                 colors = ListItemDefaults.colors(containerColor = Color.Transparent)
                             ) {
-                                Text(text = name)
+                                Text(text = signature)
                             }
-                        }
-                    ) {
-                        ListItem(
-                            colors = ListItemDefaults.colors(containerColor = Color.Transparent)
-                        ) {
-                            Text(text = signature)
                         }
                     }
                 }
+            }
+
+            UnstyledVerticalScrollbar(
+                scrollbarState = scrollbarState,
+                modifier =
+                    Modifier.align(Alignment.TopEnd)
+                        .fillMaxHeight()
+                        .width(8.dp)
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            bottom = innerPadding.calculateBottomPadding(),
+                        )
+                        .background(
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = .2f),
+                            CircleShape,
+                        ),
+            ) {
+                Thumb(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .heightIn(min = 36.dp)
+                            .background(
+                                MaterialTheme.colorScheme.primary.copy(alpha = .9f),
+                                CircleShape,
+                            )
+                )
             }
         }
     }

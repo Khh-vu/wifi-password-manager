@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.R
+import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
@@ -49,6 +50,7 @@ import io.github.wifi_password_manager.ui.icons.Refresh
 import io.github.wifi_password_manager.ui.screen.network.list.components.MethodSignatureErrorDialog
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkListTopBar
+import io.github.wifi_password_manager.ui.shared.SearchBar
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import io.github.wifi_password_manager.utils.MOCK
 import kotlinx.coroutines.launch
@@ -61,6 +63,8 @@ fun NetworkListView(
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
     val navBackStack = LocalNavBackStack.current
+    val searchAtBottom = LocalSettings.current.searchBarAtBottom
+
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val gridState = rememberLazyGridState()
     val scope = rememberCoroutineScope()
@@ -80,9 +84,22 @@ fun NetworkListView(
                 onAction = onAction,
             )
         },
+        bottomBar = {
+            if (searchAtBottom) {
+                AnimatedVisibility(visible = state.showingSearch) {
+                    SearchBar(
+                        showingSearch = state.showingSearch,
+                        state = searchState,
+                        onBack = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                        placeholder = stringResource(R.string.search_hint),
+                        atBottom = true,
+                    )
+                }
+            }
+        },
         floatingActionButton = {
             Column(
-                modifier = Modifier.imePadding(),
+                modifier = if (searchAtBottom) Modifier else Modifier.imePadding(),
                 horizontalAlignment = Alignment.End,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -141,7 +158,15 @@ fun NetworkListView(
             }
         },
     ) { innerPadding ->
-        val modifier = Modifier.fillMaxSize().imePadding()
+        val modifier =
+            Modifier.fillMaxSize()
+                .then(
+                    if (searchAtBottom) {
+                        Modifier
+                    } else {
+                        Modifier.imePadding()
+                    }
+                )
 
         if (state.savedNetworks.isEmpty()) {
             Box(modifier = modifier.padding(innerPadding), contentAlignment = Alignment.Center) {

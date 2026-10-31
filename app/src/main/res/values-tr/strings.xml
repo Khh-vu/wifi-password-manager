@@ -76,6 +76,8 @@
     <string name="material_you_title">Material You</string>
     <string name="pure_black_theme_title">Saf siyah tema</string>
     <string name="pure_black_theme_description">Koyu temada saf siyah arka plan kullan</string>
+    <string name="bottom_search_bar_title">Alt arama çubuğu</string>
+    <string name="search_bar_at_bottom_description">Arama çubuğunu klavyenin üstünde göster</string>
 
     <!-- Import & Export Section -->
     <string name="import_export_section">İçe &amp; Dışa aktar</string>

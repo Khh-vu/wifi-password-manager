@@ -75,6 +75,8 @@
     <string name="material_you_title">Material You</string>
     <string name="pure_black_theme_title">纯黑主题</string>
     <string name="pure_black_theme_description">在深色主题中使用纯黑背景</string>
+    <string name="bottom_search_bar_title">底部搜索栏</string>
+    <string name="search_bar_at_bottom_description">在键盘上方显示搜索栏</string>
 
     <!-- 导入与导出部分 -->
     <string name="import_export_section">导入与导出</string>

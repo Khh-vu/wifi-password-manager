@@ -78,6 +78,8 @@
     <string name="material_you_title">Material You</string>
     <string name="pure_black_theme_title">Чёрная тема</string>
     <string name="pure_black_theme_description">Использовать чисто чёрный фон в тёмной теме</string>
+    <string name="bottom_search_bar_title">Нижняя строка поиска</string>
+    <string name="search_bar_at_bottom_description">Показывать строку поиска над клавиатурой</string>
 
     <!-- Import & Export Section -->
     <string name="import_export_section">Импорт и экспорт</string>

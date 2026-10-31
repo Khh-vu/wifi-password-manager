@@ -26,6 +26,7 @@ data class Settings(
     val allowInsecureReceiver: Boolean = false,
     val plaintextPasswords: Boolean = false,
     val pureBlackTheme: Boolean = false,
+    val searchBarAtBottom: Boolean = false,
 ) {
     @Serializable
     enum class ThemeMode {

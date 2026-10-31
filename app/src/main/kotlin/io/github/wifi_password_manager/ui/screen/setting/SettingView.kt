@@ -164,6 +164,33 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             }
                         }
                     }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
+
+                    ListItem(
+                        onClick = {
+                            onAction(
+                                SettingViewModel.Action.ToggleSearchBarAtBottom(
+                                    !settings.searchBarAtBottom
+                                )
+                            )
+                        },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.search_bar_at_bottom_description))
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = settings.searchBarAtBottom,
+                                onCheckedChange = {
+                                    onAction(SettingViewModel.Action.ToggleSearchBarAtBottom(it))
+                                },
+                            )
+                        },
+                        shapes = UiConfig.listItemShapes(),
+                        colors = UiConfig.listItemColors(),
+                    ) {
+                        Text(text = stringResource(R.string.bottom_search_bar_title))
+                    }
                 }
             }
 

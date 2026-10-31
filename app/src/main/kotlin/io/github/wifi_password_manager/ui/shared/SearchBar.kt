@@ -1,8 +1,13 @@
 package io.github.wifi_password_manager.ui.shared
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
@@ -42,6 +47,7 @@ fun SearchBar(
     state: TextFieldState,
     onBack: () -> Unit,
     placeholder: String,
+    atBottom: Boolean = false,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -59,7 +65,14 @@ fun SearchBar(
         TextField(
             modifier =
                 Modifier.fillMaxWidth()
-                    .statusBarsPadding()
+                    .then(
+                        if (atBottom) {
+                            val insets = WindowInsets.navigationBars.union(WindowInsets.ime)
+                            Modifier.windowInsetsPadding(insets)
+                        } else {
+                            Modifier.statusBarsPadding()
+                        }
+                    )
                     .height(TopAppBarDefaults.TopAppBarExpandedHeight)
                     .focusRequester(focusRequester),
             state = state,

@@ -80,6 +80,8 @@
     <string name="material_you_title">Material You</string>
     <string name="pure_black_theme_title">سمة سوداء خالصة</string>
     <string name="pure_black_theme_description">استخدام خلفية سوداء خالصة للسمة الداكنة</string>
+    <string name="bottom_search_bar_title">شريط البحث السفلي</string>
+    <string name="search_bar_at_bottom_description">عرض شريط البحث فوق لوحة المفاتيح</string>
 
     <!-- Import & Export Section -->
     <string name="import_export_section">استيراد وتصدير</string>

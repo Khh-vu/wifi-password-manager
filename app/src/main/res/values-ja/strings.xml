@@ -75,6 +75,8 @@
     <string name="material_you_title">Material You</string>
     <string name="pure_black_theme_title">ピュアブラックテーマ</string>
     <string name="pure_black_theme_description">ダークテーマで純黒の背景を使用</string>
+    <string name="bottom_search_bar_title">下部の検索バー</string>
+    <string name="search_bar_at_bottom_description">キーボードの上に検索バーを表示</string>
 
     <!-- Import & Export Section -->
     <string name="import_export_section">インポート &amp; エクスポート</string>

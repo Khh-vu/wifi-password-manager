@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -18,6 +19,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.pluralStringResource
@@ -27,6 +29,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.sp
 import io.github.wifi_password_manager.R
+import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
@@ -47,6 +50,8 @@ fun NetworkListTopBar(
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
     val navBackStack = LocalNavBackStack.current
+    val searchAtBottom = LocalSettings.current.searchBarAtBottom
+
     val topBarColors = TopAppBarDefaults.topAppBarColors()
 
     Surface(
@@ -58,64 +63,76 @@ fun NetworkListTopBar(
             )
     ) {
         Column {
-            AnimatedContent(
-                targetState = state.showingSearch,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-            ) { showingSearch ->
-                if (showingSearch) {
-                    SearchBar(
-                        showingSearch = state.showingSearch,
-                        state = searchState,
-                        onBack = { onAction(NetworkListViewModel.Action.ToggleSearch) },
-                        placeholder = stringResource(R.string.search_hint),
-                    )
-                } else {
-                    TopAppBar(
-                        title = {
-                            if (state.savedNetworks.isNotEmpty()) {
-                                Text(
-                                    text =
-                                        pluralStringResource(
-                                            R.plurals.network_list_title,
-                                            state.savedNetworks.size,
-                                            state.savedNetworks.size,
-                                        ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    autoSize =
-                                        TextAutoSize.StepBased(
-                                            minFontSize = 16.sp,
-                                            maxFontSize = LocalTextStyle.current.fontSize,
-                                        ),
-                                )
-                            }
-                        },
-                        actions = {
-                            TooltipIconButton(
-                                onClick = { onAction(NetworkListViewModel.Action.ToggleSearch) },
-                                imageVector = Search,
-                                tooltip = stringResource(R.string.search_tooltip),
-                                positioning = TooltipAnchorPosition.Below,
-                            )
+            if (!state.showingSearch || !searchAtBottom) {
+                AnimatedContent(
+                    targetState = state.showingSearch,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() },
+                ) { showingSearch ->
+                    if (showingSearch) {
+                        SearchBar(
+                            showingSearch = state.showingSearch,
+                            state = searchState,
+                            onBack = { onAction(NetworkListViewModel.Action.ToggleSearch) },
+                            placeholder = stringResource(R.string.search_hint),
+                        )
+                    } else {
+                        TopAppBar(
+                            title = {
+                                if (state.savedNetworks.isNotEmpty()) {
+                                    Text(
+                                        text =
+                                            pluralStringResource(
+                                                R.plurals.network_list_title,
+                                                state.savedNetworks.size,
+                                                state.savedNetworks.size,
+                                            ),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        autoSize =
+                                            TextAutoSize.StepBased(
+                                                minFontSize = 16.sp,
+                                                maxFontSize = LocalTextStyle.current.fontSize,
+                                            ),
+                                    )
+                                }
+                            },
+                            actions = {
+                                if (!state.showingSearch) {
+                                    TooltipIconButton(
+                                        onClick = {
+                                            onAction(NetworkListViewModel.Action.ToggleSearch)
+                                        },
+                                        imageVector = Search,
+                                        tooltip = stringResource(R.string.search_tooltip),
+                                        positioning = TooltipAnchorPosition.Below,
+                                    )
+                                }
 
-                            TooltipIconButton(
-                                onClick = { navBackStack.add(Route.SettingScreen) },
-                                imageVector = Settings,
-                                tooltip = stringResource(R.string.settings_tooltip),
-                                positioning = TooltipAnchorPosition.Below,
-                            )
-                        },
-                        scrollBehavior = scrollBehavior,
-                        colors =
-                            topBarColors.copy(
-                                containerColor = Color.Transparent,
-                                scrolledContainerColor = Color.Transparent,
-                            ),
-                    )
+                                TooltipIconButton(
+                                    onClick = { navBackStack.add(Route.SettingScreen) },
+                                    imageVector = Settings,
+                                    tooltip = stringResource(R.string.settings_tooltip),
+                                    positioning = TooltipAnchorPosition.Below,
+                                )
+                            },
+                            scrollBehavior = scrollBehavior,
+                            colors =
+                                topBarColors.copy(
+                                    containerColor = Color.Transparent,
+                                    scrolledContainerColor = Color.Transparent,
+                                ),
+                        )
+                    }
                 }
             }
 
             FilterSortBar(
+                modifier =
+                    if (state.showingSearch && searchAtBottom) {
+                        Modifier.statusBarsPadding()
+                    } else {
+                        Modifier
+                    },
                 filter = state.filter,
                 sortAscending = state.sortAscending,
                 onAction = onAction,

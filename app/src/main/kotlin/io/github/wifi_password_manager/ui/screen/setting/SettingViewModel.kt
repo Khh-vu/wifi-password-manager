@@ -76,6 +76,8 @@ class SettingViewModel(
 
         data class TogglePureBlackTheme(val value: Boolean) : Action
 
+        data class ToggleSearchBarAtBottom(val value: Boolean) : Action
+
         data class ToggleAppLock(val value: Boolean) : Action
 
         data class ToggleSecureScreen(val value: Boolean) : Action
@@ -152,6 +154,9 @@ class SettingViewModel(
             is Action.ToggleMaterialYou -> updateSettings { it.copy(useMaterialYou = action.value) }
             is Action.TogglePureBlackTheme ->
                 updateSettings { it.copy(pureBlackTheme = action.value) }
+
+            is Action.ToggleSearchBarAtBottom ->
+                updateSettings { it.copy(searchBarAtBottom = action.value) }
 
             is Action.ToggleAppLock -> updateSettings { it.copy(appLockEnabled = action.value) }
             is Action.ToggleSecureScreen ->
