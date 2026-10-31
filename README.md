@@ -46,7 +46,7 @@ These permissions are only needed for the **Show Connected WiFi** feature when y
 
 [<img src="https://f-droid.org/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/io.github.wifi_password_manager)
 [<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it on IzzyOnDroid" height="80">](https://apt.izzysoft.de/packages/io.github.wifi_password_manager)
-[<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="80">](https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/Khh-vu/wifi-password-manager)
+[<img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="80">](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/Khh-vu/wifi-password-manager)
 [<img src=".github/assets/github_badge.png" alt="Get it on GitHub" height="80">](https://github.com/Khh-vu/wifi-password-manager/releases)
 
 ## Technical Stack
