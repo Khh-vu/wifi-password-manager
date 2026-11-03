@@ -1,8 +1,15 @@
 View, manage, backup/restore saved WiFi passwords using Shizuku or root access.
 
+<b>Requirements:</b>
+
+- Android 10 or higher
+- Shizuku or root access
+- On Android 10, Shizuku running as shell (uid 2000) is not supported because it lacks permissions. Only root access or Shizuku running as root (uid 0) or system (uid 1000) works.
+
 <b>Features:</b>
 
 - View all saved networks with their passwords
+- Connect, disconnect and forget networks directly from the app
 - Copy passwords and generate QR codes
 - Add notes to networks
 - Import/export networks as JSON with GZip compression and encryption options
