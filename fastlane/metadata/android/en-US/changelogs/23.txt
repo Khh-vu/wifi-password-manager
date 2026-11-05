@@ -1,0 +1,4 @@
+- Added Android 10 support (requires root, or Shizuku running as root or system)
+- Added scroll to top button and scrollbar to list screens
+- Added bottom search bar option setting
+- Fixed scroll position loss on empty search results
