@@ -16,6 +16,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -75,6 +76,21 @@ fun WifiCard(
     val connected =
         connectionStatus is WifiConnectionStatus.Connected && connectionStatus.ssid == network.ssid
 
+    val itemColors =
+        if (connected) {
+            val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            ListItemDefaults.colors(
+                containerColor = Color.Transparent,
+                headlineColor = contentColor,
+                leadingIconColor = contentColor,
+                overlineColor = contentColor,
+                supportingColor = contentColor,
+                trailingIconColor = contentColor,
+            )
+        } else {
+            ListItemDefaults.colors(containerColor = Color.Transparent)
+        }
+
     Card(
         modifier = modifier,
         colors =
@@ -88,13 +104,14 @@ fun WifiCard(
             network = network,
             connectionStatus = connectionStatus,
             isCacheMode = isCacheMode,
+            colors = itemColors,
             onOptionStateChange = { optionState = it },
             onAction = onAction,
         )
 
         if (network.password.isNotEmpty() || expanded) {
             Separator(connected = connected)
-            PasswordItem(network = network)
+            PasswordItem(network = network, connected = connected, colors = itemColors)
         }
 
         if (network.note != null) {
@@ -103,6 +120,7 @@ fun WifiCard(
                 modifier =
                     Modifier.clickable { navBackStack.add(Route.NoteScreen(network = network)) },
                 network = network,
+                colors = itemColors,
             )
         }
     }
@@ -145,6 +163,7 @@ private fun SSIDItem(
     network: WifiNetwork,
     connectionStatus: WifiConnectionStatus,
     isCacheMode: Boolean = false,
+    colors: ListItemColors,
     onOptionStateChange: (OptionState?) -> Unit,
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
@@ -187,7 +206,7 @@ private fun SSIDItem(
                 onAction = onAction,
             )
         },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        colors = colors,
     ) {
         Text(
             text = network.ssid,
@@ -199,7 +218,12 @@ private fun SSIDItem(
 }
 
 @Composable
-private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
+private fun PasswordItem(
+    modifier: Modifier = Modifier,
+    network: WifiNetwork,
+    connected: Boolean,
+    colors: ListItemColors,
+) {
     val plaintextPasswords = LocalSettings.current.plaintextPasswords
     var obscured by retain { mutableStateOf(!plaintextPasswords) }
 
@@ -213,6 +237,18 @@ private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
                     scope.launch { clipboard.setClipEntry(network.passwordClipEntry(obscured)) }
                 },
                 shapes = ButtonDefaults.shapes(),
+                colors =
+                    if (connected) {
+                        ButtonDefaults.elevatedButtonColors()
+                    } else {
+                        ButtonDefaults.buttonColors()
+                    },
+                elevation =
+                    if (connected) {
+                        ButtonDefaults.elevatedButtonElevation()
+                    } else {
+                        ButtonDefaults.buttonElevation()
+                    },
             ) {
                 Icon(
                     imageVector = ContentCopy,
@@ -244,7 +280,7 @@ private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
             }
         },
         trailingContent = trailingContent.takeIf { network.password.isNotEmpty() },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        colors = colors,
     ) {
         Text(
             text = stringResource(R.string.password_label),
@@ -254,13 +290,17 @@ private fun PasswordItem(modifier: Modifier = Modifier, network: WifiNetwork) {
 }
 
 @Composable
-private fun NoteItem(modifier: Modifier = Modifier, network: WifiNetwork) {
+private fun NoteItem(
+    modifier: Modifier = Modifier,
+    network: WifiNetwork,
+    colors: ListItemColors,
+) {
     ListItem(
         modifier = modifier,
         supportingContent = {
             Text(text = network.note.orEmpty(), maxLines = 3, overflow = TextOverflow.Ellipsis)
         },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        colors = colors,
     ) {
         Text(
             text = stringResource(R.string.note_label),
