@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.invoke
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 class SettingRepositoryImpl(
@@ -48,7 +49,7 @@ class SettingRepositoryImpl(
         context.dataStore.data.stateIn(
             scope = CoroutineScope(dispatcher + SupervisorJob()),
             started = SharingStarted.Eagerly,
-            initialValue = Settings(),
+            initialValue = runBlocking { getCurrentSettings() },
         )
 
     override suspend fun getCurrentSettings(): Settings {
