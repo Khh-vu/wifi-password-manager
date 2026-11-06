@@ -66,17 +66,16 @@ jobs:
             printf 'keyPassword=%s\n' "$KEYSTORE_KEY_PASSWORD"
           } > "$GITHUB_WORKSPACE/key.properties"
 
-      - name: Run lint
-        run: ./gradlew lint --no-daemon
+      - name: Lint and build Release APK
+        run: ./gradlew lintRelease assembleRelease --no-daemon
 
-      - name: Create Release APK
-        run: ./gradlew assembleRelease --no-daemon
-
-      - name: Upload build artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: app-release.apk
-          path: ./app/build/outputs/apk/release/app-release.apk
+          name: release-files
+          path: |
+            ./app/build/outputs/apk/release/app-release.apk
+            ./app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: error
 
   release:
@@ -91,11 +90,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Download build artifact
+      - name: Download build artifacts
         uses: actions/download-artifact@v7
         with:
-          name: app-release.apk
-          path: ./apk
+          name: release-files
+          path: ./artifacts
 
       - name: Create GitHub Release
         env:
@@ -108,4 +107,5 @@ jobs:
             --title "$TAG" \
             --generate-notes \
             --notes-file "fastlane/metadata/android/en-US/changelogs/$VERSION_CODE.txt" \
-            ./apk/app-release.apk
+            ./artifacts/apk/release/app-release.apk \
+            ./artifacts/mapping/release/mapping.txt
