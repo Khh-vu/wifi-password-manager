@@ -126,6 +126,8 @@
     <string name="plaintext_passwords_description">WiFi şifrelerini düz metin şeklinde görüntüle</string>
     <string name="auto_persist_ephemeral_networks_title">Geçici ağları otomatik hatırla</string>
     <string name="auto_persist_ephemeral_networks_description">Bağlantı kesildikten sonra unutulabilecek geçici ağları otomatik olarak kaydedin (bağlantı kesintilerine neden olabilir)</string>
+    <string name="auto_sync_networks_title">Ağ listesini otomatik güncelle</string>
+    <string name="auto_sync_networks_description">Uygulamadaki listeyi sistemin kayıtlı ağlarıyla arka planda düzenli olarak güncelleyin (daha fazla pil harcar)</string>
     <string name="allow_cache_mode_title">Önbellek moduna izin ver</string>
     <string name="allow_cache_mode_description">Uygulamanın Shizuku veya root erişimi olmadan çalışmasına izin verir. Ayrıcalıklı işlevler devre dışı bırakılacak ve WiFi verileri önbellekten okunacaktır.</string>
 

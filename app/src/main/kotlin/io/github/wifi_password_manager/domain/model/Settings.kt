@@ -19,6 +19,7 @@ data class Settings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val useMaterialYou: Boolean = true,
     val autoPersistEphemeralNetworks: Boolean = false,
+    val autoSyncNetworks: Boolean = false,
     val appLockEnabled: Boolean = false,
     val lockTimeout: Duration = 30.seconds,
     val secureScreenEnabled: Boolean = false,

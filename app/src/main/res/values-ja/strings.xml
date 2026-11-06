@@ -125,6 +125,8 @@
     <string name="plaintext_passwords_description">WiFiパスワードをプレーンテキストで表示します</string>
     <string name="auto_persist_ephemeral_networks_title">一時ネットワークを自動保存</string>
     <string name="auto_persist_ephemeral_networks_description">切断後に削除される一時ネットワークを自動的に保存します（切断が発生することがあります）</string>
+    <string name="auto_sync_networks_title">ネットワークリストを自動更新</string>
+    <string name="auto_sync_networks_description">システムの保存済みネットワークでアプリ内のリストをバックグラウンドで定期的に更新します（バッテリー消費が増えます）</string>
     <string name="allow_cache_mode_title">キャッシュモードを許可</string>
     <string name="allow_cache_mode_description">Shizukuまたはrootなしでアプリを実行できます。特権機能は無効になり、WiFiデータはキャッシュから読み込まれます。</string>
 

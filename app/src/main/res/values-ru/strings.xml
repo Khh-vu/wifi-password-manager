@@ -128,6 +128,8 @@
     <string name="plaintext_passwords_description">Отображать пароли WiFi в открытом виде</string>
     <string name="auto_persist_ephemeral_networks_title">Автосохранение временных сетей</string>
     <string name="auto_persist_ephemeral_networks_description">Автоматически сохранять временные сети, которые иначе были бы забыты после отключения (может вызвать разрывы соединения)</string>
+    <string name="auto_sync_networks_title">Автообновление списка сетей</string>
+    <string name="auto_sync_networks_description">Периодически обновлять список в приложении по сохранённым сетям системы в фоне (увеличивает расход батареи)</string>
     <string name="allow_cache_mode_title">Разрешить режим кэширования</string>
     <string name="allow_cache_mode_description">Разрешите приложению работать без Shizuku или root-прав. Привилегированные функции будут отключены, а данные WiFi будут считываться из кэша.</string>
 

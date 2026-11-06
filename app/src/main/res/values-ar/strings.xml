@@ -130,6 +130,8 @@
     <string name="plaintext_passwords_description">عرض كلمات مرور WiFi كنص عادي</string>
     <string name="auto_persist_ephemeral_networks_title">حفظ الشبكات المؤقتة تلقائياً</string>
     <string name="auto_persist_ephemeral_networks_description">حفظ الشبكات المؤقتة تلقائياً والتي سيتم نسيانها خلاف ذلك بعد قطع الاتصال (قد يتسبب ذلك في انقطاع الاتصال)</string>
+    <string name="auto_sync_networks_title">تحديث قائمة الشبكات تلقائياً</string>
+    <string name="auto_sync_networks_description">تحديث قائمة التطبيق دورياً من الشبكات المحفوظة في النظام في الخلفية (يستهلك المزيد من البطارية)</string>
     <string name="allow_cache_mode_title">السماح بوضع التخزين المؤقت</string>
     <string name="allow_cache_mode_description">السماح للتطبيق بالعمل بدون Shizuku أو Root. سيتم تعطيل الوظائف التي تتطلب صلاحيات متقدمة وستتم قراءة بيانات WiFi من ذاكرة التخزين المؤقت.</string>
 

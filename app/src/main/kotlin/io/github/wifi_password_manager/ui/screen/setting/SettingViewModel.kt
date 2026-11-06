@@ -86,6 +86,8 @@ class SettingViewModel(
 
         data class ToggleAutoPersistEphemeralNetworks(val value: Boolean) : Action
 
+        data class ToggleAutoSyncNetworks(val value: Boolean) : Action
+
         data class ToggleAllowCacheMode(val value: Boolean) : Action
 
         data class ToggleAllowInsecureReceiver(val value: Boolean) : Action
@@ -169,6 +171,9 @@ class SettingViewModel(
 
             is Action.ToggleAutoPersistEphemeralNetworks ->
                 updateSettings { it.copy(autoPersistEphemeralNetworks = action.value) }
+
+            is Action.ToggleAutoSyncNetworks ->
+                updateSettings { it.copy(autoSyncNetworks = action.value) }
 
             is Action.ToggleAllowCacheMode ->
                 updateSettings { it.copy(allowCacheMode = action.value) }

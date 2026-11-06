@@ -11,12 +11,13 @@ import io.github.wifi_password_manager.data.local.entity.WifiNetworkFtsEntity
 
 @Database(
     entities = [WifiNetworkEntity::class, WifiNetworkFtsEntity::class],
-    version = 5,
+    version = 6,
     autoMigrations =
         [
             AutoMigration(2, 3),
             AutoMigration(3, 4),
             AutoMigration(4, 5),
+            AutoMigration(5, 6),
         ],
 )
 abstract class AppDatabase : RoomDatabase() {

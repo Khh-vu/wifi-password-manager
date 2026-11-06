@@ -18,7 +18,33 @@ data class WifiNetworkEntity(
     @ColumnInfo(defaultValue = "NONE") val meteredOverride: String = "NONE",
     @ColumnInfo(defaultValue = "AUTO") val macRandomizationSetting: String = "AUTO",
     val randomizedMacAddress: String? = null,
+    val createdAt: Long? = null,
+    val updatedAt: Long? = null,
 )
+
+fun WifiNetworkEntity.withTimestamps(
+    oldNetwork: WifiNetworkEntity?,
+    timeMillis: Long,
+): WifiNetworkEntity =
+    when {
+        oldNetwork == null -> {
+            copy(createdAt = timeMillis, updatedAt = timeMillis)
+        }
+        hasSameSettings(oldNetwork) -> {
+            copy(createdAt = oldNetwork.createdAt, updatedAt = oldNetwork.updatedAt)
+        }
+        else -> {
+            copy(createdAt = oldNetwork.createdAt, updatedAt = timeMillis)
+        }
+    }
+
+private fun WifiNetworkEntity.hasSameSettings(other: WifiNetworkEntity): Boolean =
+    password == other.password &&
+        hidden == other.hidden &&
+        autojoin == other.autojoin &&
+        private == other.private &&
+        meteredOverride == other.meteredOverride &&
+        macRandomizationSetting == other.macRandomizationSetting
 
 fun WifiNetwork.toEntity(): WifiNetworkEntity {
     return WifiNetworkEntity(

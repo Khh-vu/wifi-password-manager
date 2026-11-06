@@ -127,6 +127,8 @@
     <string name="plaintext_passwords_description">Display WiFi passwords in plaintext</string>
     <string name="auto_persist_ephemeral_networks_title">Auto persist ephemeral networks</string>
     <string name="auto_persist_ephemeral_networks_description">Automatically save temporary networks that would otherwise be forgotten after disconnecting (may cause disconnects)</string>
+    <string name="auto_sync_networks_title">Auto update network list</string>
+    <string name="auto_sync_networks_description">Periodically update the app\'s list from the system\'s saved networks in the background (uses more battery)</string>
     <string name="allow_cache_mode_title">Allow cache mode</string>
     <string name="allow_cache_mode_description">Allow the app to run without Shizuku or root. Privileged functionalities will be disabled and WiFi data will be read from cache.</string>
 

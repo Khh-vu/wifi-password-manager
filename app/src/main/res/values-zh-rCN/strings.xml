@@ -125,6 +125,8 @@
     <string name="plaintext_passwords_description">以明文显示 WiFi 密码</string>
     <string name="auto_persist_ephemeral_networks_title">自动保留临时网络</string>
     <string name="auto_persist_ephemeral_networks_description">自动保存临时网络，使其不会在断开连接后被忘记（可能导致断连）</string>
+    <string name="auto_sync_networks_title">自动更新网络列表</string>
+    <string name="auto_sync_networks_description">在后台定期用系统已保存的网络更新应用内的列表（会增加耗电）</string>
     <string name="allow_cache_mode_title">允许缓存模式</string>
     <string name="allow_cache_mode_description">允许应用在无 Shizuku 或 root 权限时运行。特权功能将被禁用，WiFi 数据将从缓存中读取。</string>
 

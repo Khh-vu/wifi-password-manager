@@ -413,6 +413,33 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                     ListItem(
                         onClick = {
                             onAction(
+                                SettingViewModel.Action.ToggleAutoSyncNetworks(
+                                    !settings.autoSyncNetworks
+                                )
+                            )
+                        },
+                        supportingContent = {
+                            Text(text = stringResource(R.string.auto_sync_networks_description))
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = settings.autoSyncNetworks,
+                                onCheckedChange = {
+                                    onAction(SettingViewModel.Action.ToggleAutoSyncNetworks(it))
+                                },
+                            )
+                        },
+                        shapes = UiConfig.listItemShapes(),
+                        colors = UiConfig.listItemColors(),
+                    ) {
+                        Text(text = stringResource(R.string.auto_sync_networks_title))
+                    }
+
+                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
+
+                    ListItem(
+                        onClick = {
+                            onAction(
                                 SettingViewModel.Action.ToggleAllowCacheMode(
                                     !settings.allowCacheMode
                                 )
