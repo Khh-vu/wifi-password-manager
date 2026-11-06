@@ -178,7 +178,7 @@ class WifiRepositoryImpl(
     }
 
     override suspend fun refresh() {
-        if (privilegedManager.currentMode == PrivilegedMode.NONE) return
+        if (!privilegedManager.currentMode.hasPrivilegedAccess) return
         dispatcher {
             val networks = getPrivilegedConfiguredNetworks().map(WifiNetwork::fromWifiConfiguration)
             if (networks.isEmpty()) {
