@@ -48,7 +48,7 @@ fun WiFiPasswordManagerTheme(
 class ThemeWrapper : PreviewWrapperProvider {
     @Composable
     override fun Wrap(content: @Composable () -> Unit) {
-        WiFiPasswordManagerTheme { content() }
+        WiFiPasswordManagerTheme { Surface { content() } }
     }
 }
 

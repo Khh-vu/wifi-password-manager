@@ -5,6 +5,7 @@
     <string name="cancel">Отмена</string>
     <string name="ok">ОК</string>
     <string name="clear">Очистить</string>
+    <string name="reset">Сброс</string>
     <string name="back">Назад</string>
     <string name="on">Вкл.</string>
     <string name="off">Выкл.</string>
@@ -25,15 +26,21 @@
     <string name="export_option_compressed">Сжатый (GZip)</string>
     <string name="export_option_compressed_description">JSON сжатый GZip. Меньший размер файла</string>
 
-    <!-- Network Filter -->
-    <string name="filter_all">Все</string>
+    <!-- Network Sort and Filter -->
+    <string name="sort_filter_title">Сортировка и фильтр</string>
+    <string name="filter_location">Расположение</string>
     <string name="filter_on_device">На устройстве</string>
     <string name="filter_app_only">Только в приложении</string>
-
-    <!-- Network Sort -->
+    <string name="filter_attributes">Атрибуты</string>
+    <string name="filter_has_note">Есть заметка</string>
+    <string name="filter_hidden">Скрытая</string>
     <string name="sort_by">Сортировка</string>
+    <string name="sort_direction">Направление сортировки</string>
     <string name="sort_asc">По возрастанию</string>
     <string name="sort_desc">По убыванию</string>
+    <string name="sort_created">Время создания</string>
+    <string name="sort_updated">Время изменения</string>
+    <string name="sort_time_hint">Отслеживается приложением, а не системой. Может быть неточным.</string>
 
     <!-- No Access Screen -->
     <string name="no_access_title">Требуется привилегированный доступ</string>

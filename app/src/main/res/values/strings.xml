@@ -5,6 +5,7 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="clear">Clear</string>
+    <string name="reset">Reset</string>
     <string name="back">Back</string>
     <string name="on">On</string>
     <string name="off">Off</string>
@@ -26,15 +27,21 @@
     <string name="export_option_compressed">Compressed (GZip)</string>
     <string name="export_option_compressed_description">GZip compressed JSON. Smaller file size</string>
 
-    <!-- Network Filter -->
-    <string name="filter_all">All</string>
+    <!-- Network Sort and Filter -->
+    <string name="sort_filter_title">Sort and filter</string>
+    <string name="filter_location">Location</string>
     <string name="filter_on_device">On device</string>
     <string name="filter_app_only">In app only</string>
-
-    <!-- Network Sort -->
+    <string name="filter_attributes">Attributes</string>
+    <string name="filter_has_note">Has note</string>
+    <string name="filter_hidden">Hidden</string>
     <string name="sort_by">Sort by</string>
+    <string name="sort_direction">Sort direction</string>
     <string name="sort_asc">Ascending</string>
     <string name="sort_desc">Descending</string>
+    <string name="sort_created">Creation time</string>
+    <string name="sort_updated">Last update time</string>
+    <string name="sort_time_hint">Tracked by this app, not the system. May be inaccurate.</string>
 
     <!-- No Access Screen -->
     <string name="no_access_title">Privileged Access Required</string>

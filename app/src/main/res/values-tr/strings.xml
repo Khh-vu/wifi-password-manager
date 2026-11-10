@@ -5,6 +5,7 @@
     <string name="cancel">İptal</string>
     <string name="ok">Tamam</string>
     <string name="clear">Temizle</string>
+    <string name="reset">Sıfırla</string>
     <string name="back">Geri</string>
     <string name="on">Açık</string>
     <string name="off">Kapalı</string>
@@ -25,15 +26,21 @@
     <string name="export_option_compressed">Sıkıştırılmış (GZip)</string>
     <string name="export_option_compressed_description">GZip sıkıştırılmış JSON. Daha küçük dosya boyutu</string>
 
-    <!-- Network Filter -->
-    <string name="filter_all">Tümü</string>
+    <!-- Network Sort and Filter -->
+    <string name="sort_filter_title">Sırala ve filtrele</string>
+    <string name="filter_location">Konum</string>
     <string name="filter_on_device">Cihazda</string>
     <string name="filter_app_only">Yalnızca uygulamada</string>
-
-    <!-- Network Sort -->
+    <string name="filter_attributes">Özellikler</string>
+    <string name="filter_has_note">Notlu</string>
+    <string name="filter_hidden">Gizli</string>
     <string name="sort_by">Sırala</string>
+    <string name="sort_direction">Sıralama yönü</string>
     <string name="sort_asc">Artan</string>
     <string name="sort_desc">Azalan</string>
+    <string name="sort_created">Oluşturulma zamanı</string>
+    <string name="sort_updated">Güncellenme zamanı</string>
+    <string name="sort_time_hint">Sistem değil, bu uygulama kaydeder. Hatalı olabilir.</string>
 
     <!-- No Access Screen -->
     <string name="no_access_title">Ayrıcalıklı Erişim Gereklidir</string>

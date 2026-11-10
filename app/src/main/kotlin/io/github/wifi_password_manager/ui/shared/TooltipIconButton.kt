@@ -3,6 +3,7 @@ package io.github.wifi_password_manager.ui.shared
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconButtonShapes
 import androidx.compose.material3.PlainTooltip
@@ -25,10 +26,36 @@ import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 fun TooltipIconButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    enabled: Boolean = true,
     shapes: IconButtonShapes = IconButtonDefaults.shapes(),
+    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
     imageVector: ImageVector,
     tooltip: String,
     positioning: TooltipAnchorPosition,
+) {
+    TooltipIconButton(
+        modifier = modifier,
+        onClick = onClick,
+        enabled = enabled,
+        shapes = shapes,
+        colors = colors,
+        tooltip = tooltip,
+        positioning = positioning,
+        icon = { Icon(imageVector = imageVector, contentDescription = tooltip) },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TooltipIconButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    shapes: IconButtonShapes = IconButtonDefaults.shapes(),
+    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
+    tooltip: String,
+    positioning: TooltipAnchorPosition,
+    icon: @Composable () -> Unit,
 ) {
     TooltipBox(
         positionProvider =
@@ -36,8 +63,14 @@ fun TooltipIconButton(
         tooltip = { PlainTooltip { Text(text = tooltip) } },
         state = rememberTooltipState(),
     ) {
-        IconButton(modifier = modifier, onClick = onClick, shapes = shapes) {
-            Icon(imageVector = imageVector, contentDescription = tooltip)
+        IconButton(
+            modifier = modifier,
+            onClick = onClick,
+            enabled = enabled,
+            colors = colors,
+            shapes = shapes,
+        ) {
+            icon()
         }
     }
 }

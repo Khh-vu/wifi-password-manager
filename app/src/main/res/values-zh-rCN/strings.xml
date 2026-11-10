@@ -5,6 +5,7 @@
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
     <string name="clear">清除</string>
+    <string name="reset">重置</string>
     <string name="back">返回</string>
     <string name="on">开</string>
     <string name="off">关</string>
@@ -25,15 +26,21 @@
     <string name="export_option_compressed">压缩 (GZip)</string>
     <string name="export_option_compressed_description">GZip 压缩的 JSON，文件体积更小</string>
 
-    <!-- Network Filter -->
-    <string name="filter_all">全部</string>
+    <!-- Network Sort and Filter -->
+    <string name="sort_filter_title">排序和过滤器</string>
+    <string name="filter_location">位置</string>
     <string name="filter_on_device">设备上</string>
     <string name="filter_app_only">仅应用内</string>
-
-    <!-- Network Sort -->
+    <string name="filter_attributes">属性</string>
+    <string name="filter_has_note">有备注</string>
+    <string name="filter_hidden">隐藏</string>
     <string name="sort_by">排序方式</string>
+    <string name="sort_direction">排序方向</string>
     <string name="sort_asc">升序</string>
     <string name="sort_desc">降序</string>
+    <string name="sort_created">创建时间</string>
+    <string name="sort_updated">更新时间</string>
+    <string name="sort_time_hint">由本应用记录，非系统提供，可能不准确。</string>
 
     <!-- 无权限访问界面 -->
     <string name="no_access_title">需要特权访问</string>

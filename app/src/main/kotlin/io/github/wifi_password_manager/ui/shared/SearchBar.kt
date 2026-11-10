@@ -1,5 +1,6 @@
 package io.github.wifi_password_manager.ui.shared
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,6 +49,7 @@ fun SearchBar(
     onBack: () -> Unit,
     placeholder: String,
     atBottom: Boolean = false,
+    actions: @Composable () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -86,12 +88,15 @@ fun SearchBar(
             onKeyboardAction = { keyboardController?.hide() },
             leadingIcon = { BackButton(onClick = onBack) },
             trailingIcon = {
-                TooltipIconButton(
-                    onClick = { state.clearText() },
-                    imageVector = ClearAll,
-                    tooltip = stringResource(R.string.clear),
-                    positioning = TooltipAnchorPosition.Below,
-                )
+                Row {
+                    TooltipIconButton(
+                        onClick = { state.clearText() },
+                        imageVector = ClearAll,
+                        tooltip = stringResource(R.string.clear),
+                        positioning = TooltipAnchorPosition.Below,
+                    )
+                    actions()
+                }
             },
             colors =
                 TextFieldDefaults.colors(

@@ -74,6 +74,8 @@ fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> = groupBy {
             .copy(
                 securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
                 existInSystem = duplicateNetworks.any { it.existInSystem },
+                createdAt = duplicateNetworks.mapNotNull { it.createdAt }.minOrNull(),
+                updatedAt = duplicateNetworks.mapNotNull { it.updatedAt }.maxOrNull(),
             )
     }
     .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid))

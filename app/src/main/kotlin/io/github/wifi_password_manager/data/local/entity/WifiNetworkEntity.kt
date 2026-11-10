@@ -77,5 +77,7 @@ fun WifiNetworkEntity.toDomain(): WifiNetwork {
         meteredOverride = WifiNetwork.MeteredOverride.valueOf(meteredOverride),
         macRandomizationSetting = WifiNetwork.Randomization.valueOf(macRandomizationSetting),
         randomizedMacAddress = randomizedMacAddress,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }

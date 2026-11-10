@@ -5,6 +5,7 @@
     <string name="cancel">キャンセル</string>
     <string name="ok">OK</string>
     <string name="clear">クリア</string>
+    <string name="reset">リセット</string>
     <string name="back">戻る</string>
     <string name="on">オン</string>
     <string name="off">オフ</string>
@@ -25,15 +26,21 @@
     <string name="export_option_compressed">圧縮（GZip）</string>
     <string name="export_option_compressed_description">GZip圧縮されたJSON。ファイルサイズが小さい</string>
 
-    <!-- Network Filter -->
-    <string name="filter_all">すべて</string>
+    <!-- Network Sort and Filter -->
+    <string name="sort_filter_title">並べ替えとフィルター</string>
+    <string name="filter_location">保存場所</string>
     <string name="filter_on_device">端末内</string>
     <string name="filter_app_only">アプリ内のみ</string>
-
-    <!-- Network Sort -->
+    <string name="filter_attributes">属性</string>
+    <string name="filter_has_note">メモあり</string>
+    <string name="filter_hidden">非表示</string>
     <string name="sort_by">並べ替え</string>
+    <string name="sort_direction">並べ替えの方向</string>
     <string name="sort_asc">昇順</string>
     <string name="sort_desc">降順</string>
+    <string name="sort_created">作成日時</string>
+    <string name="sort_updated">更新日時</string>
+    <string name="sort_time_hint">システムではなくこのアプリが記録しています。不正確な場合があります。</string>
 
     <!-- No Access Screen -->
     <string name="no_access_title">特権アクセスが必要</string>

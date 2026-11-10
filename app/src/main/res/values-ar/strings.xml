@@ -5,6 +5,7 @@
     <string name="cancel">إلغاء</string>
     <string name="ok">موافق</string>
     <string name="clear">مسح</string>
+    <string name="reset">إعادة تعيين</string>
     <string name="back">رجوع</string>
     <string name="on">تشغيل</string>
     <string name="off">إيقاف</string>
@@ -25,15 +26,21 @@
     <string name="export_option_compressed">مضغوط (GZip)</string>
     <string name="export_option_compressed_description">ملف JSON مضغوط بصيغة GZip. حجم ملف أصغر</string>
 
-    <!-- Network Filter -->
-    <string name="filter_all">الكل</string>
+    <!-- Network Sort and Filter -->
+    <string name="sort_filter_title">الترتيب والتصفية</string>
+    <string name="filter_location">الموقع</string>
     <string name="filter_on_device">على الجهاز</string>
     <string name="filter_app_only">في التطبيق فقط</string>
-
-    <!-- Network Sort -->
+    <string name="filter_attributes">الخصائص</string>
+    <string name="filter_has_note">لديها ملاحظة</string>
+    <string name="filter_hidden">مخفية</string>
     <string name="sort_by">ترتيب حسب</string>
+    <string name="sort_direction">اتجاه الترتيب</string>
     <string name="sort_asc">تصاعدي</string>
     <string name="sort_desc">تنازلي</string>
+    <string name="sort_created">تاريخ الإنشاء</string>
+    <string name="sort_updated">تاريخ التحديث</string>
+    <string name="sort_time_hint">يتتبعها التطبيق وليس النظام، وقد تكون غير دقيقة.</string>
 
     <!-- No Access Screen -->
     <string name="no_access_title">مطلوب صلاحيات متقدمة</string>

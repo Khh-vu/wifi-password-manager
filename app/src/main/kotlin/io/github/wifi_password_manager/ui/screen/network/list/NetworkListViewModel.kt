@@ -12,6 +12,7 @@ import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.model.WifiConnectionStatus
 import io.github.wifi_password_manager.domain.model.WifiNetwork
+import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.UiText
@@ -49,19 +50,68 @@ class NetworkListViewModel(
         private val searchQueryRegex = "[^\\p{L}\\p{N}\\s]".toRegex()
     }
 
-    enum class Filter {
-        ALL,
-        ON_DEVICE,
-        APP_ONLY;
+    enum class Filter(
+        val group: Group,
+        @StringRes val labelResId: Int,
+        val matches: (WifiNetwork) -> Boolean,
+    ) {
+        ON_DEVICE(
+            group = Group.LOCATION,
+            labelResId = R.string.filter_on_device,
+            matches = { it.existInSystem },
+        ),
+        APP_ONLY(
+            group = Group.LOCATION,
+            labelResId = R.string.filter_app_only,
+            matches = { !it.existInSystem },
+        ),
+        OPEN(
+            group = Group.SECURITY,
+            labelResId = R.string.security_open,
+            matches = { SecurityType.OPEN in it.securityType },
+        ),
+        OWE(
+            group = Group.SECURITY,
+            labelResId = R.string.security_owe,
+            matches = { SecurityType.OWE in it.securityType },
+        ),
+        WPA2(
+            group = Group.SECURITY,
+            labelResId = R.string.security_wpa2,
+            matches = { SecurityType.WPA2 in it.securityType },
+        ),
+        WPA3(
+            group = Group.SECURITY,
+            labelResId = R.string.security_wpa3,
+            matches = { SecurityType.WPA3 in it.securityType },
+        ),
+        WEP(
+            group = Group.SECURITY,
+            labelResId = R.string.security_wep,
+            matches = { SecurityType.WEP in it.securityType },
+        ),
+        HAS_NOTE(
+            group = Group.ATTRIBUTES,
+            labelResId = R.string.filter_has_note,
+            matches = { it.note != null },
+        ),
+        HIDDEN(
+            group = Group.ATTRIBUTES,
+            labelResId = R.string.filter_hidden,
+            matches = { it.hidden },
+        );
 
-        val labelResId: Int
-            @StringRes
-            get() =
-                when (this) {
-                    ALL -> R.string.filter_all
-                    ON_DEVICE -> R.string.filter_on_device
-                    APP_ONLY -> R.string.filter_app_only
-                }
+        enum class Group(@StringRes val labelResId: Int) {
+            LOCATION(R.string.filter_location),
+            SECURITY(R.string.security_section),
+            ATTRIBUTES(R.string.filter_attributes),
+        }
+    }
+
+    enum class SortBy(@StringRes val labelResId: Int) {
+        SSID(R.string.ssid),
+        CREATED(R.string.sort_created),
+        UPDATED(R.string.sort_updated),
     }
 
     @Immutable
@@ -71,7 +121,8 @@ class NetworkListViewModel(
         val connectionStatus: WifiConnectionStatus = WifiConnectionStatus.Disconnected,
         val isCacheMode: Boolean = false,
         val showMethodSignatureError: Boolean = false,
-        val filter: Filter = Filter.ALL,
+        val filters: Set<Filter> = emptySet(),
+        val sortBy: SortBy = SortBy.SSID,
         val sortAscending: Boolean = true,
     )
 
@@ -80,9 +131,13 @@ class NetworkListViewModel(
 
         data object ToggleSearch : Action
 
-        data class FilterChanged(val filter: Filter) : Action
+        data class FilterToggled(val filter: Filter) : Action
 
-        data object ToggleSort : Action
+        data class SortChanged(val sortBy: SortBy) : Action
+
+        data class SortDirectionChanged(val ascending: Boolean) : Action
+
+        data object ResetSortFilter : Action
 
         data class DeleteNote(val ssid: String) : Action
 
@@ -126,11 +181,22 @@ class NetworkListViewModel(
                 val sorted =
                     networks
                         .groupAndSortedBySsid()
-                        .filter {
-                            when (ui.filter) {
-                                Filter.ALL -> true
-                                Filter.ON_DEVICE -> it.existInSystem
-                                Filter.APP_ONLY -> !it.existInSystem
+                        .filter { network ->
+                            ui.filters
+                                .groupBy { it.group }
+                                .all { (group, selected) ->
+                                    if (group == Filter.Group.ATTRIBUTES) {
+                                        selected.all { it.matches(network) }
+                                    } else {
+                                        selected.any { it.matches(network) }
+                                    }
+                                }
+                        }
+                        .let { list ->
+                            when (ui.sortBy) {
+                                SortBy.SSID -> list
+                                SortBy.CREATED -> list.sortedBy { it.createdAt }
+                                SortBy.UPDATED -> list.sortedBy { it.updatedAt }
                             }
                         }
                         .let { if (ui.sortAscending) it else it.asReversed() }
@@ -172,8 +238,11 @@ class NetworkListViewModel(
                 _uiState.update { it.copy(showingSearch = !it.showingSearch) }
             }
 
-            is Action.FilterChanged -> _uiState.update { it.copy(filter = action.filter) }
-            is Action.ToggleSort -> _uiState.update { it.copy(sortAscending = !it.sortAscending) }
+            is Action.FilterToggled -> onFilterToggled(action.filter)
+            is Action.SortChanged -> _uiState.update { it.copy(sortBy = action.sortBy) }
+            is Action.SortDirectionChanged ->
+                _uiState.update { it.copy(sortAscending = action.ascending) }
+            is Action.ResetSortFilter -> onResetSortFilter()
             is Action.DeleteNote -> onDeleteNote(action.ssid)
             is Action.DismissMethodInspectorError ->
                 _uiState.update { it.copy(showMethodSignatureError = false) }
@@ -188,6 +257,30 @@ class NetworkListViewModel(
         viewModelScope.launch {
             if (!refresh()) return@launch
             _event.send(Event.ShowMessage(UiText.StringResource(R.string.refresh_success)))
+        }
+    }
+
+    private fun onFilterToggled(filter: Filter) {
+        _uiState.update {
+            it.copy(
+                filters =
+                    if (filter in it.filters) {
+                        it.filters - filter
+                    } else {
+                        it.filters + filter
+                    }
+            )
+        }
+    }
+
+    private fun onResetSortFilter() {
+        _uiState.update {
+            val default = State()
+            it.copy(
+                filters = default.filters,
+                sortBy = default.sortBy,
+                sortAscending = default.sortAscending,
+            )
         }
     }
 

@@ -20,6 +20,8 @@ data class WifiNetwork(
     val meteredOverride: MeteredOverride = MeteredOverride.NONE,
     val macRandomizationSetting: Randomization = Randomization.AUTO,
     @Transient val randomizedMacAddress: String? = null,
+    @Transient val createdAt: Long? = null,
+    @Transient val updatedAt: Long? = null,
 ) {
     @Serializable
     enum class SecurityType {
