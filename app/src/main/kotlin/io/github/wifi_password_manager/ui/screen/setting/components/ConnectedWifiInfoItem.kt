@@ -83,14 +83,14 @@ fun ConnectedWifiInfoItem(modifier: Modifier = Modifier, mode: PrivilegedMode) {
             permissionGranted = granted
             val shouldShowRequestPermissionRationale =
                 activity?.shouldShowRequestPermissionRationale(
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    Manifest.permission.ACCESS_FINE_LOCATION,
                 )
             if (!granted && shouldShowRequestPermissionRationale == false) {
                 context.startActivity(
                     Intent(
                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         "package:${context.packageName}".toUri(),
-                    )
+                    ),
                 )
             }
         }

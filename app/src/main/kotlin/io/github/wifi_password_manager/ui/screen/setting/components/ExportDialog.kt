@@ -105,7 +105,7 @@ fun ExportDialog(
                                                 MaterialTheme.colorScheme.primaryContainer,
                                             selectedTextColor =
                                                 contentColorFor(
-                                                    MaterialTheme.colorScheme.primaryContainer
+                                                    MaterialTheme.colorScheme.primaryContainer,
                                                 ),
                                         ),
                                 )

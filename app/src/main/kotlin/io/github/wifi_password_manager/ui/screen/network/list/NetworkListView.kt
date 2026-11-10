@@ -146,7 +146,7 @@ fun NetworkListView(
                     TooltipBox(
                         positionProvider =
                             TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above
+                                positioning = TooltipAnchorPosition.Above,
                             ),
                         tooltip = {
                             PlainTooltip {
@@ -156,7 +156,7 @@ fun NetworkListView(
                         state = rememberTooltipState(),
                     ) {
                         FloatingActionButton(
-                            onClick = { scope.launch { gridState.animateScrollToItem(0) } }
+                            onClick = { scope.launch { gridState.animateScrollToItem(0) } },
                         ) {
                             Icon(
                                 imageVector = ArrowUpward,
@@ -171,7 +171,7 @@ fun NetworkListView(
                     TooltipBox(
                         positionProvider =
                             TooltipDefaults.rememberTooltipPositionProvider(
-                                positioning = TooltipAnchorPosition.Above
+                                positioning = TooltipAnchorPosition.Above,
                             ),
                         tooltip = {
                             PlainTooltip {
@@ -181,7 +181,7 @@ fun NetworkListView(
                         state = rememberTooltipState(),
                     ) {
                         FloatingActionButton(
-                            onClick = { onAction(NetworkListViewModel.Action.Refresh) }
+                            onClick = { onAction(NetworkListViewModel.Action.Refresh) },
                         ) {
                             Icon(
                                 imageVector = Refresh,
@@ -200,7 +200,7 @@ fun NetworkListView(
                         searchAtBottom && state.showingSearch -> Modifier.statusBarsPadding()
                         !searchAtBottom -> Modifier.imePadding()
                         else -> Modifier
-                    }
+                    },
                 )
 
         if (state.savedNetworks.isEmpty()) {

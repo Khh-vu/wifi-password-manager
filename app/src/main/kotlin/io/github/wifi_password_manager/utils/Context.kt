@@ -61,7 +61,7 @@ fun Context.setAppTheme(themeMode: Settings.ThemeMode) {
                     Settings.ThemeMode.LIGHT -> UiModeManager.MODE_NIGHT_NO
                     Settings.ThemeMode.DARK -> UiModeManager.MODE_NIGHT_YES
                     Settings.ThemeMode.SYSTEM -> UiModeManager.MODE_NIGHT_AUTO
-                }
+                },
             )
     } else {
         AppCompatDelegate.setDefaultNightMode(
@@ -69,7 +69,7 @@ fun Context.setAppTheme(themeMode: Settings.ThemeMode) {
                 Settings.ThemeMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
                 Settings.ThemeMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
                 Settings.ThemeMode.SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-            }
+            },
         )
     }
 }

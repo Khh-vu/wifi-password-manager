@@ -73,7 +73,7 @@ fun SearchBar(
                             Modifier.windowInsetsPadding(insets)
                         } else {
                             Modifier.statusBarsPadding()
-                        }
+                        },
                     )
                     .height(TopAppBarDefaults.TopAppBarExpandedHeight)
                     .focusRequester(focusRequester),

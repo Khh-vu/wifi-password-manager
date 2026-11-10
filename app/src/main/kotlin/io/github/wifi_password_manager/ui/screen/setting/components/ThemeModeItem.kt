@@ -70,7 +70,7 @@ private fun ThemeModeSelectionSheet(
                         ),
                     colors =
                         ListItemDefaults.segmentedColors(
-                            containerColor = BottomSheetDefaults.ContainerColor
+                            containerColor = BottomSheetDefaults.ContainerColor,
                         ),
                 ) {
                     Text(text = stringResource(it.resId))

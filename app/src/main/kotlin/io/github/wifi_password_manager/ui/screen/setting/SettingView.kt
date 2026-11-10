@@ -107,8 +107,8 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                             onClick = {
                                 onAction(
                                     SettingViewModel.Action.ToggleMaterialYou(
-                                        !settings.useMaterialYou
-                                    )
+                                        !settings.useMaterialYou,
+                                    ),
                                 )
                             },
                             trailingContent = {
@@ -138,13 +138,14 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 onClick = {
                                     onAction(
                                         SettingViewModel.Action.TogglePureBlackTheme(
-                                            !settings.pureBlackTheme
-                                        )
+                                            !settings.pureBlackTheme,
+                                        ),
                                     )
                                 },
                                 supportingContent = {
                                     Text(
-                                        text = stringResource(R.string.pure_black_theme_description)
+                                        text =
+                                            stringResource(R.string.pure_black_theme_description),
                                     )
                                 },
                                 trailingContent = {
@@ -152,7 +153,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                         checked = settings.pureBlackTheme,
                                         onCheckedChange = {
                                             onAction(
-                                                SettingViewModel.Action.TogglePureBlackTheme(it)
+                                                SettingViewModel.Action.TogglePureBlackTheme(it),
                                             )
                                         },
                                     )
@@ -171,8 +172,8 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleSearchBarAtBottom(
-                                    !settings.searchBarAtBottom
-                                )
+                                    !settings.searchBarAtBottom,
+                                ),
                             )
                         },
                         supportingContent = {
@@ -266,8 +267,8 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleSecureScreen(
-                                    !settings.secureScreenEnabled
-                                )
+                                    !settings.secureScreenEnabled,
+                                ),
                             )
                         },
                         supportingContent = {
@@ -309,13 +310,13 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleAllowInsecureReceiver(
-                                    !settings.allowInsecureReceiver
-                                )
+                                    !settings.allowInsecureReceiver,
+                                ),
                             )
                         },
                         supportingContent = {
                             Text(
-                                text = stringResource(R.string.allow_insecure_receiver_description)
+                                text = stringResource(R.string.allow_insecure_receiver_description),
                             )
                         },
                         trailingContent = {
@@ -323,7 +324,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 checked = settings.allowInsecureReceiver,
                                 onCheckedChange = {
                                     onAction(
-                                        SettingViewModel.Action.ToggleAllowInsecureReceiver(it)
+                                        SettingViewModel.Action.ToggleAllowInsecureReceiver(it),
                                     )
                                 },
                             )
@@ -378,16 +379,16 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
-                                    !settings.autoPersistEphemeralNetworks
-                                )
+                                    !settings.autoPersistEphemeralNetworks,
+                                ),
                             )
                         },
                         supportingContent = {
                             Text(
                                 text =
                                     stringResource(
-                                        R.string.auto_persist_ephemeral_networks_description
-                                    )
+                                        R.string.auto_persist_ephemeral_networks_description,
+                                    ),
                             )
                         },
                         trailingContent = {
@@ -396,8 +397,8 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 onCheckedChange = {
                                     onAction(
                                         SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
-                                            it
-                                        )
+                                            it,
+                                        ),
                                     )
                                 },
                             )
@@ -414,8 +415,8 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleAutoSyncNetworks(
-                                    !settings.autoSyncNetworks
-                                )
+                                    !settings.autoSyncNetworks,
+                                ),
                             )
                         },
                         supportingContent = {
@@ -441,8 +442,8 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleAllowCacheMode(
-                                    !settings.allowCacheMode
-                                )
+                                    !settings.allowCacheMode,
+                                ),
                             )
                         },
                         supportingContent = {
@@ -542,7 +543,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                                 Text(text = "Manufacturer: ${Build.MANUFACTURER}")
                                 Text(
                                     text =
-                                        "Android Version: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})"
+                                        "Android Version: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})",
                                 )
                             }
                         },

@@ -1,6 +1,10 @@
 package io.github.wifi_password_manager.domain.model
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.platform.LocalResources
+import io.github.wifi_password_manager.R
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -46,4 +50,24 @@ data class WifiNetwork(
         NON_PERSISTENT,
         AUTO,
     }
+
+    val securityLabel: String
+        @Composable
+        @ReadOnlyComposable
+        get() {
+            val resources = LocalResources.current
+            return securityType
+                .sortedBy { it.ordinal }
+                .joinToString("/") {
+                    resources.getString(
+                        when (it) {
+                            SecurityType.OPEN -> R.string.security_open
+                            SecurityType.OWE -> R.string.security_owe
+                            SecurityType.WPA2 -> R.string.security_wpa2
+                            SecurityType.WPA3 -> R.string.security_wpa3
+                            SecurityType.WEP -> R.string.security_wep
+                        },
+                    )
+                }
+        }
 }

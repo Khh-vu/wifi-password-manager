@@ -43,7 +43,7 @@ open class WiFiRootServiceImpl : IWifiRootService.Stub() {
                         PACKAGE_NAME,
                         null,
                         null,
-                    )
+                    ),
                 )
             } else {
                 null

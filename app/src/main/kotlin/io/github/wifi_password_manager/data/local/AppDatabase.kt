@@ -43,7 +43,7 @@ abstract class AppDatabase : RoomDatabase() {
                             PRIMARY KEY(`ssid`, `securityTypes`)
                         )
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     )
                     execSQL(
                         """
@@ -51,7 +51,7 @@ abstract class AppDatabase : RoomDatabase() {
                         SELECT ssid, networkId, securityTypes, password, hidden, autojoin, private, note
                         FROM `wifi_networks`
                         """
-                            .trimIndent()
+                            .trimIndent(),
                     )
                     execSQL("DROP TABLE `wifi_networks`")
                     execSQL("ALTER TABLE `wifi_networks_new` RENAME TO `wifi_networks`")

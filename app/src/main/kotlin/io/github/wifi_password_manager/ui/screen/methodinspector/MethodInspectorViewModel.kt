@@ -147,13 +147,13 @@ class MethodInspectorViewModel<T : Any>(
             result.fold(
                 onSuccess = {
                     _event.send(
-                        Event.ShowMessage(UiText.StringResource(R.string.export_methods_success))
+                        Event.ShowMessage(UiText.StringResource(R.string.export_methods_success)),
                     )
                 },
                 onFailure = {
                     Log.e(TAG, "Error exporting methods", it)
                     _event.send(
-                        Event.ShowMessage(UiText.StringResource(R.string.export_methods_failed))
+                        Event.ShowMessage(UiText.StringResource(R.string.export_methods_failed)),
                     )
                     if (file.exists()) file.delete()
                 },

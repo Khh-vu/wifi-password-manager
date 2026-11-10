@@ -3,7 +3,6 @@ package io.github.wifi_password_manager.utils
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipDescription
-import android.content.Context
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiConfigurationHidden
 import android.os.Build
@@ -139,21 +138,6 @@ fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
         Refine.unsafeCast(config)
     }
 }
-
-fun WifiNetwork.getSecurity(context: Context): String =
-    securityType
-        .sortedBy { it.ordinal }
-        .joinToString("/") {
-            context.getString(
-                when (it) {
-                    SecurityType.OPEN -> R.string.security_open
-                    SecurityType.OWE -> R.string.security_owe
-                    SecurityType.WPA2 -> R.string.security_wpa2
-                    SecurityType.WPA3 -> R.string.security_wpa3
-                    SecurityType.WEP -> R.string.security_wep
-                }
-            )
-        }
 
 fun WifiNetwork.passwordClipEntry(isSensitive: Boolean = true): ClipEntry {
     val clipData = ClipData.newPlainText(ssid, password)

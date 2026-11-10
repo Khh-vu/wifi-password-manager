@@ -43,5 +43,5 @@ val DurationUnit.title: String
     get() =
         stringResource(
             if (this == DurationUnit.MINUTES) R.string.lock_timeout_unit_minutes
-            else R.string.lock_timeout_unit_seconds
+            else R.string.lock_timeout_unit_seconds,
         )

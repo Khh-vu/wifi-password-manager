@@ -30,10 +30,10 @@ data class Settings(
     val searchBarAtBottom: Boolean = false,
 ) {
     @Serializable
-    enum class ThemeMode {
-        LIGHT,
-        DARK,
-        SYSTEM;
+    enum class ThemeMode(@StringRes val resId: Int) {
+        LIGHT(R.string.theme_mode_light),
+        DARK(R.string.theme_mode_dark),
+        SYSTEM(R.string.theme_mode_system);
 
         val isDark: Boolean
             @Composable
@@ -44,38 +44,17 @@ data class Settings(
                     DARK -> true
                     SYSTEM -> isSystemInDarkTheme()
                 }
-
-        val resId: Int
-            @StringRes
-            get() =
-                when (this) {
-                    LIGHT -> R.string.theme_mode_light
-                    DARK -> R.string.theme_mode_dark
-                    SYSTEM -> R.string.theme_mode_system
-                }
     }
 
     @Serializable
-    enum class Language {
-        SYSTEM,
-        ENGLISH,
-        RUSSIAN,
-        CHINESE_SIMPLIFIED,
-        JAPANESE,
-        TURKISH,
-        ARABIC;
-
-        val code: String
-            get() =
-                when (this) {
-                    SYSTEM -> ""
-                    ENGLISH -> "en"
-                    RUSSIAN -> "ru"
-                    CHINESE_SIMPLIFIED -> "zh-CN"
-                    JAPANESE -> "ja"
-                    TURKISH -> "tr"
-                    ARABIC -> "ar"
-                }
+    enum class Language(val code: String) {
+        SYSTEM(""),
+        ENGLISH("en"),
+        RUSSIAN("ru"),
+        CHINESE_SIMPLIFIED("zh-CN"),
+        JAPANESE("ja"),
+        TURKISH("tr"),
+        ARABIC("ar");
 
         val displayName: String
             @Composable

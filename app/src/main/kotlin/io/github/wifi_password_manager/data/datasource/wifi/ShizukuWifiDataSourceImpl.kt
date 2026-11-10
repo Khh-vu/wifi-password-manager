@@ -54,7 +54,7 @@ class ShizukuWifiDataSourceImpl(private val context: Context) : WifiDataSource {
                         callingPackage,
                         null,
                         null,
-                    )
+                    ),
                 )
             } else {
                 null

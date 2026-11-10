@@ -69,7 +69,7 @@ fun WifiQRDialog(
             TooltipBox(
                 positionProvider =
                     TooltipDefaults.rememberTooltipPositionProvider(
-                        positioning = TooltipAnchorPosition.Below
+                        positioning = TooltipAnchorPosition.Below,
                     ),
                 tooltip = { PlainTooltip { Text(text = wifiData) } },
                 state = rememberTooltipState(),

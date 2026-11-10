@@ -79,7 +79,7 @@ fun AppLockItem(
                 title =
                     resources.getString(
                         if (appLockEnabledState) R.string.app_lock_disable_title
-                        else R.string.app_lock_enable_title
+                        else R.string.app_lock_enable_title,
                     ),
                 AuthenticationRequest.Biometric.Fallback.DeviceCredential,
             ) {}

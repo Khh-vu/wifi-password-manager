@@ -171,14 +171,15 @@ fun MethodInspectorView(
                             content = {
                                 ListItem(
                                     colors =
-                                        ListItemDefaults.colors(containerColor = Color.Transparent)
+                                        ListItemDefaults.colors(containerColor = Color.Transparent),
                                 ) {
                                     Text(text = name)
                                 }
-                            }
+                            },
                         ) {
                             ListItem(
-                                colors = ListItemDefaults.colors(containerColor = Color.Transparent)
+                                colors =
+                                    ListItemDefaults.colors(containerColor = Color.Transparent),
                             ) {
                                 Text(text = signature)
                             }
@@ -209,7 +210,7 @@ fun MethodInspectorView(
                             .background(
                                 MaterialTheme.colorScheme.primary.copy(alpha = .9f),
                                 CircleShape,
-                            )
+                            ),
                 )
             }
         }
@@ -232,7 +233,7 @@ private fun MethodInspectorViewPreview() {
                         "method1" to "signature1",
                         "method2" to "signature2",
                         "method3" to "signature3",
-                    )
+                    ),
             ),
         searchState = rememberTextFieldState(),
         onAction = {},

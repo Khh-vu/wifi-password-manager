@@ -235,7 +235,7 @@ class SettingViewModel(
                                 ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
                             }
                         file.write(
-                            if (isEncrypted) Crypto.encrypt(data, password, option) else data
+                            if (isEncrypted) Crypto.encrypt(data, password, option) else data,
                         )
                     }
                 }
@@ -243,16 +243,16 @@ class SettingViewModel(
                     onSuccess = {
                         _event.send(
                             Event.ShowMessage(
-                                UiText.StringResource(R.string.export_networks_success)
-                            )
+                                UiText.StringResource(R.string.export_networks_success),
+                            ),
                         )
                     },
                     onFailure = {
                         Log.e(TAG, "Error exporting networks", it)
                         _event.send(
                             Event.ShowMessage(
-                                UiText.StringResource(R.string.export_networks_failed)
-                            )
+                                UiText.StringResource(R.string.export_networks_failed),
+                            ),
                         )
                         if (file.exists()) file.delete()
                     },
@@ -304,7 +304,7 @@ class SettingViewModel(
                     importMultipleFiles(files, password)
                 }
                 _event.send(
-                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_success))
+                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_success)),
                 )
             } catch (e: SerializationException) {
                 Log.w(TAG, "Error parsing JSON", e)
@@ -315,7 +315,7 @@ class SettingViewModel(
             } catch (e: Throwable) {
                 Log.e(TAG, "Error importing networks", e)
                 _event.send(
-                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_failed))
+                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_failed)),
                 )
             } finally {
                 wifiRepository.refresh()
@@ -465,13 +465,13 @@ class SettingViewModel(
                     onSuccess = {
                         wifiRepository.refresh()
                         _event.send(
-                            Event.ShowMessage(UiText.StringResource(R.string.forget_success))
+                            Event.ShowMessage(UiText.StringResource(R.string.forget_success)),
                         )
                     },
                     onFailure = {
                         Log.e(TAG, "Failed to remove networks", it)
                         _event.send(
-                            Event.ShowMessage(UiText.StringResource(R.string.forget_failed))
+                            Event.ShowMessage(UiText.StringResource(R.string.forget_failed)),
                         )
                     },
                 )

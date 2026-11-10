@@ -114,7 +114,7 @@ class WifiRepositoryImpl(
                                 launch {
                                     sendInfo(
                                         dataSource.getConnectionInfo()
-                                            ?: capabilities.transportInfo as? WifiInfo
+                                            ?: capabilities.transportInfo as? WifiInfo,
                                     )
                                 }
                             }
@@ -132,7 +132,7 @@ class WifiRepositoryImpl(
                                 launch {
                                     sendInfo(
                                         dataSource.getConnectionInfo()
-                                            ?: capabilities.transportInfo as? WifiInfo
+                                            ?: capabilities.transportInfo as? WifiInfo,
                                     )
                                 }
                             }

@@ -20,7 +20,7 @@ interface WifiNetworkDao {
             SELECT wifi_networks.* FROM wifi_networks
             JOIN wifi_networks_fts ON wifi_networks.ssid = wifi_networks_fts.ssid
             WHERE wifi_networks_fts MATCH '*' || :query || '*'
-        """
+        """,
     )
     fun getAllNetworks(query: String): Flow<List<WifiNetworkEntity>>
 
@@ -49,7 +49,7 @@ interface WifiNetworkDao {
                         )
                     }
                 stamped.copy(note = notesMap[network.ssid] ?: network.note)
-            }
+            },
         )
         markNotExistInSystem(networks.map { it.ssid })
     }

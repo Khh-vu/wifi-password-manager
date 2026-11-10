@@ -57,7 +57,7 @@ fun NetworkListTopBar(
                 topBarColors.containerColor,
                 topBarColors.scrolledContainerColor,
                 FastOutLinearInEasing.transform(scrollBehavior.state.overlappedFraction),
-            )
+            ),
     ) {
         if (!state.showingSearch || !searchAtBottom) {
             AnimatedContent(

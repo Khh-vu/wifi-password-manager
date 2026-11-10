@@ -67,7 +67,7 @@ fun SortFilterButton(
             BadgedBox(
                 badge = {
                     if (!isDefault) Badge(containerColor = MaterialTheme.colorScheme.primary)
-                }
+                },
             ) {
                 Icon(
                     imageVector = FilterAlt,

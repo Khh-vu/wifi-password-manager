@@ -27,7 +27,7 @@ data class WifiInfoParcel(
                 WifiInfoHidden().apply {
                     setSSID(WifiSsidHidden.createFromByteArray(ssidBytes))
                     setRssi(rssi)
-                }
+                },
             )
         }
     }

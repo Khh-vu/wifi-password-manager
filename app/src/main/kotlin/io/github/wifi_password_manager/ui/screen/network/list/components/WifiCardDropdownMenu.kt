@@ -51,7 +51,7 @@ fun WifiCardDropdownMenu(
         onDismissRequest = onDismissRequest,
     ) {
         DropdownMenuGroup(
-            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.leadingGroupShape)
+            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.leadingGroupShape),
         ) {
             DropdownMenuItem(
                 onClick = {},
@@ -67,7 +67,7 @@ fun WifiCardDropdownMenu(
         Spacer(Modifier.height(MenuDefaults.GroupSpacing))
 
         DropdownMenuGroup(
-            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.middleGroupShape)
+            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.middleGroupShape),
         ) {
             if (!isCacheMode) {
                 DropdownMenuItem(
@@ -103,8 +103,8 @@ fun WifiCardDropdownMenu(
                             text =
                                 stringResource(
                                     if (connected) R.string.disconnect_action
-                                    else R.string.connect_action
-                                )
+                                    else R.string.connect_action,
+                                ),
                         )
                     },
                     enabled = connectionStatus !is WifiConnectionStatus.Connecting,
@@ -114,7 +114,7 @@ fun WifiCardDropdownMenu(
                             contentDescription =
                                 stringResource(
                                     if (connected) R.string.disconnect_action
-                                    else R.string.connect_action
+                                    else R.string.connect_action,
                                 ),
                         )
                     },
@@ -139,7 +139,7 @@ fun WifiCardDropdownMenu(
         Spacer(Modifier.height(MenuDefaults.GroupSpacing))
 
         DropdownMenuGroup(
-            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.trailingGroupShape)
+            shapes = MenuDefaults.groupShapes(shape = MenuDefaults.trailingGroupShape),
         ) {
             DropdownMenuItem(
                 onClick = {
@@ -150,8 +150,8 @@ fun WifiCardDropdownMenu(
                     Text(
                         text =
                             stringResource(
-                                if (network.note != null) R.string.edit_note else R.string.add_note
-                            )
+                                if (network.note != null) R.string.edit_note else R.string.add_note,
+                            ),
                     )
                 },
                 leadingIcon = {
@@ -159,7 +159,7 @@ fun WifiCardDropdownMenu(
                         imageVector = EditNote,
                         contentDescription =
                             stringResource(
-                                if (network.note != null) R.string.edit_note else R.string.add_note
+                                if (network.note != null) R.string.edit_note else R.string.add_note,
                             ),
                     )
                 },

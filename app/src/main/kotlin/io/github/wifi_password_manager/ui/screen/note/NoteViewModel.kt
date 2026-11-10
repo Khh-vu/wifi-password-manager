@@ -61,16 +61,16 @@ class NoteViewModel(private val wifiRepository: WifiRepository, private val netw
                             Event.ShowMessage(
                                 UiText.StringResource(
                                     if (note == null) R.string.empty_note_discarded
-                                    else R.string.note_saved
-                                )
-                            )
+                                    else R.string.note_saved,
+                                ),
+                            ),
                         )
                         _event.send(Event.NavigateBack)
                     },
                     onFailure = {
                         Log.e(TAG, "Failed to update note", it)
                         _event.send(
-                            Event.ShowMessage(UiText.StringResource(R.string.note_save_failed))
+                            Event.ShowMessage(UiText.StringResource(R.string.note_save_failed)),
                         )
                     },
                 )

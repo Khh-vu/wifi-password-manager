@@ -96,7 +96,7 @@ fun NetworkList(
                         .background(
                             MaterialTheme.colorScheme.primary.copy(alpha = .9f),
                             CircleShape,
-                        )
+                        ),
             )
         }
     }

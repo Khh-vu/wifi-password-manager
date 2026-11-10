@@ -268,7 +268,7 @@ class NetworkListViewModel(
                         it.filters - filter
                     } else {
                         it.filters + filter
-                    }
+                    },
             )
         }
     }
@@ -309,8 +309,8 @@ class NetworkListViewModel(
                 if (!wifiRepository.disconnect()) return@launch
                 _event.send(
                     Event.ShowMessage(
-                        UiText.StringResource(R.string.disconnected_from_message, status.ssid)
-                    )
+                        UiText.StringResource(R.string.disconnected_from_message, status.ssid),
+                    ),
                 )
             }
         }
@@ -321,8 +321,8 @@ class NetworkListViewModel(
             _pendingNetwork.update { network }
             _event.send(
                 Event.ShowMessage(
-                    UiText.StringResource(R.string.connecting_to_message, network.ssid)
-                )
+                    UiText.StringResource(R.string.connecting_to_message, network.ssid),
+                ),
             )
 
             val connected =
@@ -338,8 +338,8 @@ class NetworkListViewModel(
                         if (connected) R.string.connected_to_message
                         else R.string.connect_failed_message,
                         network.ssid,
-                    )
-                )
+                    ),
+                ),
             )
         }
     }
@@ -355,7 +355,7 @@ class NetworkListViewModel(
             wifiRepository.delete(network.ssid)
             refresh()
             _event.send(
-                Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid))
+                Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),
             )
         }
     }

@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -52,7 +51,6 @@ import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.shared.WarningConfirmDialog
 import io.github.wifi_password_manager.ui.theme.SurfaceWrapper
 import io.github.wifi_password_manager.utils.MOCK
-import io.github.wifi_password_manager.utils.getSecurity
 import io.github.wifi_password_manager.utils.passwordClipEntry
 import kotlinx.coroutines.launch
 
@@ -167,8 +165,6 @@ private fun SSIDItem(
     onOptionStateChange: (OptionState?) -> Unit,
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
-    val context = LocalContext.current
-
     var expanded by remember { mutableStateOf(false) }
 
     ListItem(
@@ -183,8 +179,8 @@ private fun SSIDItem(
                             stringResource(R.string.connecting_status)
                         }
 
-                        else -> network.getSecurity(context)
-                    }
+                        else -> network.securityLabel
+                    },
             )
         },
         trailingContent = {

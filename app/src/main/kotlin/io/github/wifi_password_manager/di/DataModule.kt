@@ -14,7 +14,7 @@ class DataModule {
     @Single
     fun appDatabase(context: Context): AppDatabase =
         Room.databaseBuilder<AppDatabase>(
-                name = context.getDatabasePath(AppDatabase.DATABASE_NAME).absolutePath
+                name = context.getDatabasePath(AppDatabase.DATABASE_NAME).absolutePath,
             )
             .addMigrations(AppDatabase.MIGRATION_1_2)
             .build()
