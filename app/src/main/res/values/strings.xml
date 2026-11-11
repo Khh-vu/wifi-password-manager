@@ -61,6 +61,7 @@
         <item quantity="one">%d Network</item>
         <item quantity="other">%d Networks</item>
     </plurals>
+    <string name="network_list_title_empty">No Networks</string>
     <string name="search_hint">Search by SSID or Note</string>
     <string name="search_tooltip">Search</string>
     <string name="refresh_description">Refresh</string>

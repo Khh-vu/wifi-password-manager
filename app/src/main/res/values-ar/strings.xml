@@ -64,6 +64,7 @@
         <item quantity="many">%d شبكة</item>
         <item quantity="other">%d شبكة</item>
     </plurals>
+    <string name="network_list_title_empty">لا توجد شبكات</string>
     <string name="search_hint">البحث بواسطة SSID أو ملاحظة</string>
     <string name="search_tooltip">بحث</string>
     <string name="refresh_description">تحديث</string>

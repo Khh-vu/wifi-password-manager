@@ -205,21 +205,17 @@ fun NetworkListView(
 
         if (state.savedNetworks.isEmpty()) {
             Box(modifier = modifier.padding(innerPadding), contentAlignment = Alignment.Center) {
-                if (state.showingSearch) {
-                    Text(
-                        text = stringResource(R.string.no_networks_found),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 32.dp),
-                    )
-                } else {
-                    Text(
-                        text = stringResource(R.string.no_networks_available),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(horizontal = 32.dp),
-                    )
-                }
+                val isFiltering = state.showingSearch || state.filters.isNotEmpty()
+                Text(
+                    text =
+                        stringResource(
+                            if (isFiltering) R.string.no_networks_found
+                            else R.string.no_networks_available,
+                        ),
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 32.dp),
+                )
             }
         } else {
             NetworkList(

@@ -59,6 +59,7 @@
     <plurals name="network_list_title">
         <item quantity="other">%d件のネットワーク</item>
     </plurals>
+    <string name="network_list_title_empty">ネットワークなし</string>
     <string name="search_hint">SSIDまたはメモで検索</string>
     <string name="search_tooltip">検索</string>
     <string name="refresh_description">更新</string>

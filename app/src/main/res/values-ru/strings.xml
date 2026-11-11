@@ -62,6 +62,7 @@
         <item quantity="many">%d сетей</item>
         <item quantity="other">%d сети</item>
     </plurals>
+    <string name="network_list_title_empty">Нет сетей</string>
     <string name="search_hint">Поиск по SSID или заметке</string>
     <string name="search_tooltip">Поиск</string>
     <string name="refresh_description">Обновить</string>

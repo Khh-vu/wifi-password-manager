@@ -59,6 +59,7 @@
     <plurals name="network_list_title">
         <item quantity="other">%d 个网络</item>
     </plurals>
+    <string name="network_list_title_empty">无网络</string>
     <string name="search_hint">按 SSID 或备注搜索</string>
     <string name="search_tooltip">搜索</string>
     <string name="refresh_description">刷新</string>

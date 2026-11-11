@@ -60,6 +60,7 @@
         <item quantity="one">%d Ağ</item>
         <item quantity="other">%d Ağ</item>
     </plurals>
+    <string name="network_list_title_empty">Ağ yok</string>
     <string name="search_hint">SSID veya Not\'a Göre Ara</string>
     <string name="search_tooltip">Ara</string>
     <string name="refresh_description">Yenile</string>
