@@ -101,7 +101,12 @@ android {
     testOptions { unitTests { isIncludeAndroidResources = true } }
 }
 
-androidComponents { beforeVariants { it.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = true } }
+androidComponents {
+    beforeVariants {
+        @Suppress("UnstableApiUsage")
+        it.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = true
+    }
+}
 
 composeCompiler {
     stabilityConfigurationFiles.addAll(
