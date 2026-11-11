@@ -97,6 +97,7 @@ stub = { module = "dev.rikka.hidden:stub", version.ref = "stub" }
 aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+fetch-aosp-sources = { id = "fetch-aosp-sources" }
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinPlugin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

@@ -1,3 +1,4 @@
+import com.android.build.api.variant.HostTestBuilder
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -97,7 +98,10 @@ android {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
     }
+    testOptions { unitTests { isIncludeAndroidResources = true } }
 }
+
+androidComponents { beforeVariants { it.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = true } }
 
 composeCompiler {
     stabilityConfigurationFiles.addAll(

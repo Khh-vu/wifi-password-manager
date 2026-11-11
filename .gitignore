@@ -44,3 +44,6 @@ google-services.json
 
 # Kotlin compiler session files
 .kotlin/
+
+# AOSP wifi framework/service sources
+aosp-sources/
