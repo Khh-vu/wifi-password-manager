@@ -74,6 +74,13 @@ android {
 
             signingConfig = signingConfigs.findByName("release")?.takeIf { it.storeFile != null }
         }
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            isDebuggable = true
+            applicationIdSuffix = "debug"
+            versionNameSuffix = "-debug"
+        }
     }
     buildFeatures {
         aidl = true
@@ -199,7 +206,6 @@ dependencies {
     // Debug
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.leakcanary.android)
 }
 
 room3 { schemaDirectory("$projectDir/schemas") }
