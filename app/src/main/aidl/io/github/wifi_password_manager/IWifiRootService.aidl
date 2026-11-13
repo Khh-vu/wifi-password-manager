@@ -15,7 +15,7 @@ interface IWifiRootService {
 
     boolean reconnect();
 
-    oneway void forget(int netId, in IActionListener listener);
+    void forget(int netId, in IActionListener listener);
 
     WifiInfoParcel getConnectionInfo();
 
@@ -23,6 +23,6 @@ interface IWifiRootService {
 
     boolean disconnect();
 
-    oneway void connect(in WifiNetworkParcel config, int netId, in IActionListener listener);
+    void connect(in WifiNetworkParcel config, int netId, in IActionListener listener);
 }
 

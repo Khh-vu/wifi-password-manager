@@ -62,6 +62,7 @@
         <item quantity="many">%d сетей</item>
         <item quantity="other">%d сети</item>
     </plurals>
+    <string name="network_list_title_empty">Нет сетей</string>
     <string name="search_hint">Поиск по SSID или заметке</string>
     <string name="search_tooltip">Поиск</string>
     <string name="refresh_description">Обновить</string>
@@ -221,8 +222,7 @@
 
     <!-- Method Inspector Error Dialog -->
     <string name="method_inspector_error_title">Ошибка сигнатуры метода</string>
-    <string name="method_inspector_error_message">Системная служба WiFi этого устройства не соответствует ни одной известной сигнатуре метода. Пожалуйста, откройте инспектор методов, экспортируйте методы и отправьте их, чтобы это можно было исправить в будущем обновлении.</string>
-    <string name="open_method_inspector">Открыть инспектор методов</string>
+    <string name="method_inspector_error_message">Системная служба WiFi этого устройства использует сигнатуру метода, которую приложение не поддерживает. Пожалуйста, скопируйте отчёт ниже и отправьте его разработчику, чтобы это можно было исправить в будущем обновлении.</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Забыть все сети?</string>

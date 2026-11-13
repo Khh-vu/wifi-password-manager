@@ -64,6 +64,7 @@
         <item quantity="many">%d شبكة</item>
         <item quantity="other">%d شبكة</item>
     </plurals>
+    <string name="network_list_title_empty">لا توجد شبكات</string>
     <string name="search_hint">البحث بواسطة SSID أو ملاحظة</string>
     <string name="search_tooltip">بحث</string>
     <string name="refresh_description">تحديث</string>
@@ -225,8 +226,7 @@
 
     <!-- Method Inspector Error Dialog -->
     <string name="method_inspector_error_title">خطأ في توقيع الدالة</string>
-    <string name="method_inspector_error_message">لا تتطابق خدمة نظام WiFi في هذا الجهاز مع أي توقيع دالة (Method Signature) معروف. يرجى فتح فاحص الدوال (Method Inspector)، وتصدير الدوال وإرسالها ليتم إصلاح ذلك في تحديث مستقبلي.</string>
-    <string name="open_method_inspector">فتح فاحص الدوال</string>
+    <string name="method_inspector_error_message">تستخدم خدمة نظام WiFi في هذا الجهاز توقيع دالة (Method Signature) لا يدعمه هذا التطبيق. يرجى نسخ التقرير أدناه وإرساله إلى المطوّر ليتم إصلاح ذلك في تحديث مستقبلي.</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">نسيان جميع الشبكات؟</string>

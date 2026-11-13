@@ -13,6 +13,14 @@ Android's Wifi code changes between API levels. AOSP sources per release `<N>` (
 
 Android 12L uses `android12L-release`.
 
+To download the sources locally, run:
+
+```sh
+./gradlew fetchAospSources
+```
+
+They are saved in `aosp-sources/api-<N>/` (API 30–37). If a file you need is missing, add it to `FRAMEWORK_FILES` or `SERVICE_FILES` in `build-logic/src/main/kotlin/io/github/wifi_password_manager/buildlogic/FetchAospSourcesTask.kt` and run the task again.
+
 ## Bugs and feature requests
 
 Open a [GitHub issue](https://github.com/Khh-vu/wifi-password-manager/issues). For bugs, please include:

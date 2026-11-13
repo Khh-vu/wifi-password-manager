@@ -1,6 +1,5 @@
 package io.github.wifi_password_manager.ui.screen.network.list
 
-import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -46,7 +45,6 @@ class NetworkListViewModel(
     privilegedManager: PrivilegedManager,
 ) : ViewModel() {
     companion object {
-        private const val TAG = "NetworkListViewModel"
         private val searchQueryRegex = "[^\\p{L}\\p{N}\\s]".toRegex()
     }
 
@@ -120,7 +118,6 @@ class NetworkListViewModel(
         val showingSearch: Boolean = false,
         val connectionStatus: WifiConnectionStatus = WifiConnectionStatus.Disconnected,
         val isCacheMode: Boolean = false,
-        val showMethodSignatureError: Boolean = false,
         val filters: Set<Filter> = emptySet(),
         val sortBy: SortBy = SortBy.SSID,
         val sortAscending: Boolean = true,
@@ -140,8 +137,6 @@ class NetworkListViewModel(
         data object ResetSortFilter : Action
 
         data class DeleteNote(val ssid: String) : Action
-
-        data object DismissMethodInspectorError : Action
 
         data object Disconnect : Action
 
@@ -175,7 +170,7 @@ class NetworkListViewModel(
                 _uiState,
                 _networks,
                 privilegedManager.mode,
-                wifiRepository.getConnectedWifiSsidFlow().onEach { refresh() },
+                wifiRepository.getConnectedWifiSsidFlow().onEach { wifiRepository.refresh() },
                 _pendingNetwork,
             ) { ui, networks, mode, connectedSsid, pendingNetwork ->
                 val sorted =
@@ -244,9 +239,6 @@ class NetworkListViewModel(
                 _uiState.update { it.copy(sortAscending = action.ascending) }
             is Action.ResetSortFilter -> onResetSortFilter()
             is Action.DeleteNote -> onDeleteNote(action.ssid)
-            is Action.DismissMethodInspectorError ->
-                _uiState.update { it.copy(showMethodSignatureError = false) }
-
             is Action.Disconnect -> onDisconnect()
             is Action.Connect -> onConnect(action.network)
             is Action.Forget -> onForget(action.network)
@@ -255,7 +247,7 @@ class NetworkListViewModel(
 
     private fun onRefresh() {
         viewModelScope.launch {
-            if (!refresh()) return@launch
+            if (!wifiRepository.refresh()) return@launch
             _event.send(Event.ShowMessage(UiText.StringResource(R.string.refresh_success)))
         }
     }
@@ -281,17 +273,6 @@ class NetworkListViewModel(
                 sortBy = default.sortBy,
                 sortAscending = default.sortAscending,
             )
-        }
-    }
-
-    private suspend fun refresh(): Boolean {
-        return try {
-            wifiRepository.refresh()
-            true
-        } catch (e: NoSuchMethodException) {
-            Log.e(TAG, "Method signature not found", e)
-            _uiState.update { it.copy(showMethodSignatureError = true) }
-            false
         }
     }
 
@@ -353,7 +334,7 @@ class NetworkListViewModel(
                 .toSet()
                 .forEach { wifiRepository.forget(it) }
             wifiRepository.delete(network.ssid)
-            refresh()
+            wifiRepository.refresh()
             _event.send(
                 Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),
             )

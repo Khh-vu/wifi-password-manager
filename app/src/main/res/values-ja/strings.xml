@@ -59,6 +59,7 @@
     <plurals name="network_list_title">
         <item quantity="other">%d件のネットワーク</item>
     </plurals>
+    <string name="network_list_title_empty">ネットワークなし</string>
     <string name="search_hint">SSIDまたはメモで検索</string>
     <string name="search_tooltip">検索</string>
     <string name="refresh_description">更新</string>
@@ -215,8 +216,7 @@
 
     <!-- Method Inspector Error Dialog -->
     <string name="method_inspector_error_title">メソッドシグネチャエラー</string>
-    <string name="method_inspector_error_message">この端末のWiFiシステムサービスは既知のメソッドシグネチャと一致しません。メソッドインスペクターを開き、メソッドをエクスポートして送信してください。今後のアップデートで修正されます。</string>
-    <string name="open_method_inspector">メソッドインスペクターを開く</string>
+    <string name="method_inspector_error_message">この端末のWiFiシステムサービスは、このアプリが対応していないメソッドシグネチャを使用しています。下のレポートをコピーして開発者に送信してください。今後のアップデートで修正されます。</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">すべてのネットワークを削除しますか？</string>

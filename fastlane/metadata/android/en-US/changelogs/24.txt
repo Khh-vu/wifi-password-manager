@@ -1,0 +1,4 @@
+- Added sort by creation and update time
+- Added auto-sync networks setting
+- Improved network list UI
+- Fixed crash caused by incompatible system APIs on some phone manufacturers

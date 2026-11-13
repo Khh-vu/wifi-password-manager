@@ -1,3 +1,4 @@
+import com.android.build.api.variant.HostTestBuilder
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -34,8 +35,8 @@ android {
         applicationId = "io.github.wifi_password_manager"
         minSdk { version = release(29) }
         targetSdk { version = release(37) }
-        versionCode = 23
-        versionName = "1.22"
+        versionCode = 24
+        versionName = "1.23"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField(
@@ -103,6 +104,14 @@ android {
     androidResources {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
+    }
+    testOptions { unitTests { isIncludeAndroidResources = true } }
+}
+
+androidComponents {
+    beforeVariants {
+        @Suppress("UnstableApiUsage")
+        it.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = true
     }
 }
 

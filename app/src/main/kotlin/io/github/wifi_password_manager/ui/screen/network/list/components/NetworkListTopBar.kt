@@ -82,23 +82,25 @@ fun NetworkListTopBar(
                 } else {
                     TopAppBar(
                         title = {
-                            if (state.savedNetworks.isNotEmpty()) {
-                                Text(
-                                    text =
+                            Text(
+                                text =
+                                    if (state.savedNetworks.isEmpty()) {
+                                        stringResource(R.string.network_list_title_empty)
+                                    } else {
                                         pluralStringResource(
                                             R.plurals.network_list_title,
                                             state.savedNetworks.size,
                                             state.savedNetworks.size,
-                                        ),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    autoSize =
-                                        TextAutoSize.StepBased(
-                                            minFontSize = 16.sp,
-                                            maxFontSize = LocalTextStyle.current.fontSize,
-                                        ),
-                                )
-                            }
+                                        )
+                                    },
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                autoSize =
+                                    TextAutoSize.StepBased(
+                                        minFontSize = 16.sp,
+                                        maxFontSize = LocalTextStyle.current.fontSize,
+                                    ),
+                            )
                         },
                         actions = {
                             if (!state.showingSearch) {

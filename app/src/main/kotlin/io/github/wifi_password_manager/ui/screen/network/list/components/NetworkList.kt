@@ -1,5 +1,7 @@
 package io.github.wifi_password_manager.ui.screen.network.list.components
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +27,7 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.composeunstyled.Thumb
+import com.composeunstyled.ThumbVisibility
 import com.composeunstyled.UnstyledVerticalScrollbar
 import com.composeunstyled.rememberScrollbarState
 import io.github.wifi_password_manager.domain.model.WifiConnectionStatus
@@ -34,6 +37,7 @@ import io.github.wifi_password_manager.ui.theme.SurfaceWrapper
 import io.github.wifi_password_manager.utils.DeviceConfiguration
 import io.github.wifi_password_manager.utils.MOCK
 import io.github.wifi_password_manager.utils.plus
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun NetworkList(
@@ -97,6 +101,12 @@ fun NetworkList(
                             MaterialTheme.colorScheme.primary.copy(alpha = .9f),
                             CircleShape,
                         ),
+                thumbVisibility =
+                    ThumbVisibility.HideWhileIdle(
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                        hideDelay = 500.milliseconds,
+                    ),
             )
         }
     }

@@ -1,6 +1,7 @@
 import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
 
 plugins {
+    alias(libs.plugins.fetch.aosp.sources)
     alias(libs.plugins.aboutLibraries) apply false
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
