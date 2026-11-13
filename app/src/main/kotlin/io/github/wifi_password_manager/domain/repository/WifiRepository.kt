@@ -15,7 +15,7 @@ interface WifiRepository {
 
     suspend fun getNetworkCount(): Int
 
-    suspend fun refresh()
+    suspend fun refresh(): Boolean
 
     suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration>
 

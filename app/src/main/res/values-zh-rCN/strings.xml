@@ -216,8 +216,7 @@
 
     <!-- 方法检查器错误对话框 -->
     <string name="method_inspector_error_title">方法签名错误</string>
-    <string name="method_inspector_error_message">此设备的 WiFi 系统服务与任何已知方法签名都不匹配。请打开方法检查器，导出方法并提交，以便在未来的更新中修复此问题。</string>
-    <string name="open_method_inspector">打开方法检查器</string>
+    <string name="method_inspector_error_message">此设备的 WiFi 系统服务使用了本应用不支持的方法签名。请复制下方的报告并发送给开发者，以便在未来的更新中修复此问题。</string>
 
     <!-- 忘记所有网络确认对话框 -->
     <string name="forget_all_confirmation_title">忘记所有网络？</string>

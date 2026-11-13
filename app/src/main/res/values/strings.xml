@@ -219,8 +219,7 @@
 
     <!-- Method Inspector Error Dialog -->
     <string name="method_inspector_error_title">Method Signature Error</string>
-    <string name="method_inspector_error_message">This device\'s WiFi system service does not match any known method signature. Please open the method inspector, export the methods and submit them so this can be fixed in a future update.</string>
-    <string name="open_method_inspector">Open Method Inspector</string>
+    <string name="method_inspector_error_message">This device\'s WiFi system service uses a method signature this app doesn\'t support. Please copy the report below and send it to the developer so it can be fixed in a future update.</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Forget all networks?</string>

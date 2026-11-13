@@ -53,11 +53,8 @@ import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
-import io.github.wifi_password_manager.navigation.LocalNavBackStack
-import io.github.wifi_password_manager.navigation.Route
 import io.github.wifi_password_manager.ui.icons.ArrowUpward
 import io.github.wifi_password_manager.ui.icons.Refresh
-import io.github.wifi_password_manager.ui.screen.network.list.components.MethodSignatureErrorDialog
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkList
 import io.github.wifi_password_manager.ui.screen.network.list.components.NetworkListTopBar
 import io.github.wifi_password_manager.ui.screen.network.list.components.SortFilterButton
@@ -73,7 +70,6 @@ fun NetworkListView(
     searchState: TextFieldState,
     onAction: (NetworkListViewModel.Action) -> Unit,
 ) {
-    val navBackStack = LocalNavBackStack.current
     val searchAtBottom = LocalSettings.current.searchBarAtBottom
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -228,13 +224,6 @@ fun NetworkListView(
                 onAction = onAction,
             )
         }
-    }
-
-    if (state.showMethodSignatureError) {
-        MethodSignatureErrorDialog(
-            onDismiss = { onAction(NetworkListViewModel.Action.DismissMethodInspectorError) },
-            onOpenMethodInspector = { navBackStack.add(Route.IWifiManagerMethodInspectorScreen) },
-        )
     }
 }
 

@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager
 import android.os.Binder
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcel
 import android.os.Process
 import androidx.annotation.RequiresApi
 import dev.rikka.tools.refine.Refine
@@ -29,6 +30,16 @@ open class WiFiRootServiceImpl : IWifiRootService.Stub() {
         SystemServiceHelper.getSystemService(Context.WIFI_SERVICE)
             .let(IWifiManager.Stub::asInterface)
     }
+
+    override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean =
+        try {
+            super.onTransact(code, data, reply, flags)
+        } catch (e: Throwable) {
+            if (e is LinkageError || e is NoSuchMethodException) {
+                throw UnsupportedOperationException(e.stackTraceToString())
+            }
+            throw e
+        }
 
     private val user: String
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) "root" else "android"

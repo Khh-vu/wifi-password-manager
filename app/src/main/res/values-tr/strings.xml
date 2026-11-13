@@ -218,8 +218,7 @@
 
     <!-- Method Inspector Error Dialog -->
     <string name="method_inspector_error_title">Metod İmzası Hatası</string>
-    <string name="method_inspector_error_message">Bu cihazın WiFi sistem hizmeti bilinen hiçbir metod imzasıyla eşleşmiyor. Lütfen metod incelemesini açın, metodları dışa aktarın ve gelecekteki bir güncellemede düzeltilebilmesi için gönderin.</string>
-    <string name="open_method_inspector">Metod İncelemesini Aç</string>
+    <string name="method_inspector_error_message">Bu cihazın WiFi sistem hizmeti, bu uygulamanın desteklemediği bir metod imzası kullanıyor. Gelecekteki bir güncellemede düzeltilebilmesi için lütfen aşağıdaki raporu kopyalayıp geliştiriciye gönderin.</string>
 
     <!-- Forget All Networks Confirmation Dialog -->
     <string name="forget_all_confirmation_title">Tüm ağlar unutulsun mu?</string>

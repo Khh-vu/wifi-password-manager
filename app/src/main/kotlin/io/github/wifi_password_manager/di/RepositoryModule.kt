@@ -9,6 +9,7 @@ import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
+import io.github.wifi_password_manager.manager.SystemApiErrorReporter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Configuration
@@ -23,8 +24,15 @@ class RepositoryModule {
         context: Context,
         wifiNetworkDao: WifiNetworkDao,
         privilegedManager: PrivilegedManager,
+        systemApiErrorReporter: SystemApiErrorReporter,
     ): WifiRepository =
-        WifiRepositoryImpl(context, wifiNetworkDao, privilegedManager, Dispatchers.IO)
+        WifiRepositoryImpl(
+            context,
+            wifiNetworkDao,
+            privilegedManager,
+            systemApiErrorReporter,
+            Dispatchers.IO,
+        )
 
     @Single(binds = [SettingRepository::class])
     fun settingRepository(context: Context, json: Json): SettingRepository =

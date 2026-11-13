@@ -2,6 +2,7 @@ package io.github.wifi_password_manager.utils
 
 import android.net.wifi.IActionListener
 import android.util.Log
+import io.github.wifi_password_manager.manager.isSystemApiMismatch
 import kotlinx.coroutines.CompletableDeferred
 
 suspend fun awaitAction(block: suspend (IActionListener) -> Unit): Boolean {
@@ -20,6 +21,7 @@ suspend fun awaitAction(block: suspend (IActionListener) -> Unit): Boolean {
         block(listener)
         result.await()
     } catch (e: Exception) {
+        if (e.isSystemApiMismatch) throw e
         Log.e("ActionListener", "Action failed", e)
         return false
     }

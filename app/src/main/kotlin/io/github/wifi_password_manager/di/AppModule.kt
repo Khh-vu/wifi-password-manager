@@ -2,6 +2,7 @@ package io.github.wifi_password_manager.di
 
 import android.content.Context
 import io.github.wifi_password_manager.manager.PrivilegedManager
+import io.github.wifi_password_manager.manager.SystemApiErrorReporter
 import kotlinx.serialization.json.Json
 import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
@@ -21,4 +22,8 @@ class AppModule {
     }
 
     @Single fun privilegedManager(context: Context) = PrivilegedManager(context)
+
+    @Single
+    fun systemApiErrorReporter(privilegedManager: PrivilegedManager) =
+        SystemApiErrorReporter(privilegedManager)
 }

@@ -23,11 +23,13 @@ import io.github.vinceglb.filekit.dialogs.init
 import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.repository.SettingRepository
+import io.github.wifi_password_manager.manager.SystemApiErrorReporter
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.NavigationRoot
 import io.github.wifi_password_manager.navigation.rememberAppBackStack
 import io.github.wifi_password_manager.ui.screen.lock.LockView
 import io.github.wifi_password_manager.ui.screen.noaccess.NoAccessView
+import io.github.wifi_password_manager.ui.shared.MethodSignatureErrorDialog
 import io.github.wifi_password_manager.ui.theme.WiFiPasswordManagerTheme
 import io.github.wifi_password_manager.utils.isBiometricAuthenticationSupported
 import io.github.wifi_password_manager.utils.toast
@@ -41,6 +43,7 @@ import org.koin.core.parameter.parametersOf
 
 class MainActivity : AppCompatActivity() {
     private val settingRepository by inject<SettingRepository>()
+    private val systemApiErrorReporter by inject<SystemApiErrorReporter>()
 
     private val viewModel by
         viewModel<MainViewModel> { parametersOf(isBiometricAuthenticationSupported()) }
@@ -62,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             val isAuthenticated by viewModel.isAuthenticated.collectAsState()
             val skipPrivilegedCheck by viewModel.skipPrivilegedCheck.collectAsStateWithLifecycle()
             val isShizukuUnsupported by viewModel.isShizukuUnsupported.collectAsStateWithLifecycle()
+            val systemApiErrorReport by systemApiErrorReporter.report.collectAsStateWithLifecycle()
             val backStack = rememberAppBackStack()
 
             CompositionLocalProvider(
@@ -96,8 +100,16 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                     }
+                    when {
+                        isLocked -> LockView(viewModel::onAuthenticated)
 
-                    if (isLocked) LockView(viewModel::onAuthenticated)
+                        !systemApiErrorReport.isNullOrBlank() -> {
+                            MethodSignatureErrorDialog(
+                                report = systemApiErrorReport!!,
+                                onDismiss = systemApiErrorReporter::dismiss,
+                            )
+                        }
+                    }
                 }
             }
         }
