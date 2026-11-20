@@ -12,8 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,8 +31,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -47,8 +48,14 @@ import io.github.wifi_password_manager.utils.MOCK
 import io.github.wifi_password_manager.utils.plus
 
 @Composable
-fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Action) -> Unit) {
+fun NoteView(
+    network: WifiNetwork,
+    noteState: TextFieldState,
+    onAction: (NoteViewModel.Action) -> Unit,
+) {
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val focusRequester = remember { FocusRequester() }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -60,7 +67,10 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
     Scaffold(
         modifier =
             Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).pointerInput(Unit) {
-                detectTapGestures { focusManager.clearFocus() }
+                detectTapGestures {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
             },
         topBar = {
             TopAppBar(
@@ -131,16 +141,13 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
         ) {
             item {
                 OutlinedTextField(
-                    value = state,
-                    onValueChange = { onAction(NoteViewModel.Action.UpdateNote(it)) },
+                    state = noteState,
                     modifier =
                         Modifier.widthIn(max = maxWidth)
                             .fillMaxWidth()
                             .focusRequester(focusRequester),
                     placeholder = { Text(text = stringResource(R.string.note_hint)) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    minLines = minLines,
+                    lineLimits = TextFieldLineLimits.MultiLine(minLines),
                 )
             }
         }
@@ -152,7 +159,11 @@ fun NoteView(network: WifiNetwork, state: String, onAction: (NoteViewModel.Actio
 @PreviewWrapper(ThemeWrapper::class)
 private fun NoteViewPreview() {
     val network = WifiNetwork.MOCK.random().copy(note = LoremIpsum().values.joinToString(" "))
-    NoteView(network = network, state = network.note.orEmpty(), onAction = {})
+    NoteView(
+        network = network,
+        noteState = rememberTextFieldState(network.note.orEmpty()),
+        onAction = {},
+    )
 }
 
 @PreviewLightDark
@@ -160,12 +171,16 @@ private fun NoteViewPreview() {
 @PreviewWrapper(ThemeWrapper::class)
 private fun EmptyNoteViewPreview() {
     val network = WifiNetwork.MOCK.random().copy(note = null)
-    NoteView(network = network, state = "", onAction = {})
+    NoteView(network = network, noteState = rememberTextFieldState(), onAction = {})
 }
 
 @PreviewScreenSizes
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun AdaptiveNoteViewPreview() {
-    NoteView(network = WifiNetwork.MOCK.random(), state = "", onAction = {})
+    NoteView(
+        network = WifiNetwork.MOCK.random(),
+        noteState = rememberTextFieldState(),
+        onAction = {},
+    )
 }

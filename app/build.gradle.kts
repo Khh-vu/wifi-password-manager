@@ -29,7 +29,7 @@ kotlin {
 
 android {
     namespace = "io.github.wifi_password_manager"
-    compileSdk { version = release(37) }
+    compileSdk { version = release(37) { minorApiLevel = 2 } }
 
     defaultConfig {
         applicationId = "io.github.wifi_password_manager"

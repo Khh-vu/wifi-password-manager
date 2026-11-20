@@ -3,6 +3,7 @@ package io.github.wifi_password_manager.ui.screen.integration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -42,37 +43,50 @@ fun ExportWifiSetupView() {
         ) {
             // Action
             item {
-                SetupInfoField(label = "Action", content = ExportWifiReceiver.ACTION_EXPORT_WIFI)
+                SetupInfoField(
+                    label = "Action",
+                    state = rememberTextFieldState(ExportWifiReceiver.ACTION_EXPORT_WIFI),
+                )
             }
 
             // Extras
             item {
                 SetupInfoField(
                     label = "Extra",
-                    content = ExportWifiReceiver.EXTRA_FORMAT,
+                    state = rememberTextFieldState(ExportWifiReceiver.EXTRA_FORMAT),
                     hint = stringResource(R.string.export_wifi_extra_format_hint),
                 )
             }
             item {
                 SetupInfoField(
                     label = "Extra",
-                    content = ExportWifiReceiver.EXTRA_PASSWORD,
+                    state = rememberTextFieldState(ExportWifiReceiver.EXTRA_PASSWORD),
                     hint = stringResource(R.string.export_wifi_extra_password_hint),
                 )
             }
             item {
                 SetupInfoField(
                     label = "Extra",
-                    content = ExportWifiReceiver.EXTRA_FILE_NAME,
+                    state = rememberTextFieldState(ExportWifiReceiver.EXTRA_FILE_NAME),
                     hint = stringResource(R.string.export_wifi_extra_filename_hint),
                 )
             }
 
             // Package
-            item { SetupInfoField(label = "Package", content = BuildConfig.APPLICATION_ID) }
+            item {
+                SetupInfoField(
+                    label = "Package",
+                    state = rememberTextFieldState(BuildConfig.APPLICATION_ID),
+                )
+            }
 
             // Class
-            item { SetupInfoField(label = "Class", content = ExportWifiReceiver::class.java.name) }
+            item {
+                SetupInfoField(
+                    label = "Class",
+                    state = rememberTextFieldState(ExportWifiReceiver::class.java.name),
+                )
+            }
         }
     }
 }

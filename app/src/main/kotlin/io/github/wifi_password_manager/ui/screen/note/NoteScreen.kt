@@ -1,10 +1,8 @@
 package io.github.wifi_password_manager.ui.screen.note
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.ui.shared.ObserveAsEvent
@@ -19,7 +17,6 @@ fun NoteScreen(network: WifiNetwork) {
     val navBackStack = LocalNavBackStack.current
 
     val viewModel = koinViewModel<NoteViewModel> { parametersOf(network) }
-    val state by viewModel.state.collectAsStateWithLifecycle()
 
     ObserveAsEvent(viewModel.event) { event ->
         when (event) {
@@ -35,7 +32,7 @@ fun NoteScreen(network: WifiNetwork) {
 
     NoteView(
         network = network,
-        state = state,
+        noteState = viewModel.noteState,
         onAction = viewModel::onAction,
     )
 }

@@ -2,6 +2,9 @@ package io.github.wifi_password_manager.ui.screen.integration.components
 
 import android.content.ClipData
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,16 +28,15 @@ import kotlinx.coroutines.launch
 fun SetupInfoField(
     modifier: Modifier = Modifier,
     label: String,
-    content: String,
+    state: TextFieldState,
     hint: String? = null,
 ) {
     val clipboard = LocalClipboard.current
     val scope = rememberCoroutineScope()
 
     OutlinedTextField(
-        value = content,
-        onValueChange = {},
-        singleLine = true,
+        state = state,
+        lineLimits = TextFieldLineLimits.SingleLine,
         modifier = modifier.fillMaxWidth(),
         readOnly = true,
         label = { Text(text = label) },
@@ -42,7 +44,9 @@ fun SetupInfoField(
             TooltipIconButton(
                 onClick = {
                     scope.launch {
-                        clipboard.setClipEntry(ClipData.newPlainText(label, content).toClipEntry())
+                        clipboard.setClipEntry(
+                            ClipData.newPlainText(label, state.text).toClipEntry(),
+                        )
                     }
                 },
                 imageVector = ContentCopy,
@@ -59,5 +63,5 @@ fun SetupInfoField(
 @Composable
 @PreviewWrapper(SurfaceWrapper::class)
 private fun SetupInfoFieldPreview() {
-    SetupInfoField(label = "Label", content = "Content")
+    SetupInfoField(label = "Label", state = rememberTextFieldState("Content"))
 }
