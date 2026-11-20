@@ -47,12 +47,7 @@ val WifiNetwork.Companion.MOCK
             WifiNetwork(
                 networkId = it,
                 ssid = "ssid $it",
-                password =
-                    if (type !in setOf(SecurityType.OWE, SecurityType.OPEN)) {
-                        "password $it"
-                    } else {
-                        ""
-                    },
+                password = if (type in SecurityType.withPassword) "password $it" else "",
                 securityType = setOf(type),
                 hidden = Random.nextBoolean(),
                 autojoin = Random.nextBoolean(),
@@ -62,21 +57,26 @@ val WifiNetwork.Companion.MOCK
             )
         }
 
-fun List<WifiNetwork>.groupAndSortedBySsid(): List<WifiNetwork> = groupBy {
-    it.ssid
+fun List<WifiNetwork>.groupBySsidAndPassword(): List<WifiNetwork> = groupBy {
+    it.ssid to it.password
 }
     .values
-    .map { duplicateNetworks ->
-        duplicateNetworks
+    .map { rows ->
+        rows
             .first()
             .copy(
-                securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
-                existInSystem = duplicateNetworks.any { it.existInSystem },
-                createdAt = duplicateNetworks.mapNotNull { it.createdAt }.minOrNull(),
-                updatedAt = duplicateNetworks.mapNotNull { it.updatedAt }.maxOrNull(),
+                securityType = rows.flatMap { it.securityType }.toSet(),
+                existInSystem = rows.any { it.existInSystem },
+                note = rows.firstNotNullOfOrNull { it.note },
+                createdAt = rows.mapNotNull { it.createdAt }.minOrNull(),
+                updatedAt = rows.mapNotNull { it.updatedAt }.maxOrNull(),
             )
     }
-    .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid))
+    .sortedWith(
+        compareBy(String.CASE_INSENSITIVE_ORDER, WifiNetwork::ssid).thenByDescending {
+            it.existInSystem
+        },
+    )
 
 @SuppressLint("InlinedApi")
 fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {

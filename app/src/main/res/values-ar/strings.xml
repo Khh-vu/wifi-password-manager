@@ -4,6 +4,7 @@
     <!-- Common -->
     <string name="cancel">إلغاء</string>
     <string name="ok">موافق</string>
+    <string name="save">حفظ</string>
     <string name="clear">مسح</string>
     <string name="reset">إعادة تعيين</string>
     <string name="back">رجوع</string>
@@ -211,6 +212,32 @@
     <string name="export_methods_success">تم تصدير الدوال بنجاح</string>
     <string name="export_methods_failed">فشل تصدير الدوال</string>
 
+    <!-- Add Network Screen -->
+    <string name="add_network">إضافة شبكة</string>
+    <string name="add_network_manually">إدخال يدويًا</string>
+    <string name="ssid_error">يجب أن يكون SSID من 1 إلى 32 بايت</string>
+    <string name="password_error_wpa2">يجب أن تتكون كلمة المرور من 8 إلى 63 حرفًا</string>
+    <string name="password_error_wpa3">يجب أن تتكون كلمة المرور من 1 إلى 63 حرفًا</string>
+    <string name="password_error_empty">لا يمكن أن تكون كلمة المرور فارغة</string>
+    <string name="note_optional">ملاحظة (اختياري)</string>
+    <string name="hidden_network">شبكة مخفية</string>
+    <string name="save_to_section">الحفظ في</string>
+    <string name="scan_wifi_qr">مسح رمز QR</string>
+    <string name="scan_wifi_qr_unsupported">ماسح رمز QR غير متاح على هذا الجهاز</string>
+    <string name="metered_section">الاستخدام المحدود</string>
+    <string name="metered_auto">اكتشاف تلقائي</string>
+    <string name="metered_metered">محدود</string>
+    <string name="metered_unmetered">غير محدود</string>
+    <string name="mac_randomization_section">عنوان MAC</string>
+    <string name="mac_randomization_auto">تلقائي</string>
+    <string name="mac_randomization_persistent">MAC عشوائي</string>
+    <string name="mac_randomization_non_persistent">عشوائي لكل اتصال</string>
+    <string name="mac_randomization_none">MAC الجهاز</string>
+    <string name="network_already_saved">هذه الشبكة محفوظة بالفعل</string>
+    <string name="network_added">تمت إضافة الشبكة</string>
+    <string name="network_saved_app_only">تم الحفظ في التطبيق فقط. لم يقبل الجهاز الشبكة.</string>
+    <string name="network_add_failed">تعذّرت إضافة الشبكة</string>
+
     <!-- Security Types -->
     <string name="security_open">لا يوجد</string>
     <string name="security_owe">فتح محسن (Enhanced Open)</string>
@@ -240,6 +267,13 @@
     <!-- Import Password Dialog -->
     <string name="import_password_title">إدخال كلمة المرور</string>
     <string name="import_password_description">هذا الملف مشفر. أدخل كلمة المرور لفك تشفيره.</string>
+
+    <!-- Import Mode Dialog -->
+    <string name="import_mode_title">الاستيراد إلى</string>
+    <string name="import_to_device">الجهاز والتطبيق</string>
+    <string name="import_to_device_description">حفظ الشبكات على الجهاز. تبقى كلمات المرور الأخرى للشبكة نفسها في التطبيق.</string>
+    <string name="import_to_app">التطبيق فقط</string>
+    <string name="import_to_app_description">الاحتفاظ بالشبكات في التطبيق. لا يتم تغيير الجهاز.</string>
 
     <!-- Messages -->
     <string name="loading">جارِ التحميل…</string>

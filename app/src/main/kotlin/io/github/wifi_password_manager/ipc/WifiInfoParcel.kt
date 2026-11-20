@@ -12,6 +12,7 @@ import kotlinx.parcelize.Parcelize
 data class WifiInfoParcel(
     val ssid: String,
     val rssi: Int,
+    val networkId: Int,
 ) : Parcelable {
     fun toWifiInfo(): WifiInfo {
         val ssidBytes = ssid.removeSurrounding("\"").toByteArray()
@@ -20,6 +21,7 @@ data class WifiInfoParcel(
                 .apply {
                     setSsid(ssidBytes)
                     setRssi(rssi)
+                    setNetworkId(networkId)
                 }
                 .build()
         } else {
@@ -27,6 +29,7 @@ data class WifiInfoParcel(
                 WifiInfoHidden().apply {
                     setSSID(WifiSsidHidden.createFromByteArray(ssidBytes))
                     setRssi(rssi)
+                    setNetworkId(networkId)
                 },
             )
         }
@@ -34,7 +37,7 @@ data class WifiInfoParcel(
 
     companion object {
         fun fromWifiInfo(wifiInfo: WifiInfo): WifiInfoParcel {
-            return WifiInfoParcel(wifiInfo.ssid, wifiInfo.rssi)
+            return WifiInfoParcel(wifiInfo.ssid, wifiInfo.rssi, wifiInfo.networkId)
         }
     }
 }

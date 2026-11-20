@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.setting.components
+package io.github.wifi_password_manager.ui.shared
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.input.KeyboardActionHandler
@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.ui.icons.Visibility
 import io.github.wifi_password_manager.ui.icons.VisibilityOff
-import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.theme.SurfaceWrapper
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,16 +32,16 @@ fun PasswordTextField(
     modifier: Modifier = Modifier,
     state: TextFieldState,
     isError: Boolean = false,
+    errorText: String = stringResource(R.string.password_required),
     onKeyboardAction: KeyboardActionHandler? = null,
 ) {
     var isObfuscated by retain { mutableStateOf(false) }
-    val errorText = @Composable { Text(text = stringResource(R.string.password_required)) }
 
     OutlinedSecureTextField(
         state = state,
         modifier = modifier.fillMaxWidth().semantics { contentType = ContentType.Password },
         label = { Text(text = stringResource(R.string.password)) },
-        supportingText = errorText.takeIf { isError },
+        supportingText = if (isError) ({ Text(text = errorText) }) else null,
         onKeyboardAction = onKeyboardAction,
         isError = isError,
         trailingIcon = {

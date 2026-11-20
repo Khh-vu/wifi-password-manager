@@ -27,8 +27,7 @@ import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.Crypto
 import io.github.wifi_password_manager.utils.UiText
-import io.github.wifi_password_manager.utils.groupAndSortedBySsid
-import io.github.wifi_password_manager.utils.toWifiConfigurations
+import io.github.wifi_password_manager.utils.groupBySsidAndPassword
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.crypto.AEADBadTagException
@@ -63,6 +62,7 @@ class SettingViewModel(
         val isLoading: Boolean = false,
         val showForgetAllDialog: Boolean = false,
         val showExportDialog: Boolean = false,
+        val showImportModeDialog: Boolean = false,
         val showImportPasswordDialog: Boolean = false,
         val mode: PrivilegedMode = PrivilegedMode.NONE,
     )
@@ -94,7 +94,9 @@ class SettingViewModel(
 
         data object ImportNetworks : Action
 
-        data object HideImportPasswordDialog : Action
+        data class ChooseImportMode(val toDevice: Boolean) : Action
+
+        data object HideImportDialog : Action
 
         data class ConfirmImportWithPassword(val password: String) : Action
 
@@ -120,21 +122,28 @@ class SettingViewModel(
     private val _isLoading = MutableStateFlow(false)
     private val _showForgetAllDialog = MutableStateFlow(false)
     private val _showExportDialog = MutableStateFlow(false)
-    private val _showImportPasswordDialog = MutableStateFlow(false)
+
+    private enum class ImportDialog {
+        MODE,
+        PASSWORD,
+    }
+
+    private val _importDialog = MutableStateFlow<ImportDialog?>(null)
 
     val state =
         combine(
                 _isLoading,
                 _showForgetAllDialog,
                 _showExportDialog,
-                _showImportPasswordDialog,
+                _importDialog,
                 privilegedManager.mode,
-            ) { isLoading, showForgetAllDialog, showExportDialog, showImportPasswordDialog, mode ->
+            ) { isLoading, showForgetAllDialog, showExportDialog, importDialog, mode ->
                 State(
                     isLoading = isLoading,
                     showForgetAllDialog = showForgetAllDialog,
                     showExportDialog = showExportDialog,
-                    showImportPasswordDialog = showImportPasswordDialog,
+                    showImportModeDialog = importDialog == ImportDialog.MODE,
+                    showImportPasswordDialog = importDialog == ImportDialog.PASSWORD,
                     mode = mode,
                 )
             }
@@ -148,6 +157,7 @@ class SettingViewModel(
     val event = _event.receiveAsFlow()
 
     @Volatile private var pendingImportFiles: List<PlatformFile> = emptyList()
+    @Volatile private var pendingImportToDevice = false
 
     fun onAction(action: Action) {
         when (action) {
@@ -182,7 +192,8 @@ class SettingViewModel(
                 updateSettings { it.copy(allowInsecureReceiver = action.value) }
 
             is Action.ImportNetworks -> onImportNetworks()
-            is Action.HideImportPasswordDialog -> onHideImportPasswordDialog()
+            is Action.ChooseImportMode -> onChooseImportMode(action.toDevice)
+            is Action.HideImportDialog -> onHideImportDialog()
             is Action.ConfirmImportWithPassword -> onConfirmImportWithPassword(action.password)
             is Action.ShowExportDialog -> onShowExportDialog()
             is Action.HideExportDialog -> _showExportDialog.update { false }
@@ -226,7 +237,7 @@ class SettingViewModel(
 
             runCatching {
                     Dispatchers.IO {
-                        val networks = wifiRepository.getAllNetworksList().groupAndSortedBySsid()
+                        val networks = wifiRepository.getAllNetworksList().groupBySsidAndPassword()
                         val data =
                             when (option) {
                                 ExportOption.PLAIN ->
@@ -261,7 +272,19 @@ class SettingViewModel(
     }
 
     private fun onImportNetworks() {
-        if (!state.value.mode.hasPrivilegedAccess) return
+        if (state.value.mode.hasPrivilegedAccess) {
+            _importDialog.update { ImportDialog.MODE }
+        } else {
+            pickAndImport(toDevice = false)
+        }
+    }
+
+    private fun onChooseImportMode(toDevice: Boolean) {
+        _importDialog.update { null }
+        pickAndImport(toDevice)
+    }
+
+    private fun pickAndImport(toDevice: Boolean) {
         viewModelScope.launch {
             val files =
                 FileKit.openFilePicker(
@@ -273,38 +296,41 @@ class SettingViewModel(
             val hasEncryptedFiles = files.any { it.extension == "bin" }
             if (hasEncryptedFiles) {
                 pendingImportFiles = files
-                _showImportPasswordDialog.update { true }
+                pendingImportToDevice = toDevice
+                _importDialog.update { ImportDialog.PASSWORD }
                 return@launch
             }
 
-            performImport(files, password = null)
+            performImport(files, password = null, toDevice = toDevice)
         }
     }
 
-    private fun onHideImportPasswordDialog() {
+    private fun onHideImportDialog() {
         pendingImportFiles = emptyList()
-        _showImportPasswordDialog.update { false }
+        _importDialog.update { null }
     }
 
     private fun onConfirmImportWithPassword(password: String) {
         val files = pendingImportFiles
         pendingImportFiles = emptyList()
-        _showImportPasswordDialog.update { false }
-        performImport(files, password)
+        _importDialog.update { null }
+        performImport(files, password, pendingImportToDevice)
     }
 
-    private fun performImport(files: List<PlatformFile>, password: String?) {
+    private fun performImport(files: List<PlatformFile>, password: String?, toDevice: Boolean) {
         viewModelScope.launch {
             _isLoading.update { true }
 
             try {
-                if (files.size == 1) {
-                    importSingleFile(files.first(), password)
-                } else {
-                    importMultipleFiles(files, password)
-                }
+                val networks = Dispatchers.IO { parseNetworksFromFiles(files, password) }
+                val imported = Dispatchers.IO { importNetworks(networks, toDevice) }
                 _event.send(
-                    Event.ShowMessage(UiText.StringResource(R.string.import_networks_success)),
+                    Event.ShowMessage(
+                        UiText.StringResource(
+                            if (imported) R.string.import_networks_success
+                            else R.string.no_network_to_import,
+                        ),
+                    ),
                 )
             } catch (e: SerializationException) {
                 Log.w(TAG, "Error parsing JSON", e)
@@ -324,75 +350,46 @@ class SettingViewModel(
         }
     }
 
-    private suspend fun importSingleFile(file: PlatformFile, password: String?) = Dispatchers.IO {
-        val networks = parseNetworksFromFile(file, password)
-        if (networks.isEmpty()) {
-            _event.send(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import)))
-            return@IO
+    private suspend fun parseNetworksFromFiles(
+        files: List<PlatformFile>,
+        password: String?,
+    ): List<WifiNetwork> {
+        if (files.size == 1) return parseNetworksFromFile(files.first(), password)
+        return files.flatMap { file ->
+            runCatching { parseNetworksFromFile(file, password) }
+                .onFailure { Log.e(TAG, "Error parsing file: ${file.name}", it) }
+                .getOrDefault(emptyList())
         }
-
-        networks
-            .flatMap { network ->
-                val configs = network.toWifiConfigurations()
-                configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
-            }
-            .awaitAll()
-
-        wifiRepository.refresh()
-
-        networks
-            .filter { it.note != null }
-            .map { async { wifiRepository.updateNote(it.ssid, it.note) } }
-            .awaitAll()
     }
 
-    private suspend fun importMultipleFiles(files: List<PlatformFile>, password: String?) {
-        Dispatchers.IO {
-            val allNetworks = files.flatMap { file ->
-                runCatching { parseNetworksFromFile(file, password) }
-                    .onFailure { Log.e(TAG, "Error parsing file: ${file.name}", it) }
-                    .getOrDefault(emptyList())
-            }
-
-            val networks =
-                allNetworks
-                    .groupBy { it.ssid }
-                    .values
-                    .map { duplicateNetworks ->
-                        val network = duplicateNetworks.first()
-                        val notes =
-                            duplicateNetworks
-                                .mapNotNull { it.note?.trim() }
-                                .filter { it.isNotBlank() }
-                                .distinct()
-                        val mergedNote =
-                            when {
-                                notes.isEmpty() -> null
-                                notes.size == 1 -> notes.first()
-                                else -> notes.joinToString("\n")
-                            }
-                        network.copy(note = mergedNote)
-                    }
-
-            if (networks.isEmpty()) {
-                _event.send(Event.ShowMessage(UiText.StringResource(R.string.no_network_to_import)))
-                return@IO
-            }
-
+    private suspend fun importNetworks(networks: List<WifiNetwork>, toDevice: Boolean): Boolean {
+        val cards =
             networks
-                .flatMap { network ->
-                    val configs = network.toWifiConfigurations()
-                    configs.map { async { wifiRepository.addOrUpdateNetworkPrivileged(it) } }
+                .groupBy { it.ssid to it.password }
+                .values
+                .map { duplicateNetworks ->
+                    val notes =
+                        duplicateNetworks
+                            .mapNotNull { it.note?.trim() }
+                            .filter { it.isNotBlank() }
+                            .distinct()
+                    duplicateNetworks
+                        .first()
+                        .copy(
+                            securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
+                            note = notes.joinToString("\n").ifEmpty { null },
+                        )
                 }
-                .awaitAll()
+        if (cards.isEmpty()) return false
 
-            wifiRepository.refresh()
-
-            networks
-                .filter { it.note != null }
-                .map { async { wifiRepository.updateNote(it.ssid, it.note) } }
-                .awaitAll()
+        cards.forEach { wifiRepository.addManual(it) }
+        if (toDevice) {
+            wifiRepository.saveToSystem(cards.groupBy { it.ssid }.values.map { it.first() })
         }
+        cards
+            .filter { it.note != null }
+            .forEach { wifiRepository.updateNote(it.ssid, it.password, it.note) }
+        return true
     }
 
     private suspend fun parseNetworksFromFile(
@@ -417,7 +414,7 @@ class SettingViewModel(
             if (network.password.isNotBlank()) {
                 val securityType =
                     network.securityType.filterNot {
-                        it in setOf(WifiNetwork.SecurityType.OPEN, WifiNetwork.SecurityType.OWE)
+                        it in WifiNetwork.SecurityType.withoutPassword
                     }
                 network.copy(securityType = securityType.toSet())
             } else {

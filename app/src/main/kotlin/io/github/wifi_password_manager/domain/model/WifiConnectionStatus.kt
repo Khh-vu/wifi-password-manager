@@ -6,7 +6,13 @@ import androidx.compose.runtime.Immutable
 sealed interface WifiConnectionStatus {
     data object Disconnected : WifiConnectionStatus
 
-    data class Connecting(val ssid: String) : WifiConnectionStatus
+    data class Connecting(val ssid: String, val password: String) : WifiConnectionStatus {
+        fun matches(network: WifiNetwork): Boolean =
+            ssid == network.ssid && password == network.password
+    }
 
-    data class Connected(val ssid: String) : WifiConnectionStatus
+    data class Connected(val ssid: String, val password: String) : WifiConnectionStatus {
+        fun matches(network: WifiNetwork): Boolean =
+            ssid == network.ssid && password == network.password && network.existInSystem
+    }
 }

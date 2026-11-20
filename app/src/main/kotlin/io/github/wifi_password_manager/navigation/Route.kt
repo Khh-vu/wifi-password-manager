@@ -16,6 +16,8 @@ sealed interface Route : NavKey {
 
     @Serializable data class NoteScreen(val network: WifiNetwork) : Route, NavKey
 
+    @Serializable data object AddNetworkScreen : Route, NavKey
+
     @Serializable data object ExportWifiSetupScreen : Route, NavKey
 
     @Serializable data object IWifiManagerMethodInspectorScreen : Route, NavKey

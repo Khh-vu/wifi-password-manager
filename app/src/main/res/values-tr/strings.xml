@@ -4,6 +4,7 @@
     <!-- Common -->
     <string name="cancel">İptal</string>
     <string name="ok">Tamam</string>
+    <string name="save">Kaydet</string>
     <string name="clear">Temizle</string>
     <string name="reset">Sıfırla</string>
     <string name="back">Geri</string>
@@ -203,6 +204,32 @@
     <string name="export_methods_success">Metotlar başarıyla dışa aktarıldı</string>
     <string name="export_methods_failed">Metotları dışa aktarma başarısız</string>
 
+    <!-- Add Network Screen -->
+    <string name="add_network">Ağ ekle</string>
+    <string name="add_network_manually">Elle gir</string>
+    <string name="ssid_error">SSID 1–32 bayt olmalıdır</string>
+    <string name="password_error_wpa2">Parola 8–63 karakter olmalıdır</string>
+    <string name="password_error_wpa3">Parola 1–63 karakter olmalıdır</string>
+    <string name="password_error_empty">Parola boş olamaz</string>
+    <string name="note_optional">Not (isteğe bağlı)</string>
+    <string name="hidden_network">Gizli ağ</string>
+    <string name="save_to_section">Kaydetme hedefi</string>
+    <string name="scan_wifi_qr">QR kodu tara</string>
+    <string name="scan_wifi_qr_unsupported">Bu cihazda QR tarayıcı kullanılamıyor</string>
+    <string name="metered_section">Sayaçlı bağlantı</string>
+    <string name="metered_auto">Otomatik algıla</string>
+    <string name="metered_metered">Sayaçlı</string>
+    <string name="metered_unmetered">Sayaçsız</string>
+    <string name="mac_randomization_section">MAC adresi</string>
+    <string name="mac_randomization_auto">Otomatik</string>
+    <string name="mac_randomization_persistent">Rastgele MAC</string>
+    <string name="mac_randomization_non_persistent">Her bağlantıda rastgele</string>
+    <string name="mac_randomization_none">Cihaz MAC\'i</string>
+    <string name="network_already_saved">Bu ağ zaten kayıtlı</string>
+    <string name="network_added">Ağ eklendi</string>
+    <string name="network_saved_app_only">Yalnızca uygulamaya kaydedildi. Cihaz ağı kabul etmedi.</string>
+    <string name="network_add_failed">Ağ eklenemedi</string>
+
     <!-- Security Types -->
     <string name="security_open">Yok</string>
     <string name="security_owe">Gelişmiş Açık</string>
@@ -232,6 +259,13 @@
     <!-- Import Password Dialog -->
     <string name="import_password_title">Parolayı girin</string>
     <string name="import_password_description">Bu dosya şifrelenmiştir. Şifreyi çözmek için parolayı girin.</string>
+
+    <!-- Import Mode Dialog -->
+    <string name="import_mode_title">İçe aktarma hedefi</string>
+    <string name="import_to_device">Cihaz ve uygulama</string>
+    <string name="import_to_device_description">Ağları cihaza kaydet. Aynı ağın diğer parolaları uygulamada kalır.</string>
+    <string name="import_to_app">Yalnızca uygulama</string>
+    <string name="import_to_app_description">Ağları uygulamada tut. Cihaz değiştirilmez.</string>
 
     <!-- Messages -->
     <string name="loading">Yükleniyor…</string>

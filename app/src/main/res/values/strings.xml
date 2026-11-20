@@ -4,6 +4,7 @@
     <!-- Common -->
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="save">Save</string>
     <string name="clear">Clear</string>
     <string name="reset">Reset</string>
     <string name="back">Back</string>
@@ -204,6 +205,32 @@
     <string name="export_methods_success">Methods exported successfully</string>
     <string name="export_methods_failed">Failed to export methods</string>
 
+    <!-- Add Network Screen -->
+    <string name="add_network">Add network</string>
+    <string name="add_network_manually">Enter manually</string>
+    <string name="ssid_error">SSID must be 1–32 bytes</string>
+    <string name="password_error_wpa2">Password must be 8–63 characters</string>
+    <string name="password_error_wpa3">Password must be 1–63 characters</string>
+    <string name="password_error_empty">Password can\'t be empty</string>
+    <string name="note_optional">Note (optional)</string>
+    <string name="hidden_network">Hidden network</string>
+    <string name="save_to_section">Save to</string>
+    <string name="scan_wifi_qr">Scan QR code</string>
+    <string name="scan_wifi_qr_unsupported">QR scanner isn\'t available on this device</string>
+    <string name="metered_section">Metered</string>
+    <string name="metered_auto">Auto-detect</string>
+    <string name="metered_metered">Metered</string>
+    <string name="metered_unmetered">Unmetered</string>
+    <string name="mac_randomization_section">MAC address</string>
+    <string name="mac_randomization_auto">Auto</string>
+    <string name="mac_randomization_persistent">Randomized</string>
+    <string name="mac_randomization_non_persistent">Randomized per connection</string>
+    <string name="mac_randomization_none">Device MAC</string>
+    <string name="network_already_saved">This network is already saved</string>
+    <string name="network_added">Network added</string>
+    <string name="network_saved_app_only">Saved in app only. The device did not accept it.</string>
+    <string name="network_add_failed">Couldn\'t add the network</string>
+
     <!-- Security Types -->
     <string name="security_open">None</string>
     <string name="security_owe">Enhanced Open</string>
@@ -233,6 +260,13 @@
     <!-- Import Password Dialog -->
     <string name="import_password_title">Enter Password</string>
     <string name="import_password_description">This file is encrypted. Enter the password to decrypt it.</string>
+
+    <!-- Import Mode Dialog -->
+    <string name="import_mode_title">Import to</string>
+    <string name="import_to_device">Device and app</string>
+    <string name="import_to_device_description">Save networks to the device. Other passwords for the same network stay in the app.</string>
+    <string name="import_to_app">App only</string>
+    <string name="import_to_app_description">Keep networks in the app. The device is not changed.</string>
 
     <!-- Messages -->
     <string name="loading">Loading…</string>

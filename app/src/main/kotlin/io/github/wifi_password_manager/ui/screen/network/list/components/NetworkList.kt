@@ -69,8 +69,11 @@ fun NetworkList(
             verticalArrangement = Arrangement.spacedBy(spacing),
             horizontalArrangement = Arrangement.spacedBy(spacing),
         ) {
-            items(items = networks, key = { it.ssid }, contentType = { it.password.isEmpty() }) {
-                network ->
+            items(
+                items = networks,
+                key = { "${it.ssid}|${it.securityType.sorted().joinToString(",")}|${it.password}" },
+                contentType = { it.password.isEmpty() },
+            ) { network ->
                 WifiCard(
                     network = network,
                     connectionStatus = connectionStatus,

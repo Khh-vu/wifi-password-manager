@@ -4,6 +4,7 @@
     <!-- 通用 -->
     <string name="cancel">取消</string>
     <string name="ok">确定</string>
+    <string name="save">保存</string>
     <string name="clear">清除</string>
     <string name="reset">重置</string>
     <string name="back">返回</string>
@@ -201,6 +202,32 @@
     <string name="export_methods_success">方法导出成功</string>
     <string name="export_methods_failed">方法导出失败</string>
 
+    <!-- Add Network Screen -->
+    <string name="add_network">添加网络</string>
+    <string name="add_network_manually">手动输入</string>
+    <string name="ssid_error">SSID 长度须为 1–32 字节</string>
+    <string name="password_error_wpa2">密码须为 8–63 个字符</string>
+    <string name="password_error_wpa3">密码须为 1–63 个字符</string>
+    <string name="password_error_empty">密码不能为空</string>
+    <string name="note_optional">备注（可选）</string>
+    <string name="hidden_network">隐藏网络</string>
+    <string name="save_to_section">保存到</string>
+    <string name="scan_wifi_qr">扫描二维码</string>
+    <string name="scan_wifi_qr_unsupported">此设备不支持二维码扫描</string>
+    <string name="metered_section">按流量计费</string>
+    <string name="metered_auto">自动检测</string>
+    <string name="metered_metered">按流量计费</string>
+    <string name="metered_unmetered">不按流量计费</string>
+    <string name="mac_randomization_section">MAC 地址</string>
+    <string name="mac_randomization_auto">自动</string>
+    <string name="mac_randomization_persistent">随机 MAC</string>
+    <string name="mac_randomization_non_persistent">每次连接随机</string>
+    <string name="mac_randomization_none">设备 MAC</string>
+    <string name="network_already_saved">此网络已保存</string>
+    <string name="network_added">已添加网络</string>
+    <string name="network_saved_app_only">仅保存在应用内。设备未接受此网络。</string>
+    <string name="network_add_failed">无法添加网络</string>
+
     <!-- 安全类型 -->
     <string name="security_open">无</string>
     <string name="security_owe">增强开放</string>
@@ -230,6 +257,13 @@
     <!-- 导入密码对话框 -->
     <string name="import_password_title">输入密码</string>
     <string name="import_password_description">此文件已加密。请输入密码以解密。</string>
+
+    <!-- Import Mode Dialog -->
+    <string name="import_mode_title">导入到</string>
+    <string name="import_to_device">设备和应用</string>
+    <string name="import_to_device_description">将网络保存到设备。同一网络的其他密码会保留在应用内。</string>
+    <string name="import_to_app">仅应用内</string>
+    <string name="import_to_app_description">仅在应用内保存网络，不更改设备。</string>
 
     <!-- 消息提示 -->
     <string name="loading">加载中…</string>

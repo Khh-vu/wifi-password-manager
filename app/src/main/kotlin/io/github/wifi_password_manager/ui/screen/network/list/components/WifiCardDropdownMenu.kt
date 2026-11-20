@@ -43,7 +43,7 @@ fun WifiCardDropdownMenu(
 ) {
     val navBackStack = LocalNavBackStack.current
     val connected =
-        connectionStatus is WifiConnectionStatus.Connected && connectionStatus.ssid == network.ssid
+        connectionStatus is WifiConnectionStatus.Connected && connectionStatus.matches(network)
 
     DropdownMenuPopup(
         modifier = modifier,
@@ -169,7 +169,7 @@ fun WifiCardDropdownMenu(
                 DropdownMenuItem(
                     onClick = {
                         onDismissRequest()
-                        onAction(NetworkListViewModel.Action.DeleteNote(network.ssid))
+                        onAction(NetworkListViewModel.Action.DeleteNote(network))
                     },
                     text = { Text(text = stringResource(R.string.delete_note)) },
                     leadingIcon = {
@@ -213,7 +213,7 @@ private fun ConnectingWifiCardDropdownMenuPreview() {
         expanded = true,
         onDismissRequest = {},
         network = network,
-        connectionStatus = WifiConnectionStatus.Connecting(network.ssid),
+        connectionStatus = WifiConnectionStatus.Connecting(network.ssid, network.password),
         onShowWifiQrRequest = {},
         onForgetRequest = {},
         onAction = {},
@@ -229,7 +229,7 @@ private fun ConnectedWifiCardDropdownMenuPreview() {
         expanded = true,
         onDismissRequest = {},
         network = network,
-        connectionStatus = WifiConnectionStatus.Connected(network.ssid),
+        connectionStatus = WifiConnectionStatus.Connected(network.ssid, network.password),
         onShowWifiQrRequest = {},
         onForgetRequest = {},
         onAction = {},

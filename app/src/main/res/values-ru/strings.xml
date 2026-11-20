@@ -4,6 +4,7 @@
     <!-- Common -->
     <string name="cancel">Отмена</string>
     <string name="ok">ОК</string>
+    <string name="save">Сохранить</string>
     <string name="clear">Очистить</string>
     <string name="reset">Сброс</string>
     <string name="back">Назад</string>
@@ -207,6 +208,32 @@
     <string name="export_methods_success">Методы успешно экспортированы</string>
     <string name="export_methods_failed">Ошибка при экспорте методов</string>
 
+    <!-- Add Network Screen -->
+    <string name="add_network">Добавить сеть</string>
+    <string name="add_network_manually">Ввести вручную</string>
+    <string name="ssid_error">SSID должен быть от 1 до 32 байт</string>
+    <string name="password_error_wpa2">Пароль должен содержать от 8 до 63 символов</string>
+    <string name="password_error_wpa3">Пароль должен содержать от 1 до 63 символов</string>
+    <string name="password_error_empty">Пароль не может быть пустым</string>
+    <string name="note_optional">Заметка (необязательно)</string>
+    <string name="hidden_network">Скрытая сеть</string>
+    <string name="save_to_section">Сохранить в</string>
+    <string name="scan_wifi_qr">Сканировать QR-код</string>
+    <string name="scan_wifi_qr_unsupported">Сканер QR-кодов недоступен на этом устройстве</string>
+    <string name="metered_section">Лимитное подключение</string>
+    <string name="metered_auto">Автоопределение</string>
+    <string name="metered_metered">Лимитное</string>
+    <string name="metered_unmetered">Безлимитное</string>
+    <string name="mac_randomization_section">MAC-адрес</string>
+    <string name="mac_randomization_auto">Авто</string>
+    <string name="mac_randomization_persistent">Случайный</string>
+    <string name="mac_randomization_non_persistent">Случайный для каждого подключения</string>
+    <string name="mac_randomization_none">MAC устройства</string>
+    <string name="network_already_saved">Эта сеть уже сохранена</string>
+    <string name="network_added">Сеть добавлена</string>
+    <string name="network_saved_app_only">Сохранено только в приложении. Устройство не приняло сеть.</string>
+    <string name="network_add_failed">Не удалось добавить сеть</string>
+
     <!-- Security Types -->
     <string name="security_open">Открытая</string>
     <string name="security_owe">Enhanced Open</string>
@@ -236,6 +263,13 @@
     <!-- Import Password Dialog -->
     <string name="import_password_title">Введите пароль</string>
     <string name="import_password_description">Этот файл зашифрован. Введите пароль для расшифровки.</string>
+
+    <!-- Import Mode Dialog -->
+    <string name="import_mode_title">Импортировать в</string>
+    <string name="import_to_device">Устройство и приложение</string>
+    <string name="import_to_device_description">Сохранить сети на устройстве. Другие пароли для той же сети останутся в приложении.</string>
+    <string name="import_to_app">Только в приложении</string>
+    <string name="import_to_app_description">Хранить сети в приложении. Устройство не изменяется.</string>
 
     <!-- Messages -->
     <string name="loading">Загрузка…</string>

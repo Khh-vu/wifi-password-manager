@@ -24,6 +24,7 @@ fun rememberAppBackStack(): NavBackStack<NavKey> =
                         subclass(Route.LockTimeoutScreen::class)
                         subclass(Route.LicenseScreen::class)
                         subclass(Route.NoteScreen::class)
+                        subclass(Route.AddNetworkScreen::class)
                         subclass(Route.ExportWifiSetupScreen::class)
                         subclass(Route.IWifiManagerMethodInspectorScreen::class)
                     }

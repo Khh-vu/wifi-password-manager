@@ -45,6 +45,7 @@ import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ConnectedWifiInfoItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ExportDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllDialog
+import io.github.wifi_password_manager.ui.screen.setting.components.ImportOptionDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.ImportPasswordDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.PlaintextPasswordsItem
@@ -208,7 +209,6 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         },
                         shapes = UiConfig.listItemShapes(),
                         colors = UiConfig.listItemColors(),
-                        enabled = state.mode.hasPrivilegedAccess,
                     ) {
                         Text(text = stringResource(R.string.import_action))
                     }
@@ -577,9 +577,16 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             )
         }
 
+        state.showImportModeDialog -> {
+            ImportOptionDialog(
+                onDismiss = { onAction(SettingViewModel.Action.HideImportDialog) },
+                onSelect = { onAction(SettingViewModel.Action.ChooseImportMode(it)) },
+            )
+        }
+
         state.showImportPasswordDialog -> {
             ImportPasswordDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideImportPasswordDialog) },
+                onDismiss = { onAction(SettingViewModel.Action.HideImportDialog) },
                 onConfirm = { password ->
                     onAction(SettingViewModel.Action.ConfirmImportWithPassword(password))
                 },

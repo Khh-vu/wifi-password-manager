@@ -11,6 +11,7 @@ import io.github.wifi_password_manager.ui.screen.integration.ExportWifiSetupView
 import io.github.wifi_password_manager.ui.screen.license.LicenseView
 import io.github.wifi_password_manager.ui.screen.locktimeout.LockTimeoutScreen
 import io.github.wifi_password_manager.ui.screen.methodinspector.MethodInspectorScreen
+import io.github.wifi_password_manager.ui.screen.network.add.AddNetworkScreen
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListScreen
 import io.github.wifi_password_manager.ui.screen.note.NoteScreen
 import io.github.wifi_password_manager.ui.screen.setting.SettingScreen
@@ -35,6 +36,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 entry<Route.LockTimeoutScreen> { LockTimeoutScreen() }
                 entry<Route.LicenseScreen> { LicenseView() }
                 entry<Route.NoteScreen> { NoteScreen(it.network) }
+                entry<Route.AddNetworkScreen> { AddNetworkScreen() }
                 entry<Route.ExportWifiSetupScreen> { ExportWifiSetupView() }
                 entry<Route.IWifiManagerMethodInspectorScreen> {
                     MethodInspectorScreen(IWifiManager::class)

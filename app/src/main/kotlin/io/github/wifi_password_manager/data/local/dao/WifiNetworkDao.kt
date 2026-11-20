@@ -1,11 +1,14 @@
 package io.github.wifi_password_manager.data.local.dao
 
 import androidx.room3.Dao
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Transaction
 import androidx.room3.Upsert
 import io.github.wifi_password_manager.data.local.entity.WifiNetworkEntity
-import io.github.wifi_password_manager.data.local.entity.withTimestamps
+import io.github.wifi_password_manager.data.local.entity.planSync
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,7 +21,7 @@ interface WifiNetworkDao {
             SELECT * FROM wifi_networks WHERE ssid LIKE '%' || :query || '%' OR note LIKE '%' || :query || '%'
             UNION
             SELECT wifi_networks.* FROM wifi_networks
-            JOIN wifi_networks_fts ON wifi_networks.ssid = wifi_networks_fts.ssid
+            JOIN wifi_networks_fts ON wifi_networks.rowid = wifi_networks_fts.rowid
             WHERE wifi_networks_fts MATCH '*' || :query || '*'
         """,
     )
@@ -29,39 +32,35 @@ interface WifiNetworkDao {
 
     @Upsert suspend fun upsertNetworks(networks: List<WifiNetworkEntity>)
 
-    @Query("UPDATE wifi_networks SET existInSystem = 0 WHERE ssid NOT IN (:systemSsids)")
-    suspend fun markNotExistInSystem(systemSsids: List<String>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIfAbsent(networks: List<WifiNetworkEntity>): List<Long>
+
+    @Delete suspend fun deleteNetworks(networks: List<WifiNetworkEntity>)
 
     @Transaction
     suspend fun syncNetworks(networks: List<WifiNetworkEntity>) {
-        val existingNetworks = getAllNetworksList()
-        val notesMap = existingNetworks.filter { it.note != null }.associate { it.ssid to it.note }
-        val networkMap = existingNetworks.associateBy { it.ssid to it.securityTypes }
-        upsertNetworks(
-            networks.map { network ->
-                val stamped =
-                    if (existingNetworks.isEmpty()) {
-                        network
-                    } else {
-                        network.withTimestamps(
-                            oldNetwork = networkMap[network.ssid to network.securityTypes],
-                            timeMillis = System.currentTimeMillis(),
-                        )
-                    }
-                stamped.copy(note = notesMap[network.ssid] ?: network.note)
-            },
-        )
-        markNotExistInSystem(networks.map { it.ssid })
+        val plan = planSync(getAllNetworksList(), networks, System.currentTimeMillis())
+        deleteNetworks(plan.deletes)
+        upsertNetworks(plan.upserts)
     }
+
+    @Query(
+        """
+            UPDATE wifi_networks SET existInSystem = 0
+            WHERE ssid = :ssid AND securityTypes = :securityTypes AND existInSystem = 1
+        """,
+    )
+    suspend fun markNotExistInSystem(ssid: String, securityTypes: String)
 
     @Query("UPDATE wifi_networks SET existInSystem = 0") suspend fun markAllNotExistInSystem()
 
-    @Query("DELETE FROM wifi_networks WHERE ssid = :ssid") suspend fun deleteNetwork(ssid: String)
+    @Query("DELETE FROM wifi_networks WHERE ssid = :ssid AND password = :password")
+    suspend fun deleteNetwork(ssid: String, password: String)
 
     @Query("DELETE FROM wifi_networks") suspend fun clearNetworks()
 
     @Query("SELECT COUNT(*) FROM wifi_networks") suspend fun getNetworkCount(): Int
 
-    @Query("UPDATE wifi_networks SET note = :note WHERE ssid = :ssid")
-    suspend fun updateNote(ssid: String, note: String?)
+    @Query("UPDATE wifi_networks SET note = :note WHERE ssid = :ssid AND password = :password")
+    suspend fun updateNote(ssid: String, password: String, note: String?)
 }

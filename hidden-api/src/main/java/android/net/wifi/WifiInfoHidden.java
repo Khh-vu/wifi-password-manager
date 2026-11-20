@@ -11,4 +11,8 @@ public class WifiInfoHidden {
     public void setRssi(int rssi) {
         throw new RuntimeException("Stub!");
     }
+
+    public void setNetworkId(int networkId) {
+        throw new RuntimeException("Stub!");
+    }
 }

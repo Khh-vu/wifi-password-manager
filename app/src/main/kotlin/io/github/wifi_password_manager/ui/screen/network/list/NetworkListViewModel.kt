@@ -15,8 +15,8 @@ import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.UiText
-import io.github.wifi_password_manager.utils.groupAndSortedBySsid
-import io.github.wifi_password_manager.utils.toWifiConfigurations
+import io.github.wifi_password_manager.utils.fromWifiConfiguration
+import io.github.wifi_password_manager.utils.groupBySsidAndPassword
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
@@ -37,7 +36,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class NetworkListViewModel(
@@ -136,7 +134,7 @@ class NetworkListViewModel(
 
         data object ResetSortFilter : Action
 
-        data class DeleteNote(val ssid: String) : Action
+        data class DeleteNote(val network: WifiNetwork) : Action
 
         data object Disconnect : Action
 
@@ -170,12 +168,12 @@ class NetworkListViewModel(
                 _uiState,
                 _networks,
                 privilegedManager.mode,
-                wifiRepository.getConnectedWifiSsidFlow().onEach { wifiRepository.refresh() },
+                wifiRepository.getConnectedNetworkIdFlow().onEach { wifiRepository.refresh() },
                 _pendingNetwork,
-            ) { ui, networks, mode, connectedSsid, pendingNetwork ->
+            ) { ui, networks, mode, connectedNetworkId, pendingNetwork ->
                 val sorted =
                     networks
-                        .groupAndSortedBySsid()
+                        .groupBySsidAndPassword()
                         .filter { network ->
                             ui.filters
                                 .groupBy { it.group }
@@ -195,10 +193,14 @@ class NetworkListViewModel(
                             }
                         }
                         .let { if (ui.sortAscending) it else it.asReversed() }
+                val connectedStatus =
+                    networks
+                        .firstOrNull { it.existInSystem && it.networkId == connectedNetworkId }
+                        ?.let { WifiConnectionStatus.Connected(it.ssid, it.password) }
                 ui.copy(
                     savedNetworks =
-                        if (connectedSsid.isNotBlank()) {
-                            val (connected, others) = sorted.partition { it.ssid == connectedSsid }
+                        if (connectedStatus != null) {
+                            val (connected, others) = sorted.partition(connectedStatus::matches)
                             connected + others
                         } else {
                             sorted
@@ -206,10 +208,12 @@ class NetworkListViewModel(
                     isCacheMode = mode == PrivilegedMode.NONE,
                     connectionStatus =
                         when {
-                            connectedSsid.isNotBlank() ->
-                                WifiConnectionStatus.Connected(connectedSsid)
+                            connectedStatus != null -> connectedStatus
                             pendingNetwork != null ->
-                                WifiConnectionStatus.Connecting(pendingNetwork.ssid)
+                                WifiConnectionStatus.Connecting(
+                                    pendingNetwork.ssid,
+                                    pendingNetwork.password,
+                                )
                             else -> WifiConnectionStatus.Disconnected
                         },
                 )
@@ -238,7 +242,7 @@ class NetworkListViewModel(
             is Action.SortDirectionChanged ->
                 _uiState.update { it.copy(sortAscending = action.ascending) }
             is Action.ResetSortFilter -> onResetSortFilter()
-            is Action.DeleteNote -> onDeleteNote(action.ssid)
+            is Action.DeleteNote -> onDeleteNote(action.network)
             is Action.Disconnect -> onDisconnect()
             is Action.Connect -> onConnect(action.network)
             is Action.Forget -> onForget(action.network)
@@ -276,9 +280,9 @@ class NetworkListViewModel(
         }
     }
 
-    private fun onDeleteNote(ssid: String) {
+    private fun onDeleteNote(network: WifiNetwork) {
         viewModelScope.launch {
-            wifiRepository.updateNote(ssid, null)
+            wifiRepository.updateNote(network.ssid, network.password, null)
             _event.send(Event.ShowMessage(UiText.StringResource(R.string.note_deleted)))
         }
     }
@@ -306,11 +310,7 @@ class NetworkListViewModel(
                 ),
             )
 
-            val connected =
-                withTimeoutOrNull(10.seconds) {
-                    wifiRepository.connect(network)
-                    wifiRepository.getConnectedWifiSsidFlow().first { it == network.ssid }
-                } != null
+            val connected = wifiRepository.connect(network)
 
             _pendingNetwork.update { null }
             _event.send(
@@ -327,13 +327,12 @@ class NetworkListViewModel(
 
     private fun onForget(network: WifiNetwork) {
         viewModelScope.launch {
-            network
-                .toWifiConfigurations()
-                .map { it.networkId }
-                .filter { it != -1 }
-                .toSet()
-                .forEach { wifiRepository.forget(it) }
-            wifiRepository.delete(network.ssid)
+            wifiRepository
+                .getPrivilegedConfiguredNetworks()
+                .map(WifiNetwork::fromWifiConfiguration)
+                .filter { it.ssid == network.ssid && it.password == network.password }
+                .forEach { wifiRepository.forget(it.networkId) }
+            wifiRepository.delete(network.ssid, network.password)
             wifiRepository.refresh()
             _event.send(
                 Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),

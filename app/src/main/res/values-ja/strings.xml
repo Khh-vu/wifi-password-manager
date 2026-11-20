@@ -4,6 +4,7 @@
     <!-- Common -->
     <string name="cancel">キャンセル</string>
     <string name="ok">OK</string>
+    <string name="save">保存</string>
     <string name="clear">クリア</string>
     <string name="reset">リセット</string>
     <string name="back">戻る</string>
@@ -201,6 +202,32 @@
     <string name="export_methods_success">メソッドをエクスポートしました</string>
     <string name="export_methods_failed">メソッドのエクスポートに失敗しました</string>
 
+    <!-- Add Network Screen -->
+    <string name="add_network">ネットワークを追加</string>
+    <string name="add_network_manually">手動で入力</string>
+    <string name="ssid_error">SSID は 1～32 バイトにしてください</string>
+    <string name="password_error_wpa2">パスワードは 8～63 文字にしてください</string>
+    <string name="password_error_wpa3">パスワードは 1～63 文字にしてください</string>
+    <string name="password_error_empty">パスワードを入力してください</string>
+    <string name="note_optional">メモ（任意）</string>
+    <string name="hidden_network">非表示のネットワーク</string>
+    <string name="save_to_section">保存先</string>
+    <string name="scan_wifi_qr">QR コードをスキャン</string>
+    <string name="scan_wifi_qr_unsupported">この端末では QR スキャナーを利用できません</string>
+    <string name="metered_section">従量制</string>
+    <string name="metered_auto">自動検出</string>
+    <string name="metered_metered">従量制</string>
+    <string name="metered_unmetered">定額制</string>
+    <string name="mac_randomization_section">MAC アドレス</string>
+    <string name="mac_randomization_auto">自動</string>
+    <string name="mac_randomization_persistent">ランダム MAC</string>
+    <string name="mac_randomization_non_persistent">接続ごとにランダム</string>
+    <string name="mac_randomization_none">デバイスの MAC</string>
+    <string name="network_already_saved">このネットワークは保存済みです</string>
+    <string name="network_added">ネットワークを追加しました</string>
+    <string name="network_saved_app_only">アプリ内にのみ保存しました。端末に受け入れられませんでした。</string>
+    <string name="network_add_failed">ネットワークを追加できませんでした</string>
+
     <!-- Security Types -->
     <string name="security_open">なし</string>
     <string name="security_owe">Enhanced Open</string>
@@ -230,6 +257,13 @@
     <!-- Import Password Dialog -->
     <string name="import_password_title">パスワードを入力</string>
     <string name="import_password_description">このファイルは暗号化されています。復号するためにパスワードを入力してください。</string>
+
+    <!-- Import Mode Dialog -->
+    <string name="import_mode_title">インポート先</string>
+    <string name="import_to_device">端末とアプリ</string>
+    <string name="import_to_device_description">ネットワークを端末に保存します。同じネットワークの他のパスワードはアプリ内に残ります。</string>
+    <string name="import_to_app">アプリ内のみ</string>
+    <string name="import_to_app_description">ネットワークをアプリ内に保存します。端末は変更されません。</string>
 
     <!-- Messages -->
     <string name="loading">読み込み中…</string>

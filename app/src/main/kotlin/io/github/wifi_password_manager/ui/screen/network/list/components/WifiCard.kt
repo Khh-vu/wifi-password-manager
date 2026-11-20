@@ -72,7 +72,7 @@ fun WifiCard(
     val navBackStack = LocalNavBackStack.current
     var optionState by remember { mutableStateOf<OptionState?>(null) }
     val connected =
-        connectionStatus is WifiConnectionStatus.Connected && connectionStatus.ssid == network.ssid
+        connectionStatus is WifiConnectionStatus.Connected && connectionStatus.matches(network)
 
     val itemColors =
         if (connected) {
@@ -173,9 +173,7 @@ private fun SSIDItem(
             Text(
                 text =
                     when (connectionStatus) {
-                        is WifiConnectionStatus.Connecting if
-                            connectionStatus.ssid == network.ssid
-                         -> {
+                        is WifiConnectionStatus.Connecting if connectionStatus.matches(network) -> {
                             stringResource(R.string.connecting_status)
                         }
 
@@ -318,7 +316,7 @@ private fun WifiCardPreview() {
                 network = network,
                 connectionStatus =
                     if (index == 0) {
-                        WifiConnectionStatus.Connected(network.ssid)
+                        WifiConnectionStatus.Connected(network.ssid, network.password)
                     } else {
                         WifiConnectionStatus.Disconnected
                     },
@@ -341,7 +339,7 @@ private fun ConnectingWifiCardPreview() {
                 network = network,
                 connectionStatus =
                     if (index == 0) {
-                        WifiConnectionStatus.Connecting(network.ssid)
+                        WifiConnectionStatus.Connecting(network.ssid, network.password)
                     } else {
                         WifiConnectionStatus.Disconnected
                     },
@@ -364,7 +362,7 @@ private fun ExpandedWifiCardPreview() {
                 network = network,
                 connectionStatus =
                     if (index == 0) {
-                        WifiConnectionStatus.Connected(network.ssid)
+                        WifiConnectionStatus.Connected(network.ssid, network.password)
                     } else {
                         WifiConnectionStatus.Disconnected
                     },

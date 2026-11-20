@@ -4,7 +4,7 @@ import androidx.room3.ColumnInfo
 import androidx.room3.Entity
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 
-@Entity(tableName = "wifi_networks", primaryKeys = ["ssid", "securityTypes"])
+@Entity(tableName = "wifi_networks", primaryKeys = ["ssid", "securityTypes", "password"])
 data class WifiNetworkEntity(
     val ssid: String,
     val networkId: Int,
@@ -22,29 +22,8 @@ data class WifiNetworkEntity(
     val updatedAt: Long? = null,
 )
 
-fun WifiNetworkEntity.withTimestamps(
-    oldNetwork: WifiNetworkEntity?,
-    timeMillis: Long,
-): WifiNetworkEntity =
-    when {
-        oldNetwork == null -> {
-            copy(createdAt = timeMillis, updatedAt = timeMillis)
-        }
-        hasSameSettings(oldNetwork) -> {
-            copy(createdAt = oldNetwork.createdAt, updatedAt = oldNetwork.updatedAt)
-        }
-        else -> {
-            copy(createdAt = oldNetwork.createdAt, updatedAt = timeMillis)
-        }
-    }
-
-private fun WifiNetworkEntity.hasSameSettings(other: WifiNetworkEntity): Boolean =
-    password == other.password &&
-        hidden == other.hidden &&
-        autojoin == other.autojoin &&
-        private == other.private &&
-        meteredOverride == other.meteredOverride &&
-        macRandomizationSetting == other.macRandomizationSetting
+val WifiNetworkEntity.key
+    get() = Triple(ssid, securityTypes, password)
 
 fun WifiNetwork.toEntity(): WifiNetworkEntity {
     return WifiNetworkEntity(

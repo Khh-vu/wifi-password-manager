@@ -5,7 +5,7 @@ import io.github.wifi_password_manager.domain.model.WifiNetwork
 import kotlinx.coroutines.flow.Flow
 
 interface WifiRepository {
-    fun getConnectedWifiSsidFlow(): Flow<String>
+    fun getConnectedNetworkIdFlow(): Flow<Int>
 
     fun getAllNetworks(): Flow<List<WifiNetwork>>
 
@@ -23,15 +23,19 @@ interface WifiRepository {
 
     suspend fun forget(netId: Int): Boolean
 
-    suspend fun delete(ssid: String)
+    suspend fun delete(ssid: String, password: String)
+
+    suspend fun addManual(network: WifiNetwork): Boolean
+
+    suspend fun saveToSystem(networks: List<WifiNetwork>): Boolean
 
     suspend fun clearCache()
 
     suspend fun persistEphemeralNetworks()
 
-    suspend fun updateNote(ssid: String, note: String?)
+    suspend fun updateNote(ssid: String, password: String, note: String?)
 
     suspend fun disconnect(): Boolean
 
-    suspend fun connect(network: WifiNetwork)
+    suspend fun connect(network: WifiNetwork): Boolean
 }

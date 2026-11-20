@@ -53,7 +53,7 @@ class NoteViewModel(private val wifiRepository: WifiRepository, private val netw
             }
 
             val note = state.value.trim().ifBlank { null }
-            runCatching { wifiRepository.updateNote(network.ssid, note) }
+            runCatching { wifiRepository.updateNote(network.ssid, network.password, note) }
                 .fold(
                     onSuccess = {
                         wifiRepository.refresh()

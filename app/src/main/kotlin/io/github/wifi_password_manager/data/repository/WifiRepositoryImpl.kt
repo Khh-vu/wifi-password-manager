@@ -1,6 +1,5 @@
 package io.github.wifi_password_manager.data.repository
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
@@ -8,7 +7,6 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
-import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Process
 import android.util.Log
@@ -29,15 +27,23 @@ import io.github.wifi_password_manager.manager.SystemApiErrorReporter
 import io.github.wifi_password_manager.manager.isSystemApiMismatch
 import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.toWifiConfigurations
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import rikka.shizuku.Shizuku
 
 class WifiRepositoryImpl(
@@ -94,31 +100,46 @@ class WifiRepositoryImpl(
         }
     }
 
-    private suspend fun <T> withDataSource(default: T, block: suspend WifiDataSource.() -> T): T =
-        dispatcher {
-            try {
-                block(dataSource)
-            } catch (e: Throwable) {
-                if (!e.isSystemApiMismatch) throw e
-                systemApiErrorReporter.report(e)
-                default
-            }
+    private suspend fun <T> withDataSource(
+        default: T,
+        block: suspend CoroutineScope.(WifiDataSource) -> T,
+    ): T = dispatcher {
+        try {
+            block(dataSource)
+        } catch (e: Throwable) {
+            if (!e.isSystemApiMismatch) throw e
+            systemApiErrorReporter.report(e)
+            default
         }
+    }
 
     private suspend fun getConnectionInfo(): WifiInfo? =
-        withDataSource(null) { getConnectionInfo() }
+        withDataSource(null) { it.getConnectionInfo() }
 
-    override fun getConnectedWifiSsidFlow(): Flow<String> {
+    private fun replacedNetworks(
+        configs: List<WifiConfiguration>,
+        network: WifiNetwork,
+    ): List<WifiNetwork> {
+        val sameSsid =
+            configs.map(WifiNetwork::fromWifiConfiguration).filter { it.ssid == network.ssid }
+        val netIds =
+            sameSsid
+                .filter { it.securityType.any(network.securityType::contains) }
+                .map { it.networkId }
+                .toSet()
+        return sameSsid.filter { it.networkId in netIds }
+    }
+
+    private suspend fun markNotExistInSystem(networks: List<WifiNetwork>) {
+        networks.forEach { old ->
+            old.securityType.forEach { wifiNetworkDao.markNotExistInSystem(old.ssid, it.name) }
+        }
+    }
+
+    override fun getConnectedNetworkIdFlow(): Flow<Int> {
         return callbackFlow {
-                @SuppressLint("InlinedApi")
                 suspend fun sendInfo(wifiInfo: WifiInfo?) {
-                    val ssid =
-                        wifiInfo
-                            ?.ssid
-                            ?.removeSurrounding("\"")
-                            ?.takeIf { it != WifiManager.UNKNOWN_SSID }
-                            .orEmpty()
-                    send(ssid)
+                    send(wifiInfo?.networkId ?: -1)
                 }
 
                 val callback =
@@ -196,7 +217,7 @@ class WifiRepositoryImpl(
 
     override suspend fun refresh(): Boolean {
         if (!privilegedManager.currentMode.hasPrivilegedAccess) return true
-        val configs = withDataSource(null) { getPrivilegedConfiguredNetworks() } ?: return false
+        val configs = withDataSource(null) { it.getPrivilegedConfiguredNetworks() } ?: return false
         dispatcher {
             val networks = configs.map(WifiNetwork::fromWifiConfiguration)
             if (networks.isEmpty()) {
@@ -209,15 +230,40 @@ class WifiRepositoryImpl(
     }
 
     override suspend fun getPrivilegedConfiguredNetworks(): List<WifiConfiguration> =
-        withDataSource(emptyList()) { getPrivilegedConfiguredNetworks() }
+        withDataSource(emptyList()) { it.getPrivilegedConfiguredNetworks() }
 
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Boolean =
-        withDataSource(-1) { addOrUpdateNetworkPrivileged(config) } != -1
+        withDataSource(-1) { it.addOrUpdateNetworkPrivileged(config) } != -1
 
-    override suspend fun forget(netId: Int): Boolean = withDataSource(false) { forget(netId) }
+    override suspend fun forget(netId: Int): Boolean = withDataSource(false) { it.forget(netId) }
 
-    override suspend fun delete(ssid: String) {
-        wifiNetworkDao.deleteNetwork(ssid)
+    override suspend fun delete(ssid: String, password: String) {
+        wifiNetworkDao.deleteNetwork(ssid, password)
+    }
+
+    override suspend fun addManual(network: WifiNetwork): Boolean {
+        val now = System.currentTimeMillis()
+        val rows =
+            network.securityType.map {
+                network
+                    .copy(securityType = setOf(it), existInSystem = false)
+                    .toEntity()
+                    .copy(createdAt = now, updatedAt = now)
+            }
+        return wifiNetworkDao.insertIfAbsent(rows).any { it != -1L }
+    }
+
+    override suspend fun saveToSystem(networks: List<WifiNetwork>): Boolean {
+        if (!privilegedManager.currentMode.hasPrivilegedAccess) return false
+        val configs = getPrivilegedConfiguredNetworks()
+        networks.forEach { markNotExistInSystem(replacedNetworks(configs, it)) }
+        val saved =
+            networks
+                .flatMap { it.copy(existInSystem = false).toWifiConfigurations() }
+                .map { addOrUpdateNetworkPrivileged(it) }
+                .all { it }
+        refresh()
+        return saved
     }
 
     override suspend fun clearCache() {
@@ -225,25 +271,57 @@ class WifiRepositoryImpl(
     }
 
     override suspend fun persistEphemeralNetworks() =
-        withDataSource(Unit) { persistEphemeralNetworks() }
+        withDataSource(Unit) { it.persistEphemeralNetworks() }
 
-    override suspend fun updateNote(ssid: String, note: String?) {
-        wifiNetworkDao.updateNote(ssid, note)
+    override suspend fun updateNote(ssid: String, password: String, note: String?) {
+        wifiNetworkDao.updateNote(ssid, password, note)
     }
 
-    override suspend fun disconnect(): Boolean = withDataSource(false) { disconnect() }
+    override suspend fun disconnect(): Boolean = withDataSource(false) { it.disconnect() }
 
-    override suspend fun connect(network: WifiNetwork) =
-        withDataSource(Unit) {
-            val networks = getPrivilegedConfiguredNetworks().map(WifiNetwork::fromWifiConfiguration)
-            val netIds = networks.filter { it.ssid == network.ssid }.map { it.networkId }
+    override suspend fun connect(network: WifiNetwork): Boolean =
+        withContext(NonCancellable) {
+            val configs = getPrivilegedConfiguredNetworks()
+            val (same, others) =
+                replacedNetworks(configs, network).partition { it.password == network.password }
 
-            for (netId in netIds) {
-                if (connect(netId = netId)) return@withDataSource
+            withDataSource(Unit) { source ->
+                if (same.isNotEmpty()) {
+                    same.any { source.connect(netId = it.networkId) }
+                    return@withDataSource
+                }
+
+                others.map { it.networkId }.toSet().map { async { forget(it) } }.awaitAll()
+                markNotExistInSystem(others)
+                for (config in network.copy(existInSystem = false).toWifiConfigurations()) {
+                    if (source.connect(config = config)) return@withDataSource
+                }
             }
 
-            for (config in network.copy(existInSystem = false).toWifiConfigurations()) {
-                if (connect(config = config)) return@withDataSource
+            val connected =
+                withTimeoutOrNull(10.seconds) {
+                    getConnectedNetworkIdFlow().first { id ->
+                        getPrivilegedConfiguredNetworks()
+                            .map(WifiNetwork::fromWifiConfiguration)
+                            .any {
+                                it.networkId == id &&
+                                    it.ssid == network.ssid &&
+                                    it.password == network.password
+                            }
+                    }
+                } != null
+
+            if (!connected && same.isEmpty()) {
+                getPrivilegedConfiguredNetworks()
+                    .map(WifiNetwork::fromWifiConfiguration)
+                    .filter { it.ssid == network.ssid && it.password == network.password }
+                    .forEach { forget(it.networkId) }
+                others
+                    .flatMap { it.copy(existInSystem = false).toWifiConfigurations() }
+                    .forEach { addOrUpdateNetworkPrivileged(it) }
             }
+
+            refresh()
+            connected
         }
 }

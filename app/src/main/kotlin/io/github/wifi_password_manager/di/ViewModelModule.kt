@@ -8,6 +8,7 @@ import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.ui.screen.locktimeout.LockTimeoutViewModel
 import io.github.wifi_password_manager.ui.screen.methodinspector.MethodInspectorViewModel
+import io.github.wifi_password_manager.ui.screen.network.add.AddNetworkViewModel
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.screen.note.NoteViewModel
 import io.github.wifi_password_manager.ui.screen.setting.SettingViewModel
@@ -31,6 +32,10 @@ class ViewModelModule {
     @KoinViewModel
     fun networkListViewModel(wifiRepository: WifiRepository, privilegedManager: PrivilegedManager) =
         NetworkListViewModel(wifiRepository, privilegedManager)
+
+    @KoinViewModel
+    fun addNetworkViewModel(wifiRepository: WifiRepository, privilegedManager: PrivilegedManager) =
+        AddNetworkViewModel(wifiRepository, privilegedManager)
 
     @KoinViewModel
     fun noteViewModel(wifiRepository: WifiRepository, @InjectedParam network: WifiNetwork) =

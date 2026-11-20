@@ -1,5 +1,7 @@
 package io.github.wifi_password_manager.domain.model
 
+import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -28,27 +30,45 @@ data class WifiNetwork(
     @Transient val updatedAt: Long? = null,
 ) {
     @Serializable
-    enum class SecurityType {
-        OPEN,
-        OWE,
-        WPA2,
-        WPA3,
-        WEP,
+    enum class SecurityType(@StringRes val labelResId: Int) {
+        OPEN(R.string.security_open),
+        OWE(R.string.security_owe),
+        WPA2(R.string.security_wpa2),
+        WPA3(R.string.security_wpa3),
+        WEP(R.string.security_wep);
+
+        companion object {
+            val withoutPassword: Set<SecurityType> = setOf(OPEN, OWE)
+            val withPassword: Set<SecurityType> = setOf(WPA2, WPA3, WEP)
+        }
     }
 
     @Serializable
-    enum class MeteredOverride {
-        NONE,
-        METERED,
-        NOT_METERED,
+    enum class MeteredOverride(@StringRes val labelResId: Int) {
+        NONE(R.string.metered_auto),
+        METERED(R.string.metered_metered),
+        NOT_METERED(R.string.metered_unmetered),
     }
 
     @Serializable
-    enum class Randomization {
-        NONE,
-        PERSISTENT,
-        NON_PERSISTENT,
-        AUTO,
+    enum class Randomization(@StringRes val labelResId: Int) {
+        NONE(R.string.mac_randomization_none),
+        PERSISTENT(R.string.mac_randomization_persistent),
+        NON_PERSISTENT(R.string.mac_randomization_non_persistent),
+        AUTO(R.string.mac_randomization_auto);
+
+        companion object {
+            val supported: List<Randomization>
+                get() =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        entries
+                    } else {
+                        listOf(NONE, PERSISTENT)
+                    }
+
+            val default: Randomization
+                get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AUTO else PERSISTENT
+        }
     }
 
     val securityLabel: String
@@ -58,16 +78,6 @@ data class WifiNetwork(
             val resources = LocalResources.current
             return securityType
                 .sortedBy { it.ordinal }
-                .joinToString("/") {
-                    resources.getString(
-                        when (it) {
-                            SecurityType.OPEN -> R.string.security_open
-                            SecurityType.OWE -> R.string.security_owe
-                            SecurityType.WPA2 -> R.string.security_wpa2
-                            SecurityType.WPA3 -> R.string.security_wpa3
-                            SecurityType.WEP -> R.string.security_wep
-                        },
-                    )
-                }
+                .joinToString("/") { resources.getString(it.labelResId) }
         }
 }
