@@ -2,12 +2,14 @@ package io.github.wifi_password_manager.ui.screen.setting.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -69,88 +71,85 @@ fun ExportDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.export_action)) },
         text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                item {
-                    ExposedDropdownMenuBox(
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = !expanded },
+                ) {
+                    OutlinedTextField(
+                        state = formatState,
+                        modifier =
+                            Modifier.fillMaxWidth()
+                                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+                        readOnly = true,
+                        label = { Text(text = stringResource(R.string.export_format)) },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                        },
+                        supportingText = {
+                            Text(text = stringResource(selectedOption.descriptionResId))
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    )
+
+                    ExposedDropdownMenu(
                         expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
+                        onDismissRequest = { expanded = false },
+                        containerColor = MaterialTheme.colorScheme.background,
                     ) {
-                        OutlinedTextField(
-                            state = formatState,
-                            modifier =
-                                Modifier.fillMaxWidth()
-                                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
-                            readOnly = true,
-                            label = { Text(text = stringResource(R.string.export_format)) },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            },
-                            supportingText = {
-                                Text(text = stringResource(selectedOption.descriptionResId))
-                            },
-                            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            containerColor = MaterialTheme.colorScheme.background,
-                        ) {
-                            ExportOption.entries.forEach { option ->
-                                if (ExportOption.entries.first() != option) {
-                                    Spacer(modifier = Modifier.height(MenuDefaults.GroupSpacing))
-                                }
-
-                                SelectableDropdownMenuItem(
-                                    selected = option == selectedOption,
-                                    onClick = {
-                                        selectedOption = option
-                                        expanded = false
-                                    },
-                                    text = { Text(text = stringResource(option.titleResId)) },
-                                    shapes = MenuDefaults.itemShapes(),
-                                    colors =
-                                        MenuDefaults.selectableItemColors(
-                                            selectedContainerColor =
-                                                MaterialTheme.colorScheme.primaryContainer,
-                                            selectedTextColor =
-                                                contentColorFor(
-                                                    MaterialTheme.colorScheme.primaryContainer,
-                                                ),
-                                        ),
-                                )
+                        ExportOption.entries.forEach { option ->
+                            if (ExportOption.entries.first() != option) {
+                                Spacer(modifier = Modifier.height(MenuDefaults.GroupSpacing))
                             }
+
+                            SelectableDropdownMenuItem(
+                                selected = option == selectedOption,
+                                onClick = {
+                                    selectedOption = option
+                                    expanded = false
+                                },
+                                text = { Text(text = stringResource(option.titleResId)) },
+                                shapes = MenuDefaults.itemShapes(),
+                                colors =
+                                    MenuDefaults.selectableItemColors(
+                                        selectedContainerColor =
+                                            MaterialTheme.colorScheme.primaryContainer,
+                                        selectedTextColor =
+                                            contentColorFor(
+                                                MaterialTheme.colorScheme.primaryContainer,
+                                            ),
+                                    ),
+                            )
                         }
                     }
                 }
 
-                item {
-                    ListItem(
-                        checked = encrypted,
-                        onCheckedChange = { encrypted = it },
-                        leadingContent = {
-                            Checkbox(checked = encrypted, onCheckedChange = { encrypted = it })
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    ) {
-                        Text(text = stringResource(R.string.encrypt_export))
-                    }
+                ListItem(
+                    checked = encrypted,
+                    onCheckedChange = { encrypted = it },
+                    leadingContent = {
+                        Checkbox(checked = encrypted, onCheckedChange = { encrypted = it })
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                ) {
+                    Text(text = stringResource(R.string.encrypt_export))
                 }
 
-                item {
-                    AnimatedVisibility(visible = encrypted, modifier = Modifier.fillMaxWidth()) {
-                        PasswordTextField(
-                            state = passwordState,
-                            isError = showPasswordError,
-                            onKeyboardAction = {
-                                showPasswordError = encrypted && passwordState.text.isBlank()
-                                if (!showPasswordError) {
-                                    autofillManager?.commit()
-                                    onSelect(selectedOption, passwordState.text.toString())
-                                }
-                            },
-                        )
-                    }
+                AnimatedVisibility(visible = encrypted, modifier = Modifier.fillMaxWidth()) {
+                    PasswordTextField(
+                        state = passwordState,
+                        isError = showPasswordError,
+                        onKeyboardAction = {
+                            showPasswordError = encrypted && passwordState.text.isBlank()
+                            if (!showPasswordError) {
+                                autofillManager?.commit()
+                                onSelect(selectedOption, passwordState.text.toString())
+                            }
+                        },
+                    )
                 }
             }
         },

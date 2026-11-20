@@ -1,7 +1,9 @@
 package io.github.wifi_password_manager.ui.screen.setting.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ListItemDefaults
@@ -27,31 +29,30 @@ fun ImportOptionDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.import_mode_title)) },
         text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-                item {
-                    SegmentedListItem(
-                        onClick = { onSelect(true) },
-                        selected = false,
-                        supportingContent = {
-                            Text(text = stringResource(R.string.import_to_device_description))
-                        },
-                        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
-                    ) {
-                        Text(text = stringResource(R.string.import_to_device))
-                    }
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+            ) {
+                SegmentedListItem(
+                    onClick = { onSelect(true) },
+                    selected = false,
+                    supportingContent = {
+                        Text(text = stringResource(R.string.import_to_device_description))
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
+                ) {
+                    Text(text = stringResource(R.string.import_to_device))
                 }
 
-                item {
-                    SegmentedListItem(
-                        onClick = { onSelect(false) },
-                        selected = false,
-                        supportingContent = {
-                            Text(text = stringResource(R.string.import_to_app_description))
-                        },
-                        shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
-                    ) {
-                        Text(text = stringResource(R.string.import_to_app))
-                    }
+                SegmentedListItem(
+                    onClick = { onSelect(false) },
+                    selected = false,
+                    supportingContent = {
+                        Text(text = stringResource(R.string.import_to_app_description))
+                    },
+                    shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
+                ) {
+                    Text(text = stringResource(R.string.import_to_app))
                 }
             }
         },

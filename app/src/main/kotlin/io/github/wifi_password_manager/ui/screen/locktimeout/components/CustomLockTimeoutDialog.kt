@@ -1,14 +1,16 @@
 package io.github.wifi_password_manager.ui.screen.locktimeout.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -56,23 +58,21 @@ fun CustomLockTimeoutDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.lock_timeout_custom)) },
         text = {
-            LazyColumn {
-                item {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = value,
-                        label = { Text(text = stringResource(R.string.lock_timeout_value)) },
-                        lineLimits = TextFieldLineLimits.SingleLine,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        inputTransformation =
-                            InputTransformation {
-                                if (length > 2 || !asCharSequence().all { it.isDigit() }) {
-                                    revertAllChanges()
-                                }
-                            },
-                        trailingIcon = { UnitDropdown(unit = unit, onUnitChange = { unit = it }) },
-                    )
-                }
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = value,
+                    label = { Text(text = stringResource(R.string.lock_timeout_value)) },
+                    lineLimits = TextFieldLineLimits.SingleLine,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    inputTransformation =
+                        InputTransformation {
+                            if (length > 2 || !asCharSequence().all { it.isDigit() }) {
+                                revertAllChanges()
+                            }
+                        },
+                    trailingIcon = { UnitDropdown(unit = unit, onUnitChange = { unit = it }) },
+                )
             }
         },
         confirmButton = {

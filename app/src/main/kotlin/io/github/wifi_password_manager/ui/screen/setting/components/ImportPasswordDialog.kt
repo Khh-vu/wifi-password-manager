@@ -1,9 +1,11 @@
 package io.github.wifi_password_manager.ui.screen.setting.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -39,23 +41,24 @@ fun ImportPasswordDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.import_password_title)) },
         text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                item { Text(text = stringResource(R.string.import_password_description)) }
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(text = stringResource(R.string.import_password_description))
 
-                item {
-                    PasswordTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = password,
-                        isError = showPasswordError,
-                        onKeyboardAction = {
-                            showPasswordError = password.text.isBlank()
-                            if (!showPasswordError) {
-                                autofillManager?.commit()
-                                onConfirm(password.text.toString())
-                            }
-                        },
-                    )
-                }
+                PasswordTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    state = password,
+                    isError = showPasswordError,
+                    onKeyboardAction = {
+                        showPasswordError = password.text.isBlank()
+                        if (!showPasswordError) {
+                            autofillManager?.commit()
+                            onConfirm(password.text.toString())
+                        }
+                    },
+                )
             }
         },
         confirmButton = {
@@ -73,7 +76,13 @@ fun ImportPasswordDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss, shapes = ButtonDefaults.shapes()) {
+            TextButton(
+                onClick = {
+                    autofillManager?.cancel()
+                    onDismiss()
+                },
+                shapes = ButtonDefaults.shapes(),
+            ) {
                 Text(text = stringResource(R.string.cancel))
             }
         },

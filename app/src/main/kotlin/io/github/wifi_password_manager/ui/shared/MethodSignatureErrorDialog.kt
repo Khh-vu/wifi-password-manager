@@ -5,8 +5,9 @@ import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -49,15 +50,16 @@ fun MethodSignatureErrorDialog(
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(text = stringResource(R.string.method_inspector_error_message))
-                LazyColumn(modifier = Modifier.heightIn(max = 240.dp)) {
-                    item {
-                        SelectionContainer {
-                            Text(
-                                text = report,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = FontFamily.Monospace,
-                            )
-                        }
+                Column(
+                    modifier =
+                        Modifier.heightIn(max = 240.dp).verticalScroll(rememberScrollState()),
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = report,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = FontFamily.Monospace,
+                        )
                     }
                 }
             }

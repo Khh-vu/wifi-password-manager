@@ -5,15 +5,17 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -113,58 +115,56 @@ fun NoAccessView(
         modifier = modifier.fillMaxSize().systemBarsPadding(),
         color = MaterialTheme.colorScheme.background,
     ) {
-        LazyColumn(
-            contentPadding = PaddingValues(32.dp),
+        Column(
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            item {
-                Icon(
-                    imageVector = Lock,
-                    contentDescription = null,
-                    modifier = Modifier.size(80.dp),
-                    tint = MaterialTheme.colorScheme.primary,
-                )
+            Icon(
+                imageVector = Lock,
+                contentDescription = null,
+                modifier = Modifier.size(80.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.no_access_title),
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.no_access_description),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+            )
+
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
                 Spacer(modifier = Modifier.height(24.dp))
+                Android10LimitationCard()
+            }
 
-                Text(
-                    text = stringResource(R.string.no_access_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    textAlign = TextAlign.Center,
-                )
+            Spacer(modifier = Modifier.height(32.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(R.string.no_access_description),
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                )
-
-                if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-                    Spacer(modifier = Modifier.height(24.dp))
-                    Android10LimitationCard()
+            FlowRow(horizontalArrangement = Arrangement.Center) {
+                if (allowSkip) {
+                    OutlinedButton(onClick = onSkip, shapes = ButtonDefaults.shapes()) {
+                        Text(text = stringResource(R.string.continue_in_cache_mode))
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-                FlowRow(horizontalArrangement = Arrangement.Center) {
-                    if (allowSkip) {
-                        OutlinedButton(onClick = onSkip, shapes = ButtonDefaults.shapes()) {
-                            Text(text = stringResource(R.string.continue_in_cache_mode))
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    Button(
-                        onClick = ::requestAccess,
-                        enabled = !isShizukuUnsupported,
-                        shapes = ButtonDefaults.shapes(),
-                    ) {
-                        Text(text = stringResource(R.string.grant_access))
-                    }
+                Button(
+                    onClick = ::requestAccess,
+                    enabled = !isShizukuUnsupported,
+                    shapes = ButtonDefaults.shapes(),
+                ) {
+                    Text(text = stringResource(R.string.grant_access))
                 }
             }
         }

@@ -1,12 +1,12 @@
 package io.github.wifi_password_manager.ui.screen.network.list.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +40,6 @@ import io.github.wifi_password_manager.ui.shared.ChipGroup
 import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.theme.SurfaceWrapper
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
-import io.github.wifi_password_manager.utils.plus
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,11 +125,14 @@ private fun SortFilterSheet(
 
         HorizontalDivider(modifier = Modifier.padding(horizontal = 12.dp).padding(bottom = 12.dp))
 
-        LazyColumn(
-            contentPadding = PaddingValues(horizontal = 12.dp) + PaddingValues(bottom = 12.dp),
+        Column(
+            modifier =
+                Modifier.verticalScroll(rememberScrollState())
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 12.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item {
+            Column {
                 Text(
                     text = stringResource(R.string.sort_by),
                     style = MaterialTheme.typography.titleSmall,
@@ -160,7 +162,7 @@ private fun SortFilterSheet(
                 }
             }
 
-            item {
+            Column {
                 Text(
                     text = stringResource(R.string.sort_direction),
                     style = MaterialTheme.typography.titleSmall,
@@ -176,21 +178,23 @@ private fun SortFilterSheet(
                 )
             }
 
-            item { HorizontalDivider() }
+            HorizontalDivider()
 
-            items(NetworkListViewModel.Filter.Group.entries) { group ->
-                Text(
-                    text = stringResource(group.labelResId),
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                )
+            NetworkListViewModel.Filter.Group.entries.forEach { group ->
+                Column {
+                    Text(
+                        text = stringResource(group.labelResId),
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                    )
 
-                ChipGroup(
-                    options = NetworkListViewModel.Filter.entries.filter { it.group == group },
-                    selected = { it in filters },
-                    label = { stringResource(it.labelResId) },
-                    onSelect = { onAction(NetworkListViewModel.Action.FilterToggled(it)) },
-                )
+                    ChipGroup(
+                        options = NetworkListViewModel.Filter.entries.filter { it.group == group },
+                        selected = { it in filters },
+                        label = { stringResource(it.labelResId) },
+                        onSelect = { onAction(NetworkListViewModel.Action.FilterToggled(it)) },
+                    )
+                }
             }
         }
     }

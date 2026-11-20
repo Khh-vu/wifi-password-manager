@@ -1,7 +1,9 @@
 package io.github.wifi_password_manager.ui.screen.setting.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -44,20 +46,21 @@ fun ForgetAllDialog(
         },
         title = { Text(text = stringResource(R.string.forget_all_confirmation_title)) },
         text = {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                item { Text(text = stringResource(R.string.forget_all_confirmation_message)) }
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(text = stringResource(R.string.forget_all_confirmation_message))
 
-                item {
-                    ListItem(
-                        checked = clearCache,
-                        onCheckedChange = { clearCache = it },
-                        leadingContent = {
-                            Checkbox(checked = clearCache, onCheckedChange = { clearCache = it })
-                        },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-                    ) {
-                        Text(text = stringResource(R.string.forget_all_clear_cache))
-                    }
+                ListItem(
+                    checked = clearCache,
+                    onCheckedChange = { clearCache = it },
+                    leadingContent = {
+                        Checkbox(checked = clearCache, onCheckedChange = { clearCache = it })
+                    },
+                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                ) {
+                    Text(text = stringResource(R.string.forget_all_clear_cache))
                 }
             }
         },

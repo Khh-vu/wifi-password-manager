@@ -6,15 +6,18 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -134,22 +137,21 @@ fun NoteView(
                 else -> 5
             }
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().imePadding(),
-            contentPadding = innerPadding + contentPadding,
+        Column(
+            modifier =
+                Modifier.fillMaxSize()
+                    .imePadding()
+                    .verticalScroll(rememberScrollState())
+                    .padding(innerPadding + contentPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            item {
-                OutlinedTextField(
-                    state = noteState,
-                    modifier =
-                        Modifier.widthIn(max = maxWidth)
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
-                    placeholder = { Text(text = stringResource(R.string.note_hint)) },
-                    lineLimits = TextFieldLineLimits.MultiLine(minLines),
-                )
-            }
+            OutlinedTextField(
+                state = noteState,
+                modifier =
+                    Modifier.widthIn(max = maxWidth).fillMaxWidth().focusRequester(focusRequester),
+                placeholder = { Text(text = stringResource(R.string.note_hint)) },
+                lineLimits = TextFieldLineLimits.MultiLine(minLines),
+            )
         }
     }
 }
