@@ -43,8 +43,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 
 class SettingViewModel(
@@ -236,7 +236,7 @@ class SettingViewModel(
                 ) ?: return@launch
 
             runCatching {
-                    Dispatchers.IO {
+                    withContext(Dispatchers.IO) {
                         val networks = wifiRepository.getAllNetworksList().groupBySsidAndPassword()
                         val data =
                             when (option) {
@@ -322,8 +322,9 @@ class SettingViewModel(
             _isLoading.update { true }
 
             try {
-                val networks = Dispatchers.IO { parseNetworksFromFiles(files, password) }
-                val imported = Dispatchers.IO { importNetworks(networks, toDevice) }
+                val networks =
+                    withContext(Dispatchers.IO) { parseNetworksFromFiles(files, password) }
+                val imported = withContext(Dispatchers.IO) { importNetworks(networks, toDevice) }
                 _event.send(
                     Event.ShowMessage(
                         UiText.StringResource(
@@ -451,7 +452,7 @@ class SettingViewModel(
                         return@launch
                     }
 
-                    Dispatchers.IO {
+                    withContext(Dispatchers.IO) {
                         validNetworks
                             .map { async { wifiRepository.forget(it.networkId) } }
                             .awaitAll()

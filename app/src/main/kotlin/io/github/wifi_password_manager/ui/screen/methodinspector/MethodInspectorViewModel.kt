@@ -33,8 +33,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
@@ -137,7 +137,7 @@ class MethodInspectorViewModel<T : Any>(
             _isExporting.update { true }
 
             val result = runCatching {
-                Dispatchers.IO {
+                withContext(Dispatchers.IO) {
                     val data = MethodInspectorExport(methods = methods.await().values.toList())
                     val jsonString = json.encodeToString(data)
                     file.writeString(jsonString)

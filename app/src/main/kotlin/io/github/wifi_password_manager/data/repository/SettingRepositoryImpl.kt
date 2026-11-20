@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 
 class SettingRepositoryImpl(
@@ -31,17 +31,19 @@ class SettingRepositoryImpl(
                 object : Serializer<Settings> {
                     override val defaultValue: Settings = Settings()
 
-                    override suspend fun readFrom(input: InputStream): Settings = dispatcher {
-                        try {
-                            json.decodeFromString(input.readBytes().decodeToString())
-                        } catch (_: Exception) {
-                            defaultValue
+                    override suspend fun readFrom(input: InputStream): Settings =
+                        withContext(dispatcher) {
+                            try {
+                                json.decodeFromString(input.readBytes().decodeToString())
+                            } catch (_: Exception) {
+                                defaultValue
+                            }
                         }
-                    }
 
-                    override suspend fun writeTo(t: Settings, output: OutputStream) = dispatcher {
-                        output.write(json.encodeToString(t).encodeToByteArray())
-                    }
+                    override suspend fun writeTo(t: Settings, output: OutputStream) =
+                        withContext(dispatcher) {
+                            output.write(json.encodeToString(t).encodeToByteArray())
+                        }
                 },
         )
 

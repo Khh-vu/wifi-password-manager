@@ -40,7 +40,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -103,15 +102,16 @@ class WifiRepositoryImpl(
     private suspend fun <T> withDataSource(
         default: T,
         block: suspend CoroutineScope.(WifiDataSource) -> T,
-    ): T = dispatcher {
-        try {
-            block(dataSource)
-        } catch (e: Throwable) {
-            if (!e.isSystemApiMismatch) throw e
-            systemApiErrorReporter.report(e)
-            default
+    ): T =
+        withContext(dispatcher) {
+            try {
+                block(dataSource)
+            } catch (e: Throwable) {
+                if (!e.isSystemApiMismatch) throw e
+                systemApiErrorReporter.report(e)
+                default
+            }
         }
-    }
 
     private suspend fun getConnectionInfo(): WifiInfo? =
         withDataSource(null) { it.getConnectionInfo() }
@@ -218,11 +218,11 @@ class WifiRepositoryImpl(
     override suspend fun refresh(): Boolean {
         if (!privilegedManager.currentMode.hasPrivilegedAccess) return true
         val configs = withDataSource(null) { it.getPrivilegedConfiguredNetworks() } ?: return false
-        dispatcher {
+        withContext(dispatcher) {
             val networks = configs.map(WifiNetwork::fromWifiConfiguration)
             if (networks.isEmpty()) {
                 wifiNetworkDao.markAllNotExistInSystem()
-                return@dispatcher
+                return@withContext
             }
             wifiNetworkDao.syncNetworks(networks.map { it.toEntity() })
         }
