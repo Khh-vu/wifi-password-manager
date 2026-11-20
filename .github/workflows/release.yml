@@ -14,23 +14,42 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version_code: ${{ steps.version.outputs.VERSION_CODE }}
+      prerelease: ${{ steps.version.outputs.PRERELEASE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - name: Get version code
+      - name: Get version info
         id: version
+        env:
+          TAG: ${{ github.ref_name }}
         run: |
           VERSION_CODE=$(grep -oP '^\s*versionCode = \K\d+' ./app/build.gradle.kts)
           if [ -z "$VERSION_CODE" ] || [ "$(echo "$VERSION_CODE" | wc -l)" -ne 1 ]; then
             echo "Expected exactly one versionCode in app/build.gradle.kts, got: '$VERSION_CODE'" >&2
             exit 1
           fi
+
+          VERSION_NAME=$(grep -oP '^\s*versionName = "\K[^"]+' ./app/build.gradle.kts)
+          if [ -z "$VERSION_NAME" ] || [ "$(echo "$VERSION_NAME" | wc -l)" -ne 1 ]; then
+            echo "Expected exactly one versionName in app/build.gradle.kts, got: '$VERSION_NAME'" >&2
+            exit 1
+          fi
+          if [ "$TAG" != "v$VERSION_NAME" ]; then
+            echo "Tag '$TAG' does not match versionName 'v$VERSION_NAME' in app/build.gradle.kts" >&2
+            exit 1
+          fi
+
+          PRERELEASE=false
+          if [[ "$TAG" == *-dev.* ]]; then PRERELEASE=true; fi
+
           echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "PRERELEASE=$PRERELEASE" >> "$GITHUB_OUTPUT"
 
       - name: Check changelog exists
+        if: steps.version.outputs.PRERELEASE != 'true'
         run: |
           CHANGELOG="fastlane/metadata/android/en-US/changelogs/${{ steps.version.outputs.VERSION_CODE }}.txt"
           if [ ! -f "$CHANGELOG" ]; then
@@ -53,7 +72,7 @@ jobs:
           KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
         run: printf '%s' "$KEYSTORE_FILE" | base64 --decode > "$GITHUB_WORKSPACE/key.jks"
 
-      - name: Create keystore.properties file
+      - name: Create key.properties file
         env:
           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -101,11 +120,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
           VERSION_CODE: ${{ needs.build.outputs.version_code }}
+          PRERELEASE: ${{ needs.build.outputs.prerelease }}
         run: |
-          gh release create "$TAG" \
-            --verify-tag \
-            --title "$TAG" \
-            --generate-notes \
-            --notes-file "fastlane/metadata/android/en-US/changelogs/$VERSION_CODE.txt" \
+          ARGS=(--verify-tag --title "$TAG" --generate-notes)
+          if [ "$PRERELEASE" = "true" ]; then
+            ARGS+=(--prerelease)
+            NOTES_FILE=".github/prerelease-notes/$TAG.md"
+          else
+            NOTES_FILE="fastlane/metadata/android/en-US/changelogs/$VERSION_CODE.txt"
+          fi
+          if [ -f "$NOTES_FILE" ]; then ARGS+=(--notes-file "$NOTES_FILE"); fi
+          gh release create "$TAG" "${ARGS[@]}" \
             ./artifacts/apk/release/app-release.apk \
             ./artifacts/mapping/release/mapping.txt
