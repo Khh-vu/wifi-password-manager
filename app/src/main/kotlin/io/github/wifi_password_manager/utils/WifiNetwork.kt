@@ -7,7 +7,6 @@ import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiConfigurationHidden
 import android.os.Build
 import android.os.PersistableBundle
-import android.util.Log
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.toClipEntry
 import dev.rikka.tools.refine.Refine
@@ -25,16 +24,8 @@ fun WifiNetwork.Companion.fromWifiConfiguration(config: WifiConfiguration): Wifi
         hidden = network.hiddenSSID,
         autojoin = Build.VERSION.SDK_INT < Build.VERSION_CODES.R || network.allowAutojoin,
         private = !network.shared,
-        meteredOverride =
-            WifiNetwork.MeteredOverride.entries.getOrElse(network.meteredOverride) {
-                Log.w("WifiNetwork", "Unknown metered override: $it")
-                WifiNetwork.MeteredOverride.NONE
-            },
-        macRandomizationSetting =
-            WifiNetwork.Randomization.entries.getOrElse(network.macRandomizationSetting) {
-                Log.w("WifiNetwork", "Unknown mac randomization setting: $it")
-                WifiNetwork.Randomization.AUTO
-            },
+        meteredOverride = network.meteredOverride,
+        macRandomizationSetting = network.macRandomizationSetting,
         randomizedMacAddress =
             network.randomizedMacAddress.toString().takeIf { it != "02:00:00:00:00:00" },
     )
@@ -124,13 +115,17 @@ fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
                 }
                 hiddenSSID = hidden
                 shared = !private
-                meteredOverride = this@toWifiConfigurations.meteredOverride.ordinal
+                meteredOverride = this@toWifiConfigurations.meteredOverride
                 macRandomizationSetting =
-                    this@toWifiConfigurations.macRandomizationSetting.ordinal.let {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            it
+                    this@toWifiConfigurations.macRandomizationSetting.let {
+                        if (
+                            Build.VERSION.SDK_INT < Build.VERSION_CODES.S &&
+                                (it == WifiNetwork.Randomization.NON_PERSISTENT.value ||
+                                    it == WifiNetwork.Randomization.AUTO.value)
+                        ) {
+                            WifiNetwork.Randomization.PERSISTENT.value
                         } else {
-                            it.coerceAtMost(1)
+                            it
                         }
                     }
             }

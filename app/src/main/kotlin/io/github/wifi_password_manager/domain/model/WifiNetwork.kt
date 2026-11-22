@@ -7,9 +7,14 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalResources
 import io.github.wifi_password_manager.R
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
 @Immutable
 @Serializable
@@ -23,8 +28,10 @@ data class WifiNetwork(
     val private: Boolean = false,
     val note: String? = null,
     @Transient val existInSystem: Boolean = true,
-    val meteredOverride: MeteredOverride = MeteredOverride.NONE,
-    val macRandomizationSetting: Randomization = Randomization.AUTO,
+    @Serializable(with = MeteredOverrideSerializer::class)
+    val meteredOverride: Int = MeteredOverride.NONE.value,
+    @Serializable(with = RandomizationSerializer::class)
+    val macRandomizationSetting: Int = Randomization.default.value,
     @Transient val randomizedMacAddress: String? = null,
     @Transient val createdAt: Long? = null,
     @Transient val updatedAt: Long? = null,
@@ -43,21 +50,25 @@ data class WifiNetwork(
         }
     }
 
-    @Serializable
-    enum class MeteredOverride(@StringRes val labelResId: Int) {
-        NONE(R.string.metered_auto),
-        METERED(R.string.metered_metered),
-        NOT_METERED(R.string.metered_unmetered),
-    }
-
-    @Serializable
-    enum class Randomization(@StringRes val labelResId: Int) {
-        NONE(R.string.mac_randomization_none),
-        PERSISTENT(R.string.mac_randomization_persistent),
-        NON_PERSISTENT(R.string.mac_randomization_non_persistent),
-        AUTO(R.string.mac_randomization_auto);
+    enum class MeteredOverride(val value: Int, @StringRes val labelResId: Int) {
+        NONE(0, R.string.metered_auto),
+        METERED(1, R.string.metered_metered),
+        NOT_METERED(2, R.string.metered_unmetered);
 
         companion object {
+            fun fromValue(value: Int): MeteredOverride? = entries.find { it.value == value }
+        }
+    }
+
+    enum class Randomization(val value: Int, @StringRes val labelResId: Int) {
+        NONE(0, R.string.mac_randomization_none),
+        PERSISTENT(1, R.string.mac_randomization_persistent),
+        NON_PERSISTENT(2, R.string.mac_randomization_non_persistent),
+        AUTO(3, R.string.mac_randomization_auto);
+
+        companion object {
+            fun fromValue(value: Int): Randomization? = entries.find { it.value == value }
+
             val supported: List<Randomization>
                 get() =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -80,4 +91,44 @@ data class WifiNetwork(
                 .sortedBy { it.ordinal }
                 .joinToString("/") { resources.getString(it.labelResId) }
         }
+}
+
+object MeteredOverrideSerializer : KSerializer<Int> {
+    override val descriptor =
+        PrimitiveSerialDescriptor("WifiNetwork.MeteredOverride", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Int) {
+        val override =
+            WifiNetwork.MeteredOverride.fromValue(value) ?: WifiNetwork.MeteredOverride.NONE
+        encoder.encodeString(override.name)
+    }
+
+    override fun deserialize(decoder: Decoder): Int {
+        val name = decoder.decodeString()
+        val override =
+            WifiNetwork.MeteredOverride.entries.find { it.name == name }
+                ?: WifiNetwork.MeteredOverride.NONE
+        return override.value
+    }
+}
+
+object RandomizationSerializer : KSerializer<Int> {
+    override val descriptor =
+        PrimitiveSerialDescriptor("WifiNetwork.Randomization", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Int) {
+        val randomization =
+            WifiNetwork.Randomization.fromValue(value) ?: WifiNetwork.Randomization.default
+        encoder.encodeString(randomization.name)
+    }
+
+    override fun deserialize(decoder: Decoder): Int {
+        val name = decoder.decodeString()
+        val randomization =
+            WifiNetwork.Randomization.entries
+                .find { it.name == name }
+                ?.takeIf { it in WifiNetwork.Randomization.supported }
+                ?: WifiNetwork.Randomization.default
+        return randomization.value
+    }
 }

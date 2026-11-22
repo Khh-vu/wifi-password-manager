@@ -13,7 +13,7 @@ import io.github.wifi_password_manager.data.local.entity.WifiNetworkFtsEntity
 
 @Database(
     entities = [WifiNetworkEntity::class, WifiNetworkFtsEntity::class],
-    version = 7,
+    version = 8,
     autoMigrations =
         [
             AutoMigration(2, 3),
@@ -21,6 +21,7 @@ import io.github.wifi_password_manager.data.local.entity.WifiNetworkFtsEntity
             AutoMigration(4, 5),
             AutoMigration(5, 6),
             AutoMigration(6, 7, spec = AppDatabase.RebuildFtsSpec::class),
+            AutoMigration(7, 8, spec = AppDatabase.Migration7To8Spec::class),
         ],
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -28,6 +29,35 @@ abstract class AppDatabase : RoomDatabase() {
 
     class RebuildFtsSpec : AutoMigrationSpec {
         override suspend fun onPostMigrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                "INSERT INTO `wifi_networks_fts`(`wifi_networks_fts`) VALUES('rebuild')",
+            )
+        }
+    }
+
+    class Migration7To8Spec : AutoMigrationSpec {
+        override suspend fun onPostMigrate(connection: SQLiteConnection) {
+            connection.execSQL(
+                """
+                UPDATE `wifi_networks` SET `meteredOverride` = CASE `meteredOverride`
+                    WHEN 'METERED' THEN 1
+                    WHEN 'NOT_METERED' THEN 2
+                    ELSE 0
+                END
+                """
+                    .trimIndent(),
+            )
+            connection.execSQL(
+                """
+                UPDATE `wifi_networks` SET `macRandomizationSetting` = CASE `macRandomizationSetting`
+                    WHEN 'NONE' THEN 0
+                    WHEN 'PERSISTENT' THEN 1
+                    WHEN 'NON_PERSISTENT' THEN 2
+                    ELSE 3
+                END
+                """
+                    .trimIndent(),
+            )
             connection.execSQL(
                 "INSERT INTO `wifi_networks_fts`(`wifi_networks_fts`) VALUES('rebuild')",
             )

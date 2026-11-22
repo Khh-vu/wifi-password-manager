@@ -135,8 +135,8 @@ class AddNetworkViewModel(
                 securityType = setOf(current.security),
                 password = password,
                 hidden = current.hidden,
-                meteredOverride = current.meteredOverride,
-                macRandomizationSetting = current.macRandomization,
+                meteredOverride = current.meteredOverride.value,
+                macRandomizationSetting = current.macRandomization.value,
                 note = noteState.text.toString().trim().ifEmpty { null },
                 existInSystem = false,
             )
