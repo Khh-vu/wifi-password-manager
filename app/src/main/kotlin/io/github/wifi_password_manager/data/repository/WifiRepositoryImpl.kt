@@ -119,12 +119,16 @@ class WifiRepositoryImpl(
     private suspend fun getConnectionInfo(): WifiInfo? =
         withDataSource(null) { it.getConnectionInfo() }
 
+    private suspend fun systemNetworksBySsid(): Map<String, List<WifiNetwork>> =
+        getPrivilegedConfiguredNetworks().map(WifiNetwork::fromWifiConfiguration).groupBy {
+            it.ssid
+        }
+
     private fun replacedNetworks(
-        configs: List<WifiConfiguration>,
+        systemNetworksBySsid: Map<String, List<WifiNetwork>>,
         network: WifiNetwork,
     ): List<WifiNetwork> {
-        val sameSsid =
-            configs.map(WifiNetwork::fromWifiConfiguration).filter { it.ssid == network.ssid }
+        val sameSsid = systemNetworksBySsid[network.ssid].orEmpty()
         val netIds =
             sameSsid
                 .filter { it.securityType.any(network.securityType::contains) }
@@ -276,8 +280,8 @@ class WifiRepositoryImpl(
 
     override suspend fun saveToSystem(networks: List<WifiNetwork>): Boolean {
         if (!privilegedManager.currentMode.hasPrivilegedAccess) return false
-        val configs = getPrivilegedConfiguredNetworks()
-        networks.forEach { markNotExistInSystem(replacedNetworks(configs, it)) }
+        val systemNetworks = systemNetworksBySsid()
+        markNotExistInSystem(networks.flatMap { replacedNetworks(systemNetworks, it) })
         val saved =
             networks
                 .flatMap { it.copy(existInSystem = false).toWifiConfigurations() }
@@ -333,9 +337,10 @@ class WifiRepositoryImpl(
 
     override suspend fun connect(network: WifiNetwork): Boolean =
         withContext(NonCancellable) {
-            val configs = getPrivilegedConfiguredNetworks()
             val (same, others) =
-                replacedNetworks(configs, network).partition { it.password == network.password }
+                replacedNetworks(systemNetworksBySsid(), network).partition {
+                    it.password == network.password
+                }
 
             withDataSource(Unit) { source ->
                 if (same.isNotEmpty()) {
