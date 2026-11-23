@@ -140,6 +140,7 @@ class NetworkListViewModel(
         val sortBy: SortBy = SortBy.SSID,
         val sortAscending: Boolean = true,
         val isLoading: Boolean = false,
+        val isRefreshing: Boolean = false,
         val showForgetAllDialog: Boolean = false,
         val showExportDialog: Boolean = false,
         val showImportModeDialog: Boolean = false,
@@ -267,6 +268,7 @@ class NetworkListViewModel(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5.seconds),
+                // Cleared by the first combined emission, which waits for the initial refresh.
                 initialValue =
                     State(isCacheMode = !privilegedManager.currentMode.hasPrivilegedAccess),
             )
@@ -310,9 +312,15 @@ class NetworkListViewModel(
     }
 
     private fun onRefresh() {
+        if (_uiState.value.isRefreshing) return
+        _uiState.update { it.copy(isRefreshing = true) }
         viewModelScope.launch {
-            if (!wifiRepository.refresh()) return@launch
-            _event.send(Event.ShowMessage(UiText.StringResource(R.string.refresh_success)))
+            try {
+                if (!wifiRepository.refresh()) return@launch
+                _event.send(Event.ShowMessage(UiText.StringResource(R.string.refresh_success)))
+            } finally {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
         }
     }
 

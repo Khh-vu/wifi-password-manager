@@ -18,9 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +35,9 @@ import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,7 +74,7 @@ import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import io.github.wifi_password_manager.utils.MOCK
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NetworkListView(
     state: NetworkListViewModel.State,
@@ -80,6 +86,7 @@ fun NetworkListView(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val gridState = rememberLazyGridState()
+    val pullToRefreshState = rememberPullToRefreshState()
     val scope = rememberCoroutineScope()
     val showScrollToTop by remember { derivedStateOf { gridState.firstVisibleItemIndex > 3 } }
 
@@ -187,31 +194,54 @@ fun NetworkListView(
                     },
                 )
 
-        if (state.savedNetworks.isEmpty()) {
-            Box(modifier = modifier.padding(innerPadding), contentAlignment = Alignment.Center) {
-                val isFiltering = state.showingSearch || state.filters.isNotEmpty()
-                Text(
-                    text =
-                        stringResource(
-                            if (isFiltering) R.string.no_networks_found
-                            else R.string.no_networks_available,
-                        ),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 32.dp),
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = { onAction(NetworkListViewModel.Action.Refresh) },
+            modifier = modifier,
+            state = pullToRefreshState,
+            enabled = !state.isCacheMode,
+            indicator = {
+                PullToRefreshDefaults.LoadingIndicator(
+                    state = pullToRefreshState,
+                    isRefreshing = state.isRefreshing,
+                    modifier =
+                        Modifier.align(Alignment.TopCenter)
+                            .padding(top = innerPadding.calculateTopPadding()),
+                )
+            },
+        ) {
+            if (state.savedNetworks.isEmpty()) {
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState()),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val isFiltering = state.showingSearch || state.filters.isNotEmpty()
+                    Text(
+                        text =
+                            stringResource(
+                                if (isFiltering) R.string.no_networks_found
+                                else R.string.no_networks_available,
+                            ),
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 32.dp),
+                    )
+                }
+            } else {
+                NetworkList(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = innerPadding,
+                    toolbarPadding = toolbarPadding,
+                    gridState = gridState,
+                    networks = state.savedNetworks,
+                    connectionStatus = state.connectionStatus,
+                    isCacheMode = state.isCacheMode,
+                    onAction = onAction,
                 )
             }
-        } else {
-            NetworkList(
-                modifier = modifier,
-                contentPadding = innerPadding,
-                toolbarPadding = toolbarPadding,
-                gridState = gridState,
-                networks = state.savedNetworks,
-                connectionStatus = state.connectionStatus,
-                isCacheMode = state.isCacheMode,
-                onAction = onAction,
-            )
         }
 
         Box(
