@@ -22,7 +22,7 @@ import io.github.wifi_password_manager.ipc.WifiNetworkParcel
 import io.github.wifi_password_manager.utils.WifiManagerHelper
 import rikka.shizuku.SystemServiceHelper
 
-open class WiFiRootServiceImpl : IWifiRootService.Stub() {
+open class WiFiRootServiceImpl(private val context: Context) : IWifiRootService.Stub() {
     companion object {
         private const val PACKAGE_NAME = "android"
     }
@@ -32,8 +32,12 @@ open class WiFiRootServiceImpl : IWifiRootService.Stub() {
             .let(IWifiManager.Stub::asInterface)
     }
 
-    override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean =
-        try {
+    override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean {
+        val callingUid = getCallingUid()
+        if (callingUid != context.applicationInfo.uid) {
+            throw SecurityException("Untrusted caller uid=$callingUid")
+        }
+        return try {
             super.onTransact(code, data, reply, flags)
         } catch (e: Throwable) {
             if (e is LinkageError || e is NoSuchMethodException) {
@@ -41,6 +45,7 @@ open class WiFiRootServiceImpl : IWifiRootService.Stub() {
             }
             throw e
         }
+    }
 
     private val user: String
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) "root" else "android"

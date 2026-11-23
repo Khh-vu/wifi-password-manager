@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 # Shizuku create UserService via reflection.
--keep class io.github.wifi_password_manager.services.WiFiShizukuService { <init>(); }
+-keep class io.github.wifi_password_manager.services.WiFiShizukuService { <init>(android.content.Context); }
 
 -assumenosideeffects class android.util.Log {
     public static int d(...);

@@ -1,13 +1,14 @@
 package io.github.wifi_password_manager.services
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Parcel
 import android.os.Process
 import android.system.Os
 import kotlin.system.exitProcess
 import rikka.shizuku.ShizukuApiConstants
 
-class WiFiShizukuService : WiFiRootServiceImpl() {
+class WiFiShizukuService(context: Context) : WiFiRootServiceImpl(context) {
     init {
         @Suppress("DEPRECATION") Os.setuid(Process.SYSTEM_UID)
     }

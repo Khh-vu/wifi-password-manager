@@ -12,6 +12,6 @@ class WiFiRootService : RootService() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             @Suppress("DEPRECATION") Os.setuid(Process.SYSTEM_UID)
         }
-        return WiFiRootServiceImpl()
+        return WiFiRootServiceImpl(this)
     }
 }
