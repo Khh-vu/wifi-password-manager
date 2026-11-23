@@ -17,8 +17,6 @@ import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.dialogs.openFileSaver
 import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.extension
-import io.github.vinceglb.filekit.name
-import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.write
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.ExportOption
@@ -29,9 +27,7 @@ import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
-import io.github.wifi_password_manager.utils.Crypto
 import io.github.wifi_password_manager.utils.UiText
-import io.github.wifi_password_manager.utils.fromWifiConfiguration
 import io.github.wifi_password_manager.utils.groupBySsidAndPassword
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -42,8 +38,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -393,13 +387,7 @@ class NetworkListViewModel(
 
     private fun onForget(network: WifiNetwork) {
         viewModelScope.launch {
-            wifiRepository
-                .getPrivilegedConfiguredNetworks()
-                .map(WifiNetwork::fromWifiConfiguration)
-                .filter { it.ssid == network.ssid && it.password == network.password }
-                .forEach { wifiRepository.forget(it.networkId) }
-            wifiRepository.delete(network.ssid, network.password)
-            wifiRepository.refresh()
+            wifiRepository.forgetNetwork(network)
             _event.send(
                 Event.ShowMessage(UiText.StringResource(R.string.forgot_message, network.ssid)),
             )
@@ -421,7 +409,6 @@ class NetworkListViewModel(
         _uiState.update { it.copy(showExportDialog = false) }
         viewModelScope.launch {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
-            val isEncrypted = password.isNotEmpty()
             val file =
                 FileKit.openFileSaver(
                     suggestedName = "WiFi_${LocalDateTime.now().format(formatter)}",
@@ -431,16 +418,7 @@ class NetworkListViewModel(
             runCatching {
                     withContext(Dispatchers.IO) {
                         val networks = wifiRepository.getAllNetworksList().groupBySsidAndPassword()
-                        val data =
-                            when (option) {
-                                ExportOption.PLAIN ->
-                                    fileRepository.networksToJson(networks).toByteArray()
-
-                                ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
-                            }
-                        file.write(
-                            if (isEncrypted) Crypto.encrypt(data, password, option) else data,
-                        )
+                        file.write(fileRepository.encodeNetworks(networks, option, password))
                     }
                 }
                 .fold(
@@ -515,12 +493,12 @@ class NetworkListViewModel(
             _uiState.update { it.copy(isLoading = true) }
 
             try {
-                val message =
+                val result =
                     withContext(Dispatchers.IO) {
-                        val networks = parseNetworksFromFiles(files, password)
-                        importNetworks(networks, toDevice)
+                        val networks = fileRepository.readNetworks(files, password)
+                        wifiRepository.importNetworks(networks, toDevice)
                     }
-                _event.send(Event.ShowMessage(UiText.StringResource(message)))
+                _event.send(Event.ShowMessage(UiText.StringResource(result.messageResId)))
             } catch (e: SerializationException) {
                 Log.w(TAG, "Error parsing JSON", e)
                 _event.send(Event.ShowMessage(UiText.StringResource(R.string.invalid_json)))
@@ -535,81 +513,6 @@ class NetworkListViewModel(
             } finally {
                 wifiRepository.refresh()
                 _uiState.update { it.copy(isLoading = false) }
-            }
-        }
-    }
-
-    private suspend fun parseNetworksFromFiles(
-        files: List<PlatformFile>,
-        password: String?,
-    ): List<WifiNetwork> {
-        val results = files.map { file ->
-            runCatching { parseNetworksFromFile(file, password) }
-                .onFailure { Log.e(TAG, "Error parsing file: ${file.name}", it) }
-        }
-        if (results.none { it.isSuccess }) results.first().getOrThrow()
-        return results.flatMap { it.getOrDefault(emptyList()) }
-    }
-
-    private suspend fun importNetworks(networks: List<WifiNetwork>, toDevice: Boolean): Int {
-        val cards =
-            networks
-                .groupBy { it.ssid to it.password }
-                .values
-                .map { duplicateNetworks ->
-                    val notes =
-                        duplicateNetworks
-                            .mapNotNull { it.note?.trim() }
-                            .filter { it.isNotBlank() }
-                            .distinct()
-                    duplicateNetworks
-                        .first()
-                        .copy(
-                            securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
-                            note = notes.joinToString("\n").ifEmpty { null },
-                        )
-                }
-        if (cards.isEmpty()) return R.string.no_network_to_import
-
-        val addedAny = cards.map { wifiRepository.addManual(it) }.any { it }
-        val savedToDevice =
-            toDevice &&
-                wifiRepository.saveToSystem(cards.groupBy { it.ssid }.values.map { it.first() })
-        cards
-            .filter { it.note != null }
-            .forEach { wifiRepository.updateNote(it.ssid, it.password, it.note) }
-        return when {
-            toDevice && savedToDevice -> R.string.import_to_device_success
-            toDevice -> R.string.import_device_rejected_some
-            addedAny -> R.string.import_to_app_success
-            else -> R.string.import_already_saved
-        }
-    }
-
-    private suspend fun parseNetworksFromFile(
-        file: PlatformFile,
-        password: String?,
-    ): List<WifiNetwork> {
-        val data = file.readBytes()
-        val list =
-            when (file.extension.lowercase()) {
-                "bin" if password != null -> {
-                    val (option, decrypted) = Crypto.decrypt(data, password)
-                    when (option) {
-                        ExportOption.PLAIN -> fileRepository.networksFromJson(String(decrypted))
-                        ExportOption.COMPRESSED -> fileRepository.networksFromGZip(decrypted)
-                    }
-                }
-
-                "gz" -> fileRepository.networksFromGZip(data)
-                else -> fileRepository.networksFromJson(String(data))
-            }
-        return list.map { network ->
-            if (network.password.isNotBlank()) {
-                val type = network.securityType.filter { it !in SecurityType.withoutPassword }
-                network.copy(securityType = type.toSet())
-            } else {
-                network
             }
         }
     }
@@ -632,25 +535,13 @@ class NetworkListViewModel(
             _uiState.update { it.copy(isLoading = true, showForgetAllDialog = false) }
 
             runCatching {
-                    val networks = wifiRepository.getPrivilegedConfiguredNetworks()
-                    val validNetworks = networks.filter { it.networkId != -1 }
-
-                    if (validNetworks.isEmpty() && !clearCache) {
-                        Log.d(TAG, "No valid networks to remove")
+                    if (!wifiRepository.forgetAll(clearCache)) {
                         _uiState.update { it.copy(isLoading = false) }
                         return@launch
-                    }
-
-                    withContext(Dispatchers.IO) {
-                        validNetworks
-                            .map { async { wifiRepository.forget(it.networkId) } }
-                            .awaitAll()
-                        if (clearCache) wifiRepository.clearCache()
                     }
                 }
                 .fold(
                     onSuccess = {
-                        wifiRepository.refresh()
                         _event.send(
                             Event.ShowMessage(UiText.StringResource(R.string.forget_success)),
                         )

@@ -26,10 +26,10 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.sp
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
+import io.github.wifi_password_manager.ui.LocalSettings
 import io.github.wifi_password_manager.ui.icons.Settings
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.shared.SearchBar

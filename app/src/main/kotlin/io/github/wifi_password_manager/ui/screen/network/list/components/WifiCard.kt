@@ -1,5 +1,9 @@
 package io.github.wifi_password_manager.ui.screen.network.list.components
 
+import android.content.ClipData
+import android.content.ClipDescription
+import android.os.Build
+import android.os.PersistableBundle
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,7 +34,9 @@ import androidx.compose.runtime.retain.retain
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -39,11 +45,11 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiConnectionStatus
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
+import io.github.wifi_password_manager.ui.LocalSettings
 import io.github.wifi_password_manager.ui.icons.ContentCopy
 import io.github.wifi_password_manager.ui.icons.MoreVert
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
@@ -51,13 +57,27 @@ import io.github.wifi_password_manager.ui.shared.TooltipIconButton
 import io.github.wifi_password_manager.ui.shared.WarningConfirmDialog
 import io.github.wifi_password_manager.ui.theme.SurfaceWrapper
 import io.github.wifi_password_manager.utils.MOCK
-import io.github.wifi_password_manager.utils.passwordClipEntry
 import kotlinx.coroutines.launch
 
 private sealed interface OptionState {
     data object WifiQR : OptionState
 
     data object ForgetConfirm : OptionState
+}
+
+private fun WifiNetwork.passwordClipEntry(isSensitive: Boolean = true): ClipEntry {
+    val clipData = ClipData.newPlainText(ssid, password)
+    if (isSensitive) {
+        clipData.description.extras =
+            PersistableBundle().apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
+                } else {
+                    putBoolean("android.content.extra.IS_SENSITIVE", true)
+                }
+            }
+    }
+    return clipData.toClipEntry()
 }
 
 @Composable

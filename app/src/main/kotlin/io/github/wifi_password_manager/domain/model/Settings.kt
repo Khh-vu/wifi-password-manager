@@ -1,12 +1,7 @@
 package io.github.wifi_password_manager.domain.model
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.res.stringResource
 import io.github.wifi_password_manager.R
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -33,17 +28,7 @@ data class Settings(
     enum class ThemeMode(@StringRes val resId: Int) {
         LIGHT(R.string.theme_mode_light),
         DARK(R.string.theme_mode_dark),
-        SYSTEM(R.string.theme_mode_system);
-
-        val isDark: Boolean
-            @Composable
-            @ReadOnlyComposable
-            get() =
-                when (this) {
-                    LIGHT -> false
-                    DARK -> true
-                    SYSTEM -> isSystemInDarkTheme()
-                }
+        SYSTEM(R.string.theme_mode_system),
     }
 
     @Serializable
@@ -54,22 +39,6 @@ data class Settings(
         CHINESE_SIMPLIFIED("zh-CN"),
         JAPANESE("ja"),
         TURKISH("tr"),
-        ARABIC("ar");
-
-        val displayName: String
-            @Composable
-            @ReadOnlyComposable
-            get() =
-                when (this) {
-                    SYSTEM -> stringResource(R.string.language_system_default)
-                    ENGLISH -> "English"
-                    RUSSIAN -> "Русский"
-                    CHINESE_SIMPLIFIED -> "中文 (简体)"
-                    JAPANESE -> "日本語"
-                    TURKISH -> "Türkçe"
-                    ARABIC -> "العربية"
-                }
+        ARABIC("ar"),
     }
 }
-
-val LocalSettings = compositionLocalOf { Settings() }

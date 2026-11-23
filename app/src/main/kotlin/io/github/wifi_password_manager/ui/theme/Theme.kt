@@ -13,10 +13,22 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewWrapperProvider
+import io.github.wifi_password_manager.domain.model.Settings
+
+val Settings.ThemeMode.isDark: Boolean
+    @Composable
+    @ReadOnlyComposable
+    get() =
+        when (this) {
+            Settings.ThemeMode.LIGHT -> false
+            Settings.ThemeMode.DARK -> true
+            Settings.ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        }
 
 @Composable
 fun WiFiPasswordManagerTheme(

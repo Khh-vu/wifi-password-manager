@@ -51,8 +51,8 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
+import io.github.wifi_password_manager.ui.LocalSettings
 import io.github.wifi_password_manager.ui.icons.ArrowUpward
 import io.github.wifi_password_manager.ui.screen.network.list.components.ExportDialog
 import io.github.wifi_password_manager.ui.screen.network.list.components.ForgetAllDialog

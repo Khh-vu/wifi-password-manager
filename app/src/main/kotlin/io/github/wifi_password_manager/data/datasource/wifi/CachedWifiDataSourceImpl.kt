@@ -8,7 +8,6 @@ import android.os.Build
 import androidx.core.content.getSystemService
 import io.github.wifi_password_manager.data.local.dao.WifiNetworkDao
 import io.github.wifi_password_manager.data.local.entity.toDomain
-import io.github.wifi_password_manager.utils.toWifiConfigurations
 
 class CachedWifiDataSourceImpl(
     private val context: Context,

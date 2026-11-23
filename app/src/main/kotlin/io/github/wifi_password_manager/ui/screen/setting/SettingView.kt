@@ -29,10 +29,10 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.BuildConfig
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
+import io.github.wifi_password_manager.ui.LocalSettings
 import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.icons.BugReport
 import io.github.wifi_password_manager.ui.icons.Info
@@ -49,6 +49,7 @@ import io.github.wifi_password_manager.ui.screen.setting.components.SettingSecti
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.BackButton
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
+import io.github.wifi_password_manager.ui.theme.isDark
 import io.github.wifi_password_manager.utils.label
 import io.github.wifi_password_manager.utils.plus
 

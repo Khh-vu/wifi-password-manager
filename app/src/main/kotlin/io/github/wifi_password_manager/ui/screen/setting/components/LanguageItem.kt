@@ -10,6 +10,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.retain.retain
@@ -23,6 +24,20 @@ import io.github.wifi_password_manager.domain.model.Settings
 import io.github.wifi_password_manager.ui.UiConfig
 import io.github.wifi_password_manager.ui.theme.SurfaceWrapper
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
+
+private val Settings.Language.displayName: String
+    @Composable
+    @ReadOnlyComposable
+    get() =
+        when (this) {
+            Settings.Language.SYSTEM -> stringResource(R.string.language_system_default)
+            Settings.Language.ENGLISH -> "English"
+            Settings.Language.RUSSIAN -> "Русский"
+            Settings.Language.CHINESE_SIMPLIFIED -> "中文 (简体)"
+            Settings.Language.JAPANESE -> "日本語"
+            Settings.Language.TURKISH -> "Türkçe"
+            Settings.Language.ARABIC -> "العربية"
+        }
 
 @Composable
 fun LanguageItem(language: Settings.Language, onLanguageChange: (Settings.Language) -> Unit) {

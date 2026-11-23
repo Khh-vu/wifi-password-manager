@@ -1,7 +1,7 @@
 package io.github.wifi_password_manager.ui.screen.locktimeout
 
 import androidx.compose.runtime.Composable
-import io.github.wifi_password_manager.domain.model.LocalSettings
+import io.github.wifi_password_manager.ui.LocalSettings
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

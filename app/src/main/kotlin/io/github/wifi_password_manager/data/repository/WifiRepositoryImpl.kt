@@ -16,17 +16,19 @@ import io.github.wifi_password_manager.data.datasource.wifi.RootWifiDataSourceIm
 import io.github.wifi_password_manager.data.datasource.wifi.ShizukuUserServiceWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.ShizukuWifiDataSourceImpl
 import io.github.wifi_password_manager.data.datasource.wifi.WifiDataSource
+import io.github.wifi_password_manager.data.datasource.wifi.fromWifiConfiguration
+import io.github.wifi_password_manager.data.datasource.wifi.toWifiConfigurations
 import io.github.wifi_password_manager.data.local.dao.WifiNetworkDao
+import io.github.wifi_password_manager.data.local.entity.WifiNetworkEntity
 import io.github.wifi_password_manager.data.local.entity.toDomain
 import io.github.wifi_password_manager.data.local.entity.toEntity
+import io.github.wifi_password_manager.domain.model.ImportResult
 import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.repository.WifiRepository
 import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.manager.SystemApiErrorReporter
 import io.github.wifi_password_manager.manager.isSystemApiMismatch
-import io.github.wifi_password_manager.utils.fromWifiConfiguration
-import io.github.wifi_password_manager.utils.toWifiConfigurations
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -34,6 +36,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -131,10 +134,18 @@ class WifiRepositoryImpl(
     }
 
     private suspend fun markNotExistInSystem(networks: List<WifiNetwork>) {
-        networks.forEach { old ->
-            old.securityType.forEach { wifiNetworkDao.markNotExistInSystem(old.ssid, it.name) }
-        }
+        wifiNetworkDao.markNotExistInSystem(
+            networks.flatMap { old -> old.securityType.map { old.ssid to it.name } },
+        )
     }
+
+    private fun manualRows(network: WifiNetwork, now: Long): List<WifiNetworkEntity> =
+        network.securityType.map {
+            network
+                .copy(securityType = setOf(it), existInSystem = false)
+                .toEntity()
+                .copy(createdAt = now, updatedAt = now)
+        }
 
     override fun getConnectedNetworkIdFlow(): Flow<Int> {
         return callbackFlow {
@@ -237,19 +248,29 @@ class WifiRepositoryImpl(
 
     override suspend fun forget(netId: Int): Boolean = withDataSource(false) { it.forget(netId) }
 
-    override suspend fun delete(ssid: String, password: String) {
-        wifiNetworkDao.deleteNetwork(ssid, password)
+    override suspend fun forgetNetwork(network: WifiNetwork) {
+        getPrivilegedConfiguredNetworks()
+            .map(WifiNetwork::fromWifiConfiguration)
+            .filter { it.ssid == network.ssid && it.password == network.password }
+            .forEach { forget(it.networkId) }
+        wifiNetworkDao.deleteNetwork(network.ssid, network.password)
+        refresh()
+    }
+
+    override suspend fun forgetAll(clearCache: Boolean): Boolean {
+        val netIds = getPrivilegedConfiguredNetworks().map { it.networkId }.filter { it != -1 }
+        if (netIds.isEmpty() && !clearCache) {
+            Log.d(TAG, "No valid networks to remove")
+            return false
+        }
+        coroutineScope { netIds.map { async { forget(it) } }.awaitAll() }
+        if (clearCache) wifiNetworkDao.clearNetworks()
+        refresh()
+        return true
     }
 
     override suspend fun addManual(network: WifiNetwork): Boolean {
-        val now = System.currentTimeMillis()
-        val rows =
-            network.securityType.map {
-                network
-                    .copy(securityType = setOf(it), existInSystem = false)
-                    .toEntity()
-                    .copy(createdAt = now, updatedAt = now)
-            }
+        val rows = manualRows(network, System.currentTimeMillis())
         return wifiNetworkDao.insertIfAbsent(rows).any { it != -1L }
     }
 
@@ -266,8 +287,39 @@ class WifiRepositoryImpl(
         return saved
     }
 
-    override suspend fun clearCache() {
-        wifiNetworkDao.clearNetworks()
+    override suspend fun importNetworks(
+        networks: List<WifiNetwork>,
+        toDevice: Boolean,
+    ): ImportResult {
+        val cards =
+            networks
+                .groupBy { it.ssid to it.password }
+                .values
+                .map { duplicateNetworks ->
+                    val notes =
+                        duplicateNetworks
+                            .mapNotNull { it.note?.trim() }
+                            .filter { it.isNotBlank() }
+                            .distinct()
+                    duplicateNetworks
+                        .first()
+                        .copy(
+                            securityType = duplicateNetworks.flatMap { it.securityType }.toSet(),
+                            note = notes.joinToString("\n").ifEmpty { null },
+                        )
+                }
+        if (cards.isEmpty()) return ImportResult.NOTHING_TO_IMPORT
+
+        val now = System.currentTimeMillis()
+        val addedAny = wifiNetworkDao.importNetworks(cards.flatMap { manualRows(it, now) })
+        val savedToDevice =
+            toDevice && saveToSystem(cards.groupBy { it.ssid }.values.map { it.first() })
+        return when {
+            toDevice && savedToDevice -> ImportResult.SAVED_TO_DEVICE
+            toDevice -> ImportResult.DEVICE_REJECTED_SOME
+            addedAny -> ImportResult.SAVED_TO_APP
+            else -> ImportResult.ALREADY_SAVED
+        }
     }
 
     override suspend fun persistEphemeralNetworks() =

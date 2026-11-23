@@ -15,7 +15,6 @@ import io.github.wifi_password_manager.domain.model.ExportOption
 import io.github.wifi_password_manager.domain.repository.FileRepository
 import io.github.wifi_password_manager.domain.repository.SettingRepository
 import io.github.wifi_password_manager.domain.repository.WifiRepository
-import io.github.wifi_password_manager.utils.Crypto
 import io.github.wifi_password_manager.utils.groupBySsidAndPassword
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -127,16 +126,6 @@ class ExportWifiReceiver : BroadcastReceiver(), KoinComponent {
 
     private suspend fun getExportData(option: ExportOption, password: String?): ByteArray {
         val networks = wifiRepository.getAllNetworksList().groupBySsidAndPassword()
-        val data =
-            when (option) {
-                ExportOption.PLAIN -> fileRepository.networksToJson(networks).toByteArray()
-                ExportOption.COMPRESSED -> fileRepository.networksToGZip(networks)
-            }
-
-        return if (!password.isNullOrEmpty()) {
-            Crypto.encrypt(data, password, option)
-        } else {
-            data
-        }
+        return fileRepository.encodeNetworks(networks, option, password)
     }
 }

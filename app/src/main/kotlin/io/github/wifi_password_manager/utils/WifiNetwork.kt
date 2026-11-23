@@ -1,35 +1,8 @@
 package io.github.wifi_password_manager.utils
 
-import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipDescription
-import android.net.wifi.WifiConfiguration
-import android.net.wifi.WifiConfigurationHidden
-import android.os.Build
-import android.os.PersistableBundle
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.toClipEntry
-import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.domain.model.WifiNetwork.SecurityType
 import kotlin.random.Random
-
-fun WifiNetwork.Companion.fromWifiConfiguration(config: WifiConfiguration): WifiNetwork {
-    val network = Refine.unsafeCast<WifiConfigurationHidden>(config)
-    return WifiNetwork(
-        networkId = network.networkId,
-        ssid = network.printableSsid,
-        securityType = setOf(network.securityType),
-        password = network.simpleKey,
-        hidden = network.hiddenSSID,
-        autojoin = Build.VERSION.SDK_INT < Build.VERSION_CODES.R || network.allowAutojoin,
-        private = !network.shared,
-        meteredOverride = network.meteredOverride,
-        macRandomizationSetting = network.macRandomizationSetting,
-        randomizedMacAddress =
-            network.randomizedMacAddress.toString().takeIf { it != "02:00:00:00:00:00" },
-    )
-}
 
 val WifiNetwork.Companion.MOCK
     get() =
@@ -68,82 +41,3 @@ fun List<WifiNetwork>.groupBySsidAndPassword(): List<WifiNetwork> = groupBy {
             it.existInSystem
         },
     )
-
-@SuppressLint("InlinedApi")
-fun WifiNetwork.toWifiConfigurations(): List<WifiConfiguration> {
-    return securityType.map { type ->
-        val config =
-            WifiConfigurationHidden().apply {
-                networkId = if (existInSystem) this@toWifiConfigurations.networkId else -1
-                SSID = "\"$ssid\""
-                when (type) {
-                    SecurityType.OPEN -> {
-                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_OPEN)
-                    }
-
-                    SecurityType.OWE -> {
-                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_OWE)
-                    }
-
-                    SecurityType.WPA2 -> {
-                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_PSK)
-                        preSharedKey = "\"$password\""
-                    }
-
-                    SecurityType.WPA3 -> {
-                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_SAE)
-                        preSharedKey = "\"$password\""
-                    }
-
-                    SecurityType.WEP -> {
-                        setSecurityParams(WifiConfiguration.SECURITY_TYPE_WEP)
-                        // WEP-40, WEP-104, and WEP-256
-                        if (
-                            (password.length == 10 ||
-                                password.length == 26 ||
-                                password.length == 58) && password matches "[0-9A-Fa-f]*".toRegex()
-                        ) {
-                            wepKeys[0] = password
-                        } else {
-                            wepKeys[0] = "\"$password\""
-                        }
-                        wepTxKeyIndex = 0
-                    }
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    allowAutojoin = autojoin
-                }
-                hiddenSSID = hidden
-                shared = !private
-                meteredOverride = this@toWifiConfigurations.meteredOverride
-                macRandomizationSetting =
-                    this@toWifiConfigurations.macRandomizationSetting.let {
-                        if (
-                            Build.VERSION.SDK_INT < Build.VERSION_CODES.S &&
-                                (it == WifiNetwork.Randomization.NON_PERSISTENT.value ||
-                                    it == WifiNetwork.Randomization.AUTO.value)
-                        ) {
-                            WifiNetwork.Randomization.PERSISTENT.value
-                        } else {
-                            it
-                        }
-                    }
-            }
-        Refine.unsafeCast(config)
-    }
-}
-
-fun WifiNetwork.passwordClipEntry(isSensitive: Boolean = true): ClipEntry {
-    val clipData = ClipData.newPlainText(ssid, password)
-    if (isSensitive) {
-        clipData.description.extras =
-            PersistableBundle().apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    putBoolean(ClipDescription.EXTRA_IS_SENSITIVE, true)
-                } else {
-                    putBoolean("android.content.extra.IS_SENSITIVE", true)
-                }
-            }
-    }
-    return clipData.toClipEntry()
-}

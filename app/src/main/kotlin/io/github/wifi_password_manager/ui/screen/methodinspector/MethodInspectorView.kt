@@ -53,7 +53,7 @@ import com.composeunstyled.Thumb
 import com.composeunstyled.UnstyledVerticalScrollbar
 import com.composeunstyled.rememberScrollbarState
 import io.github.wifi_password_manager.R
-import io.github.wifi_password_manager.domain.model.LocalSettings
+import io.github.wifi_password_manager.ui.LocalSettings
 import io.github.wifi_password_manager.ui.icons.Download
 import io.github.wifi_password_manager.ui.icons.Search
 import io.github.wifi_password_manager.ui.shared.BackButton

@@ -7,7 +7,7 @@ import android.net.wifi.WifiConfigurationHidden
 import android.os.Build
 import android.os.Parcelable
 import dev.rikka.tools.refine.Refine
-import io.github.wifi_password_manager.utils.simpleKey
+import io.github.wifi_password_manager.data.datasource.wifi.simpleKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

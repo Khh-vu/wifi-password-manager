@@ -17,8 +17,10 @@ import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.setAppTheme
 import io.github.wifi_password_manager.workers.PersistEphemeralNetworksWorker
 import io.github.wifi_password_manager.workers.SyncNetworksWorker
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
@@ -104,17 +106,21 @@ class App : Application() {
     }
 
     private fun observeConfiguredNetworksChanged() {
+        val changes = Channel<Unit>(Channel.CONFLATED)
+        ProcessLifecycleOwner.get().lifecycleScope.launch {
+            changes.receiveAsFlow().collect {
+                try {
+                    privilegedManager.refresh()
+                    wifiRepository.refresh()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Failed to sync changed networks", e)
+                }
+            }
+        }
         val receiver =
             object : BroadcastReceiver() {
                 override fun onReceive(context: Context, intent: Intent) {
-                    ProcessLifecycleOwner.get().lifecycleScope.launch {
-                        try {
-                            privilegedManager.refresh()
-                            wifiRepository.refresh()
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Failed to sync changed networks", e)
-                        }
-                    }
+                    changes.trySend(Unit)
                 }
             }
         ContextCompat.registerReceiver(

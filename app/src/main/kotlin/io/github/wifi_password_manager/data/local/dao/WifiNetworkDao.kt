@@ -35,6 +35,16 @@ interface WifiNetworkDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIfAbsent(networks: List<WifiNetworkEntity>): List<Long>
 
+    @Transaction
+    suspend fun importNetworks(networks: List<WifiNetworkEntity>): Boolean {
+        val addedAny = insertIfAbsent(networks).any { it != -1L }
+        networks
+            .filter { it.note != null }
+            .distinctBy { it.ssid to it.password }
+            .forEach { updateNote(it.ssid, it.password, it.note) }
+        return addedAny
+    }
+
     @Delete suspend fun deleteNetworks(networks: List<WifiNetworkEntity>)
 
     @Transaction
@@ -51,6 +61,13 @@ interface WifiNetworkDao {
         """,
     )
     suspend fun markNotExistInSystem(ssid: String, securityTypes: String)
+
+    @Transaction
+    suspend fun markNotExistInSystem(ssidAndSecurityTypes: List<Pair<String, String>>) {
+        ssidAndSecurityTypes.forEach { (ssid, securityTypes) ->
+            markNotExistInSystem(ssid, securityTypes)
+        }
+    }
 
     @Query("UPDATE wifi_networks SET existInSystem = 0") suspend fun markAllNotExistInSystem()
 
