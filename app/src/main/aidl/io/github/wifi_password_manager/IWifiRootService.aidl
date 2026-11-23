@@ -1,11 +1,12 @@
 package io.github.wifi_password_manager;
 
 import android.net.wifi.IActionListener;
+import io.github.wifi_password_manager.ipc.WifiNetworkListParcel;
 import io.github.wifi_password_manager.ipc.WifiNetworkParcel;
 import io.github.wifi_password_manager.ipc.WifiInfoParcel;
 
 interface IWifiRootService {
-    List<WifiNetworkParcel> getPrivilegedConfiguredNetworks();
+    WifiNetworkListParcel getPrivilegedConfiguredNetworks();
 
     int addOrUpdateNetworkPrivileged(in WifiNetworkParcel config);
 

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.net.wifi.WifiConfiguration
 import android.net.wifi.WifiInfo
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -82,7 +83,13 @@ open class RootWifiDataSourceImpl(context: Context) : WifiDataSource {
             Log.d(TAG, "Service not available, returning empty list")
             return emptyList()
         }
-        return service.privilegedConfiguredNetworks.orEmpty().map { it.toWifiConfiguration() }
+        val networks =
+            try {
+                service.privilegedConfiguredNetworks?.networks.orEmpty()
+            } finally {
+                Binder.flushPendingCommands()
+            }
+        return networks.map { it.toWifiConfiguration() }
     }
 
     override suspend fun addOrUpdateNetworkPrivileged(config: WifiConfiguration): Int {

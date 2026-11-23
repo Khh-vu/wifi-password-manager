@@ -17,6 +17,7 @@ import androidx.annotation.RequiresApi
 import dev.rikka.tools.refine.Refine
 import io.github.wifi_password_manager.IWifiRootService
 import io.github.wifi_password_manager.ipc.WifiInfoParcel
+import io.github.wifi_password_manager.ipc.WifiNetworkListParcel
 import io.github.wifi_password_manager.ipc.WifiNetworkParcel
 import io.github.wifi_password_manager.utils.WifiManagerHelper
 import rikka.shizuku.SystemServiceHelper
@@ -87,8 +88,10 @@ open class WiFiRootServiceImpl : IWifiRootService.Stub() {
         }
     }
 
-    override fun getPrivilegedConfiguredNetworks(): List<WifiNetworkParcel> {
-        return getConfiguredNetworks().map(WifiNetworkParcel::fromWifiConfiguration)
+    override fun getPrivilegedConfiguredNetworks(): WifiNetworkListParcel {
+        return WifiNetworkListParcel(
+            getConfiguredNetworks().map(WifiNetworkParcel::fromWifiConfiguration),
+        )
     }
 
     override fun addOrUpdateNetworkPrivileged(config: WifiNetworkParcel): Int {
