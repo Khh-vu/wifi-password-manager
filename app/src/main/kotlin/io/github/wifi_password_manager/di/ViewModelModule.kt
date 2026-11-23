@@ -30,8 +30,11 @@ class ViewModelModule {
     ) = MainViewModel(settingRepository, privilegedManager, isBiometricSupported)
 
     @KoinViewModel
-    fun networkListViewModel(wifiRepository: WifiRepository, privilegedManager: PrivilegedManager) =
-        NetworkListViewModel(wifiRepository, privilegedManager)
+    fun networkListViewModel(
+        wifiRepository: WifiRepository,
+        fileRepository: FileRepository,
+        privilegedManager: PrivilegedManager,
+    ) = NetworkListViewModel(wifiRepository, fileRepository, privilegedManager)
 
     @KoinViewModel
     fun addNetworkViewModel(wifiRepository: WifiRepository, privilegedManager: PrivilegedManager) =
@@ -44,10 +47,8 @@ class ViewModelModule {
     @KoinViewModel
     fun settingViewModel(
         settingRepository: SettingRepository,
-        wifiRepository: WifiRepository,
-        fileRepository: FileRepository,
         privilegedManager: PrivilegedManager,
-    ) = SettingViewModel(settingRepository, wifiRepository, fileRepository, privilegedManager)
+    ) = SettingViewModel(settingRepository, privilegedManager)
 
     @KoinViewModel
     fun lockTimeoutViewModel(settingRepository: SettingRepository) =

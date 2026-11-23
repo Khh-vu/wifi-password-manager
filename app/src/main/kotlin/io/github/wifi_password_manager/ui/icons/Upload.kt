@@ -9,14 +9,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.unit.dp
 
-val SwapVert: ImageVector
+val Upload: ImageVector
     get() {
-        if (swapVert != null) {
-            return swapVert!!
+        if (upload != null) {
+            return upload!!
         }
-        swapVert =
+        upload =
             ImageVector.Builder(
-                    name = "swap_vert",
+                    name = "upload",
                     defaultWidth = 24.dp,
                     defaultHeight = 24.dp,
                     viewportWidth = 24f,
@@ -34,32 +34,35 @@ val SwapVert: ImageVector
                         strokeLineMiter = 1f,
                         pathFillType = PathFillType.NonZero,
                     ) {
-                        moveTo(8f, 13f)
-                        verticalLineTo(5.82f)
-                        lineTo(5.43f, 8.4f)
-                        lineTo(4f, 7f)
-                        lineTo(9f, 2f)
+                        moveTo(11f, 16f)
+                        verticalLineTo(7.85f)
+                        lineTo(8.4f, 10.45f)
+                        lineTo(7f, 9f)
+                        lineToRelative(5f, -5f)
                         lineToRelative(5f, 5f)
-                        lineTo(12.58f, 8.4f)
-                        lineTo(10f, 5.82f)
-                        verticalLineTo(13f)
-                        horizontalLineTo(8f)
+                        lineToRelative(-1.4f, 1.45f)
+                        lineToRelative(-2.6f, -2.6f)
+                        verticalLineTo(16f)
+                        horizontalLineTo(11f)
                         close()
-                        moveToRelative(7f, 9f)
-                        lineTo(10f, 17f)
-                        lineToRelative(1.43f, -1.4f)
-                        lineTo(14f, 18.18f)
-                        verticalLineTo(11f)
+                        moveTo(6f, 20f)
+                        quadTo(5.18f, 20f, 4.59f, 19.41f)
+                        reflectiveQuadTo(4f, 18f)
+                        verticalLineTo(15f)
+                        horizontalLineTo(6f)
+                        verticalLineToRelative(3f)
+                        horizontalLineTo(18f)
+                        verticalLineTo(15f)
                         horizontalLineToRelative(2f)
-                        verticalLineToRelative(7.18f)
-                        lineTo(18.58f, 15.6f)
-                        lineTo(20f, 17f)
-                        lineToRelative(-5f, 5f)
+                        verticalLineToRelative(3f)
+                        quadToRelative(0f, 0.82f, -0.59f, 1.41f)
+                        reflectiveQuadTo(18f, 20f)
+                        horizontalLineTo(6f)
                         close()
                     }
                 }
                 .build()
-        return swapVert!!
+        return upload!!
     }
 
-private var swapVert: ImageVector? = null
+private var upload: ImageVector? = null

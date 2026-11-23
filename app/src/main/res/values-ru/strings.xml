@@ -91,11 +91,8 @@
     <string name="search_bar_at_bottom_description">Показывать строку поиска над клавиатурой</string>
 
     <!-- Import & Export Section -->
-    <string name="import_export_section">Импорт и экспорт</string>
     <string name="import_action">Импортировать сети</string>
-    <string name="import_description">Импорт сетей WiFi из файлов JSON или GZip</string>
     <string name="export_action">Экспортировать сети</string>
-    <string name="export_description">Экспорт сетей WiFi в файл</string>
     <string name="export_format">Формат</string>
     <string name="encrypt_export">Зашифровать экспорт</string>
     <string name="password">Пароль</string>
@@ -132,7 +129,6 @@
     <!-- Advanced Section -->
     <string name="advanced_section">Дополнительно</string>
     <string name="forget_all_title">Забыть все сети</string>
-    <string name="forget_all_description">Удалить все сохранённые сети WiFi с этого устройства</string>
     <string name="plaintext_passwords_title">Показывать пароли в открытом виде</string>
     <string name="plaintext_passwords_description">Отображать пароли WiFi в открытом виде</string>
     <string name="auto_persist_ephemeral_networks_title">Автосохранение временных сетей</string>
@@ -210,7 +206,6 @@
 
     <!-- Add Network Screen -->
     <string name="add_network">Добавить сеть</string>
-    <string name="add_network_manually">Ввести вручную</string>
     <string name="ssid_error">SSID должен быть от 1 до 32 байт</string>
     <string name="password_error_wpa2">Пароль должен содержать от 8 до 63 символов</string>
     <string name="password_error_wpa3">Пароль должен содержать от 1 до 63 символов</string>
@@ -275,7 +270,10 @@
     <string name="loading">Загрузка…</string>
     <string name="refresh_success">Обновлено успешно</string>
     <string name="no_network_to_import">Сети для импорта не найдены</string>
-    <string name="import_networks_success">Сети успешно импортированы</string>
+    <string name="import_to_device_success">Импортировано на устройство и в приложение</string>
+    <string name="import_to_app_success">Импортировано в приложение</string>
+    <string name="import_device_rejected_some">Устройство не приняло некоторые сети.</string>
+    <string name="import_already_saved">Все сети уже сохранены</string>
     <string name="import_networks_failed">Ошибка при импорте сетей</string>
     <string name="export_networks_success">Сети успешно экспортированы</string>
     <string name="export_networks_failed">Ошибка при экспорте сетей</string>

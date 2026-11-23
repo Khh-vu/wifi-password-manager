@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import io.github.wifi_password_manager.BuildConfig
 import io.github.wifi_password_manager.R
 import io.github.wifi_password_manager.domain.model.LocalSettings
+import io.github.wifi_password_manager.domain.model.PrivilegedMode
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
 import io.github.wifi_password_manager.ui.UiConfig
@@ -39,26 +40,20 @@ import io.github.wifi_password_manager.ui.icons.IntegrationInstructions
 import io.github.wifi_password_manager.ui.icons.Language
 import io.github.wifi_password_manager.ui.icons.Palette
 import io.github.wifi_password_manager.ui.icons.Security
-import io.github.wifi_password_manager.ui.icons.SwapVert
 import io.github.wifi_password_manager.ui.icons.Tune
 import io.github.wifi_password_manager.ui.screen.setting.components.AppLockItem
 import io.github.wifi_password_manager.ui.screen.setting.components.ConnectedWifiInfoItem
-import io.github.wifi_password_manager.ui.screen.setting.components.ExportDialog
-import io.github.wifi_password_manager.ui.screen.setting.components.ForgetAllDialog
-import io.github.wifi_password_manager.ui.screen.setting.components.ImportOptionDialog
-import io.github.wifi_password_manager.ui.screen.setting.components.ImportPasswordDialog
 import io.github.wifi_password_manager.ui.screen.setting.components.LanguageItem
 import io.github.wifi_password_manager.ui.screen.setting.components.PlaintextPasswordsItem
 import io.github.wifi_password_manager.ui.screen.setting.components.SettingSection
 import io.github.wifi_password_manager.ui.screen.setting.components.ThemeModeItem
 import io.github.wifi_password_manager.ui.shared.BackButton
-import io.github.wifi_password_manager.ui.shared.LoadingDialog
 import io.github.wifi_password_manager.ui.theme.ThemeWrapper
 import io.github.wifi_password_manager.utils.label
 import io.github.wifi_password_manager.utils.plus
 
 @Composable
-fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Action) -> Unit) {
+fun SettingView(mode: PrivilegedMode, onAction: (SettingViewModel.Action) -> Unit) {
     val uriHandler = LocalUriHandler.current
     val navBackStack = LocalNavBackStack.current
     val settings = LocalSettings.current
@@ -192,38 +187,6 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                         colors = UiConfig.listItemColors(),
                     ) {
                         Text(text = stringResource(R.string.bottom_search_bar_title))
-                    }
-                }
-            }
-
-            // Import & Export Section
-            item {
-                SettingSection(
-                    imageVector = SwapVert,
-                    title = stringResource(R.string.import_export_section),
-                ) {
-                    ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ImportNetworks) },
-                        supportingContent = {
-                            Text(text = stringResource(R.string.import_description))
-                        },
-                        shapes = UiConfig.listItemShapes(),
-                        colors = UiConfig.listItemColors(),
-                    ) {
-                        Text(text = stringResource(R.string.import_action))
-                    }
-
-                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
-
-                    ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ShowExportDialog) },
-                        supportingContent = {
-                            Text(text = stringResource(R.string.export_description))
-                        },
-                        shapes = UiConfig.listItemShapes(),
-                        colors = UiConfig.listItemColors(),
-                    ) {
-                        Text(text = stringResource(R.string.export_action))
                     }
                 }
             }
@@ -362,20 +325,6 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
                     title = stringResource(R.string.advanced_section),
                 ) {
                     ListItem(
-                        onClick = { onAction(SettingViewModel.Action.ShowForgetAllDialog) },
-                        supportingContent = {
-                            Text(text = stringResource(R.string.forget_all_description))
-                        },
-                        shapes = UiConfig.listItemShapes(),
-                        colors = UiConfig.listItemColors(),
-                        enabled = state.mode.hasPrivilegedAccess,
-                    ) {
-                        Text(text = stringResource(R.string.forget_all_title))
-                    }
-
-                    HorizontalDivider(color = MaterialTheme.colorScheme.background)
-
-                    ListItem(
                         onClick = {
                             onAction(
                                 SettingViewModel.Action.ToggleAutoPersistEphemeralNetworks(
@@ -465,7 +414,7 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
 
                     HorizontalDivider(color = MaterialTheme.colorScheme.background)
 
-                    ConnectedWifiInfoItem(mode = state.mode)
+                    ConnectedWifiInfoItem(mode = mode)
                 }
             }
 
@@ -555,56 +504,18 @@ fun SettingView(state: SettingViewModel.State, onAction: (SettingViewModel.Actio
             }
         }
     }
-
-    when {
-        state.isLoading -> {
-            LoadingDialog()
-        }
-
-        state.showForgetAllDialog -> {
-            ForgetAllDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideForgetAllDialog) },
-                onConfirm = { onAction(SettingViewModel.Action.ConfirmForgetAllNetworks(it)) },
-            )
-        }
-
-        state.showExportDialog -> {
-            ExportDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideExportDialog) },
-                onSelect = { option, password ->
-                    onAction(SettingViewModel.Action.ConfirmExport(option, password))
-                },
-            )
-        }
-
-        state.showImportModeDialog -> {
-            ImportOptionDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideImportDialog) },
-                onSelect = { onAction(SettingViewModel.Action.ChooseImportMode(it)) },
-            )
-        }
-
-        state.showImportPasswordDialog -> {
-            ImportPasswordDialog(
-                onDismiss = { onAction(SettingViewModel.Action.HideImportDialog) },
-                onConfirm = { password ->
-                    onAction(SettingViewModel.Action.ConfirmImportWithPassword(password))
-                },
-            )
-        }
-    }
 }
 
 @PreviewLightDark
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun SettingViewPreview() {
-    SettingView(state = SettingViewModel.State(), onAction = {})
+    SettingView(mode = PrivilegedMode.entries.random(), onAction = {})
 }
 
 @PreviewScreenSizes
 @Composable
 @PreviewWrapper(ThemeWrapper::class)
 private fun AdaptiveSettingViewPreview() {
-    SettingView(state = SettingViewModel.State(), onAction = {})
+    SettingView(mode = PrivilegedMode.entries.random(), onAction = {})
 }

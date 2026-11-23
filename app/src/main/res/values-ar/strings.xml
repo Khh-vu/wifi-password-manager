@@ -93,11 +93,8 @@
     <string name="search_bar_at_bottom_description">عرض شريط البحث فوق لوحة المفاتيح</string>
 
     <!-- Import & Export Section -->
-    <string name="import_export_section">استيراد وتصدير</string>
     <string name="import_action">استيراد الشبكات</string>
-    <string name="import_description">استيراد شبكات WiFi من ملف(ملفات) JSON أو GZip</string>
     <string name="export_action">تصدير الشبكات</string>
-    <string name="export_description">تصدير شبكات WiFi إلى ملف</string>
     <string name="export_format">التنسيق</string>
     <string name="encrypt_export">تشفير التصدير</string>
     <string name="password">كلمة المرور</string>
@@ -134,7 +131,6 @@
     <!-- Advanced Section -->
     <string name="advanced_section">متقدم</string>
     <string name="forget_all_title">نسيان جميع الشبكات</string>
-    <string name="forget_all_description">إزالة جميع شبكات WiFi المحفوظة من هذا الجهاز</string>
     <string name="plaintext_passwords_title">إظهار كلمات المرور كنص عادي</string>
     <string name="plaintext_passwords_description">عرض كلمات مرور WiFi كنص عادي</string>
     <string name="auto_persist_ephemeral_networks_title">حفظ الشبكات المؤقتة تلقائياً</string>
@@ -214,7 +210,6 @@
 
     <!-- Add Network Screen -->
     <string name="add_network">إضافة شبكة</string>
-    <string name="add_network_manually">إدخال يدويًا</string>
     <string name="ssid_error">يجب أن يكون SSID من 1 إلى 32 بايت</string>
     <string name="password_error_wpa2">يجب أن تتكون كلمة المرور من 8 إلى 63 حرفًا</string>
     <string name="password_error_wpa3">يجب أن تتكون كلمة المرور من 1 إلى 63 حرفًا</string>
@@ -279,7 +274,10 @@
     <string name="loading">جارِ التحميل…</string>
     <string name="refresh_success">تم التحديث بنجاح</string>
     <string name="no_network_to_import">لم يتم العثور على شبكات لاستيرادها</string>
-    <string name="import_networks_success">تم استيراد الشبكات بنجاح</string>
+    <string name="import_to_device_success">تم الاستيراد إلى الجهاز والتطبيق</string>
+    <string name="import_to_app_success">تم الاستيراد إلى التطبيق</string>
+    <string name="import_device_rejected_some">لم يقبل الجهاز بعض الشبكات.</string>
+    <string name="import_already_saved">جميع الشبكات محفوظة بالفعل</string>
     <string name="import_networks_failed">فشل استيراد الشبكات</string>
     <string name="export_networks_success">تم تصدير الشبكات بنجاح</string>
     <string name="export_networks_failed">فشل تصدير الشبكات</string>

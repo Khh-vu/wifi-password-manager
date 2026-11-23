@@ -88,11 +88,8 @@
     <string name="search_bar_at_bottom_description">在键盘上方显示搜索栏</string>
 
     <!-- 导入与导出部分 -->
-    <string name="import_export_section">导入与导出</string>
     <string name="import_action">导入网络</string>
-    <string name="import_description">从 JSON 或 GZip 文件导入 WiFi 网络</string>
     <string name="export_action">导出网络</string>
-    <string name="export_description">将 WiFi 网络导出到文件</string>
     <string name="export_format">格式</string>
     <string name="encrypt_export">加密导出</string>
     <string name="password">密码</string>
@@ -129,7 +126,6 @@
     <!-- 高级部分 -->
     <string name="advanced_section">高级</string>
     <string name="forget_all_title">忘记所有网络</string>
-    <string name="forget_all_description">从本设备移除所有已保存的 WiFi 网络</string>
     <string name="plaintext_passwords_title">显示明文密码</string>
     <string name="plaintext_passwords_description">以明文显示 WiFi 密码</string>
     <string name="auto_persist_ephemeral_networks_title">自动保留临时网络</string>
@@ -204,7 +200,6 @@
 
     <!-- Add Network Screen -->
     <string name="add_network">添加网络</string>
-    <string name="add_network_manually">手动输入</string>
     <string name="ssid_error">SSID 长度须为 1–32 字节</string>
     <string name="password_error_wpa2">密码须为 8–63 个字符</string>
     <string name="password_error_wpa3">密码须为 1–63 个字符</string>
@@ -269,7 +264,10 @@
     <string name="loading">加载中…</string>
     <string name="refresh_success">刷新成功</string>
     <string name="no_network_to_import">未找到可导入的网络</string>
-    <string name="import_networks_success">网络导入成功</string>
+    <string name="import_to_device_success">已导入到设备和应用</string>
+    <string name="import_to_app_success">已导入到应用</string>
+    <string name="import_device_rejected_some">设备未接受部分网络。</string>
+    <string name="import_already_saved">所有网络均已保存</string>
     <string name="import_networks_failed">网络导入失败</string>
     <string name="export_networks_success">网络导出成功</string>
     <string name="export_networks_failed">网络导出失败</string>

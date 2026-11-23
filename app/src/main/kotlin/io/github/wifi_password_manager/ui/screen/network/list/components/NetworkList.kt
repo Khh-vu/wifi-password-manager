@@ -43,6 +43,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun NetworkList(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    toolbarPadding: PaddingValues = PaddingValues(0.dp),
     gridState: LazyGridState = rememberLazyGridState(),
     networks: List<WifiNetwork>,
     connectionStatus: WifiConnectionStatus,
@@ -65,7 +66,7 @@ fun NetworkList(
                     else -> GridCells.Adaptive(400.dp)
                 },
             state = gridState,
-            contentPadding = contentPadding + PaddingValues(spacing),
+            contentPadding = contentPadding + toolbarPadding + PaddingValues(spacing),
             verticalArrangement = Arrangement.spacedBy(spacing),
             horizontalArrangement = Arrangement.spacedBy(spacing),
         ) {

@@ -88,11 +88,8 @@
     <string name="search_bar_at_bottom_description">キーボードの上に検索バーを表示</string>
 
     <!-- Import & Export Section -->
-    <string name="import_export_section">インポート &amp; エクスポート</string>
     <string name="import_action">ネットワークをインポート</string>
-    <string name="import_description">JSONまたはGZipファイルからWiFiネットワークをインポート</string>
     <string name="export_action">ネットワークをエクスポート</string>
-    <string name="export_description">WiFiネットワークをファイルにエクスポート</string>
     <string name="export_format">フォーマット</string>
     <string name="encrypt_export">エクスポートを暗号化</string>
     <string name="password">パスワード</string>
@@ -129,7 +126,6 @@
     <!-- Advanced Section -->
     <string name="advanced_section">詳細設定</string>
     <string name="forget_all_title">すべてのネットワークを削除</string>
-    <string name="forget_all_description">このデバイスから保存済みWiFiネットワークをすべて削除する</string>
     <string name="plaintext_passwords_title">パスワードをプレーンテキストで表示</string>
     <string name="plaintext_passwords_description">WiFiパスワードをプレーンテキストで表示します</string>
     <string name="auto_persist_ephemeral_networks_title">一時ネットワークを自動保存</string>
@@ -204,7 +200,6 @@
 
     <!-- Add Network Screen -->
     <string name="add_network">ネットワークを追加</string>
-    <string name="add_network_manually">手動で入力</string>
     <string name="ssid_error">SSID は 1～32 バイトにしてください</string>
     <string name="password_error_wpa2">パスワードは 8～63 文字にしてください</string>
     <string name="password_error_wpa3">パスワードは 1～63 文字にしてください</string>
@@ -269,7 +264,10 @@
     <string name="loading">読み込み中…</string>
     <string name="refresh_success">更新しました</string>
     <string name="no_network_to_import">インポートするネットワークが見つかりません</string>
-    <string name="import_networks_success">ネットワークをインポートしました</string>
+    <string name="import_to_device_success">デバイスとアプリにインポートしました</string>
+    <string name="import_to_app_success">アプリにインポートしました</string>
+    <string name="import_device_rejected_some">一部のネットワークがデバイスに受け入れられませんでした。</string>
+    <string name="import_already_saved">すべてのネットワークは保存済みです</string>
     <string name="import_networks_failed">ネットワークのインポートに失敗しました</string>
     <string name="export_networks_success">ネットワークをエクスポートしました</string>
     <string name="export_networks_failed">ネットワークのエクスポートに失敗しました</string>

@@ -30,7 +30,6 @@ import io.github.wifi_password_manager.domain.model.LocalSettings
 import io.github.wifi_password_manager.domain.model.WifiNetwork
 import io.github.wifi_password_manager.navigation.LocalNavBackStack
 import io.github.wifi_password_manager.navigation.Route
-import io.github.wifi_password_manager.ui.icons.Search
 import io.github.wifi_password_manager.ui.icons.Settings
 import io.github.wifi_password_manager.ui.screen.network.list.NetworkListViewModel
 import io.github.wifi_password_manager.ui.shared.SearchBar
@@ -103,24 +102,6 @@ fun NetworkListTopBar(
                             )
                         },
                         actions = {
-                            if (!state.showingSearch) {
-                                TooltipIconButton(
-                                    onClick = {
-                                        onAction(NetworkListViewModel.Action.ToggleSearch)
-                                    },
-                                    imageVector = Search,
-                                    tooltip = stringResource(R.string.search_tooltip),
-                                    positioning = TooltipAnchorPosition.Below,
-                                )
-                            }
-
-                            SortFilterButton(
-                                filters = state.filters,
-                                sortBy = state.sortBy,
-                                sortAscending = state.sortAscending,
-                                onAction = onAction,
-                            )
-
                             TooltipIconButton(
                                 onClick = { navBackStack.add(Route.SettingScreen) },
                                 imageVector = Settings,

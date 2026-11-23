@@ -49,6 +49,7 @@ fun SortFilterButton(
     sortBy: NetworkListViewModel.SortBy,
     sortAscending: Boolean,
     onAction: (NetworkListViewModel.Action) -> Unit,
+    positioning: TooltipAnchorPosition = TooltipAnchorPosition.Below,
 ) {
     var showBottomSheet by retain { mutableStateOf(false) }
     val sheetState =
@@ -61,7 +62,7 @@ fun SortFilterButton(
     TooltipIconButton(
         onClick = { showBottomSheet = true },
         tooltip = stringResource(R.string.sort_filter_title),
-        positioning = TooltipAnchorPosition.Below,
+        positioning = positioning,
         icon = {
             BadgedBox(
                 badge = {
@@ -200,6 +201,7 @@ private fun SortFilterSheet(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @PreviewLightDark
 @Composable
 @PreviewWrapper(ThemeWrapper::class)

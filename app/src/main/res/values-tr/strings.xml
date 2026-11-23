@@ -89,11 +89,8 @@
     <string name="search_bar_at_bottom_description">Arama çubuğunu klavyenin üstünde göster</string>
 
     <!-- Import & Export Section -->
-    <string name="import_export_section">İçe &amp; Dışa aktar</string>
     <string name="import_action">Ağları içe aktar</string>
-    <string name="import_description">JSON veya GZip dosyasından WiFi ağlarını içe aktarın</string>
     <string name="export_action">Ağları dışa aktar</string>
-    <string name="export_description">WiFi ağlarını bir dosyaya aktarın</string>
     <string name="export_format">Biçim</string>
     <string name="encrypt_export">Dışa aktarmayı şifrele</string>
     <string name="password">Parola</string>
@@ -130,7 +127,6 @@
     <!-- Advanced Section -->
     <string name="advanced_section">Gelişmiş</string>
     <string name="forget_all_title">Tüm ağları unut</string>
-    <string name="forget_all_description">Bu cihazdan kaydedilmiş tüm WiFi ağlarını kaldırır</string>
     <string name="plaintext_passwords_title">Düz Metin Şifreleri Göster</string>
     <string name="plaintext_passwords_description">WiFi şifrelerini düz metin şeklinde görüntüle</string>
     <string name="auto_persist_ephemeral_networks_title">Geçici ağları otomatik hatırla</string>
@@ -206,7 +202,6 @@
 
     <!-- Add Network Screen -->
     <string name="add_network">Ağ ekle</string>
-    <string name="add_network_manually">Elle gir</string>
     <string name="ssid_error">SSID 1–32 bayt olmalıdır</string>
     <string name="password_error_wpa2">Parola 8–63 karakter olmalıdır</string>
     <string name="password_error_wpa3">Parola 1–63 karakter olmalıdır</string>
@@ -271,7 +266,10 @@
     <string name="loading">Yükleniyor…</string>
     <string name="refresh_success">Yenileme başarılı</string>
     <string name="no_network_to_import">İçe aktarılacak ağ bulunamadı</string>
-    <string name="import_networks_success">Ağlar başarıyla içe aktarıldı</string>
+    <string name="import_to_device_success">Cihaza ve uygulamaya içe aktarıldı</string>
+    <string name="import_to_app_success">Uygulamaya içe aktarıldı</string>
+    <string name="import_device_rejected_some">Cihaz bazı ağları kabul etmedi.</string>
+    <string name="import_already_saved">Tüm ağlar zaten kayıtlı</string>
     <string name="import_networks_failed">Ağların içe aktarılması başarısız</string>
     <string name="export_networks_success">Ağlar başarıyla dışa aktarıldı</string>
     <string name="export_networks_failed">Ağları dışa aktarma başarısız</string>

@@ -1,4 +1,4 @@
-package io.github.wifi_password_manager.ui.screen.setting.components
+package io.github.wifi_password_manager.ui.screen.network.list.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
