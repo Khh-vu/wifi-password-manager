@@ -17,7 +17,10 @@ import io.github.wifi_password_manager.manager.PrivilegedManager
 import io.github.wifi_password_manager.utils.setAppTheme
 import io.github.wifi_password_manager.workers.PersistEphemeralNetworksWorker
 import io.github.wifi_password_manager.workers.SyncNetworksWorker
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -32,6 +35,7 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 import rikka.shizuku.ShizukuProvider
 
 @KoinApplication
+@OptIn(FlowPreview::class)
 class App : Application() {
     companion object {
         private const val TAG = "App"
@@ -108,7 +112,7 @@ class App : Application() {
     private fun observeConfiguredNetworksChanged() {
         val changes = Channel<Unit>(Channel.CONFLATED)
         ProcessLifecycleOwner.get().lifecycleScope.launch {
-            changes.receiveAsFlow().collect {
+            changes.receiveAsFlow().debounce(1.seconds).collect {
                 try {
                     privilegedManager.refresh()
                     wifiRepository.refresh()
